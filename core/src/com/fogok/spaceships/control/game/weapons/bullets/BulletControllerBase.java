@@ -13,7 +13,7 @@ public abstract class BulletControllerBase<T extends BulletItselfBase> implement
 
     private static final int bufferSize = 30;
 
-    private Class<T> clazz;     //ретурнить генерик не можем, приходтся городить басурманские костыли
+    private Class<T> bullet;     //ретурнить генерик не можем, приходтся городить басурманские костыли
 
     // тут активные пульки
     private final Array<T> activeBullets;
@@ -24,7 +24,7 @@ public abstract class BulletControllerBase<T extends BulletItselfBase> implement
         protected T newObject(){
             try {
                 System.out.println("new instance! " + (bulletPool.peak + 1) );
-                return clazz.newInstance();
+                return bullet.newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -34,12 +34,12 @@ public abstract class BulletControllerBase<T extends BulletItselfBase> implement
         }
     };
 
-    public BulletControllerBase(Class<T> clazz) {
-        this(clazz, bufferSize);
+    public BulletControllerBase(Class<T> bullet) {
+        this(bullet, bufferSize);
     }
 
-    public BulletControllerBase(Class<T> clazz, int sizeBuffer) {
-        this.clazz = clazz;
+    public BulletControllerBase(Class<T> bullet, int sizeBuffer) {
+        this.bullet = bullet;
         activeBullets = new Array<T>(false, sizeBuffer);
     }
 

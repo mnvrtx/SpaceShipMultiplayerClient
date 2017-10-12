@@ -2,18 +2,12 @@ package com.fogok.spaceships.model.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.game.SpaceShipController;
-import com.fogok.spaceships.control.game.weapons.Weapon;
-import com.fogok.spaceships.control.game.weapons.bullets.simplebluster.BlusterBulletController;
-import com.fogok.spaceships.control.game.weapons.bullets.simplebluster.BlusterController;
 import com.fogok.spaceships.model.ViewModelObject;
-import com.fogok.spaceships.utils.Assets;
+import com.fogok.spaceships.model.game.weapons.bullets.Bluster;
 import com.fogok.spaceships.view.game.SpaceShipView;
-import com.fogok.spaceships.view.utils.AspectRatioHelper;
 
 
 public class SpaceShip implements ViewModelObject{
@@ -21,28 +15,30 @@ public class SpaceShip implements ViewModelObject{
     private SpaceShipView spaceShipView;
     private SpaceShipController spaceShipController;
 
-    private Weapon blusterController;
+    private float test;
 
+    private Bluster bluster;
 
     public SpaceShip(ControllerManager controllerManager) {
         spaceShipView = new SpaceShipView();
         spaceShipController = controllerManager.getSpaceShipController();
 
-        blusterController = controllerManager.getEverybodyObjectsController().getDemolishingObjectsController().getBlusterBulletController();
+        bluster = new Bluster(controllerManager);
     }
 
     @Override
     public void draw(SpriteBatch batch) {
-        blusterController.handle(false);
+        bluster.draw(batch);    //уничтожить этот метод, все объекты будут отрисовываться в EveryBodyObjectsController
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-            blusterController.fire(spaceShipController.getPosition().x + (spaceShipView.getSprite().getWidth() - test.getWidth()) / 2f, spaceShipController.getPosition().y + (spaceShipView.getSprite().getHeight() - test.getHeight()) / 2f, 0.2f + spaceShipController.getCurrentSpeed(), (int) spaceShipController.getCurrentDirection() + 90);
-
-
-
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            test+= 0.2f;
+            if (test > 1.5f) {
+                bluster.fire(spaceShipView);
+                test = 0f;
+            }
+        }
 
         spaceShipController.handle(false);
         spaceShipView.draw(batch, spaceShipController);
-
     }
 }

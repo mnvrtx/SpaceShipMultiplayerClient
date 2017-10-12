@@ -34,6 +34,6 @@ public class SimpleBlusterView implements View {
 
     @Override
     public Sprite getSprite() {
-        return null;
+        return bluster;
     }
 }

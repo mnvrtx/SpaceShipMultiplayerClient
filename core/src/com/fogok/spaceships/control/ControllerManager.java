@@ -1,0 +1,49 @@
+package com.fogok.spaceships.control;
+
+import com.fogok.spaceships.control.game.BackgroundController;
+import com.fogok.spaceships.control.game.CameraController;
+import com.fogok.spaceships.control.game.EverybodyObjectsController;
+import com.fogok.spaceships.control.game.SpaceShipController;
+import com.fogok.spaceships.control.ui.JoyStickController;
+import com.fogok.spaceships.model.NetworkData;
+import com.fogok.spaceships.view.utils.NativeGdxHelper;
+
+public class ControllerManager {
+
+    private EverybodyObjectsController everybodyObjectsController;
+    private JoyStickController joyStickController;
+    private SpaceShipController spaceShipController;
+    private BackgroundController backgroundController;
+    private CameraController cameraController;
+
+    public ControllerManager(NetworkData networkData, NativeGdxHelper nativeGdxHelper){
+        everybodyObjectsController = new EverybodyObjectsController();
+        joyStickController = new JoyStickController(networkData);
+        spaceShipController = new SpaceShipController(joyStickController);
+        cameraController = new CameraController(nativeGdxHelper, spaceShipController);
+        backgroundController = new BackgroundController();
+    }
+
+
+    //region Getters
+    public JoyStickController getJoyStickController() {
+        return joyStickController;
+    }
+
+    public SpaceShipController getSpaceShipController() {
+        return spaceShipController;
+    }
+
+    public BackgroundController getBackgroundController() {
+        return backgroundController;
+    }
+
+    public CameraController getCameraController() {
+        return cameraController;
+    }
+
+    public EverybodyObjectsController getEverybodyObjectsController() {
+        return everybodyObjectsController;
+    }
+    //endregion
+}

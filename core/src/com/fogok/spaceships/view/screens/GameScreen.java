@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.model.NetworkData;
+import com.fogok.spaceships.net.ServerLogicWrapper;
 import com.fogok.spaceships.view.screens.screen_components.GUI;
 import com.fogok.spaceships.view.screens.screen_components.GameSession;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
@@ -29,7 +30,7 @@ public class GameScreen implements Screen {
         gameSession = new GameSession(controllerManager, networkData);
         gui = new GUI(controllerManager);
 
-//        ServerLogicWrapper.openServerSocket(networkData);
+        ServerLogicWrapper.openServerSocket(networkData);
     }
 
     @Override

@@ -19,11 +19,11 @@ public class ServerLogicWrapper {
             @Override
             public void run() {
 
-                EventLoopGroup group = new NioEventLoopGroup();
+                EventLoopGroup workingGroup = new NioEventLoopGroup();
 
                 try {
                     Bootstrap boot = new Bootstrap();
-                    boot.group(group)
+                    boot.group(workingGroup)
                             .channel(NioSocketChannel.class)
                             .option(ChannelOption.TCP_NODELAY, true)
                             .handler(new ChannelInitializer<SocketChannel>() {
@@ -40,7 +40,7 @@ public class ServerLogicWrapper {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    group.shutdownGracefully();
+                    workingGroup.shutdownGracefully();
                 }
 
             }

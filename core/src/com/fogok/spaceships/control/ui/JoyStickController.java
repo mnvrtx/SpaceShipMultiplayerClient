@@ -55,15 +55,15 @@ public class JoyStickController implements Controller{
             touchedXJoystick = (float) (centerJoystickX - sizeJoystick / 2) + joyStickOutputX;
             touchedYJoystick = (float) (centerJoystickY - sizeJoystick / 2) + joyStickOutputY;
 
-            _networkData.setJoystickX(joyStickOutputX);
-            _networkData.setJoystickY(joyStickOutputY);
+//            _networkData.setJoystickX(joyStickOutputX);
+//            _networkData.setJoystickY(joyStickOutputY);
         }else{
             touchedXJoystick = (float) centerJoystickX - (float) sizeJoystick / 2f;
             touchedYJoystick = (float) centerJoystickY - (float) sizeJoystick / 2f;
             joyStickOutputX = 0;
             joyStickOutputY = 0;
-            _networkData.setJoystickX(0f);
-            _networkData.setJoystickY(0f);
+//            _networkData.setJoystickX(0f);
+//            _networkData.setJoystickY(0f);
         }
 
 

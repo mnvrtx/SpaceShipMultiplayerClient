@@ -2,17 +2,17 @@ package com.fogok.spaceships.control.game.weapons.bullets;
 
 
 import com.badlogic.gdx.Gdx;
+import com.fogok.spaceships.control.game.GameObject;
 import com.fogok.spaceships.view.utils.GMUtils;
 import com.fogok.spaceships.view.utils.Pool;
 import com.fogok.spaceships.view.utils.PooledObject;
 
-public abstract class BulletItselfBase implements Pool.Poolable, PooledObject {
+public abstract class BulletItselfBase extends GameObject implements Pool.Poolable, PooledObject {
 
     /*
      * Основа для любой пульки
      */
 
-    float x, y;
     float speed;
     float timeAlive;
     int direction;
@@ -20,8 +20,7 @@ public abstract class BulletItselfBase implements Pool.Poolable, PooledObject {
 
     @Override
     public void start(float x, float y, float speed, int direction){
-        this.x = x;
-        this.y = y;
+        setPosition(x, y);
         this.speed = speed;
         this.direction = direction;
         timeAlive = 0f;
@@ -37,8 +36,7 @@ public abstract class BulletItselfBase implements Pool.Poolable, PooledObject {
         if (isAlive) {
             processAction();
             float plusX = GMUtils.getNextX(speed, direction), plusY = GMUtils.getNextY(speed, direction);
-            x += plusX;
-            y += plusY;
+            setPosition(getX() + plusX, getY() + plusY);
             timeAlive -= Gdx.graphics.getDeltaTime();
             if (getCondtitionToDead()) {
                 isAlive = false;
@@ -73,14 +71,6 @@ public abstract class BulletItselfBase implements Pool.Poolable, PooledObject {
     //endregion
 
     //region Getters
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
     public int getDirection() {
         return direction;
     }

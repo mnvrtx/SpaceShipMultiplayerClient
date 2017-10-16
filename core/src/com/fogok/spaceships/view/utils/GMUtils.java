@@ -1,8 +1,10 @@
 package com.fogok.spaceships.view.utils;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import com.fogok.spaceships.net.NettyHandler;
 
 import java.util.Random;
 
@@ -59,6 +61,29 @@ public class GMUtils {
         return currentVal;
     }
 
+    public static float lerpValue(float targetVal, float startVal, float currentVal) {
+        float absDif = Math.abs(targetVal - startVal);
+        float change = (Math.min(Gdx.graphics.getDeltaTime(), NettyHandler.TIMEITERSSLEEP) / NettyHandler.TIMEITERSSLEEP) * absDif;
+        if (absDif < change * 2f)
+            return targetVal;
+        change = currentVal > targetVal ? -change : change;
+        currentVal += change;
+        return absDif != 0f ? currentVal : targetVal;
+    }
+
+    public static float getRoundedVal(float nonRoundedVal){
+        return (int)(nonRoundedVal * 1000) / 1000f;
+    }
+
+//    public static void main(String[] args) throws InterruptedException {
+//        float start = -2, target = 2;
+//        float current = start;
+//        while (true) {
+//            Thread.sleep(500);
+//            current = lerpValue(start, target, current);
+//            System.out.println(current);
+//        }
+//    }
 
 
     private static Texture texture;

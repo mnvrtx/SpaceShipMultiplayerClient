@@ -6,6 +6,7 @@ public class ArrayOptimizeWrapper<T> {
 
     private T[] array;
     private int size;
+    private int maxSize;
 
     public ArrayOptimizeWrapper(Class<T> c, int size) {
         this.size = 0;

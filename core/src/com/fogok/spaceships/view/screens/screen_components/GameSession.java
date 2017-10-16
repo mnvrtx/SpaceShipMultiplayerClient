@@ -7,29 +7,32 @@ import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.ViewModelObject;
 import com.fogok.spaceships.model.game.Background;
 import com.fogok.spaceships.model.game.SpaceShip;
+import com.fogok.spaceships.model.game.TempShipServer;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
 public class GameSession {
 
     private SpriteBatch gameSpriteBatch;
-    private NetworkData _networkData;
+    private NetworkData networkData;
 
     private ViewModelObject[] viewModelObjects;
 
     private ControllerManager _controllerManager;
 
     public GameSession(ControllerManager controllerManager, NetworkData networkData) {
-        _networkData = networkData;
+        this.networkData = networkData;
         _controllerManager = controllerManager;
         gameSpriteBatch = new SpriteBatch();
 
-        viewModelObjects = new ViewModelObject[2];
+        viewModelObjects = new ViewModelObject[3];
 
         viewModelObjects[0] = new Background(controllerManager);
         viewModelObjects[1] = new SpaceShip(controllerManager);
+        viewModelObjects[2] = new TempShipServer(networkData);
     }
 
     public void draw(NativeGdxHelper nativeGdxHelper) {
+        networkData.resetSize();
         _controllerManager.getCameraController().handle(false);
         gameSpriteBatch.setProjectionMatrix(nativeGdxHelper.getGameSessionCamera().combined);
         gameSpriteBatch.begin();

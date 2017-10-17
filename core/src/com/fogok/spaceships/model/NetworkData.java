@@ -16,8 +16,9 @@ public class NetworkData {
     };
 
     private static final String[] JSONStrings = new String[]{
-            //  0    1    2    3    4    5
-            "t", "x", "y", "a"
+            //0   1    2    3    4    5
+            "t", "x", "y", "a", "b"
+            //type; x;  y; additPrms; booleans
     };
 
 
@@ -34,7 +35,7 @@ public class NetworkData {
         stringBuilder.append(JSONElements[0]);
         for (GameObject gameObject : gameObjects) {
             for (int i = 0; i < JSONStrings.length; i++) {
-                addStartJSONString(i, i != 3);
+                addStartJSONString(i, false);
                 switch (i) {
                     case 0:
                         stringBuilder.append(gameObject.getType());
@@ -54,8 +55,11 @@ public class NetworkData {
                         }
                         stringBuilder.append(JSONElements[7]);
                         break;
+                    case 4:
+                        stringBuilder.append(gameObject.getLongFlags());
+                        break;
                 }
-                addEndJSONString(i != 3, i == JSONStrings.length - 1);
+                addEndJSONString(false, i == JSONStrings.length - 1);
             }
 
         }

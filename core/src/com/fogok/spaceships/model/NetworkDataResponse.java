@@ -18,9 +18,11 @@ public class NetworkDataResponse {
 
     public void handle(String json){
         if (isNormalJson(json)) {
-            final JsonValue jsonValue = jsonReader.parse(json);
-            oldJsonResponse = jsonResponse != null ? jsonResponse : jsonValue;
-            jsonResponse = jsonValue;
+            try {
+                final JsonValue jsonValue = jsonReader.parse(json);
+                oldJsonResponse = jsonResponse != null ? jsonResponse : jsonValue;
+                jsonResponse = jsonValue;
+            }catch (Exception e){}
         } else {
             jsonResponse = null;
         }

@@ -6,8 +6,8 @@ import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.ViewModelObject;
 import com.fogok.spaceships.model.game.Background;
-import com.fogok.spaceships.model.game.SpaceShip;
-import com.fogok.spaceships.model.game.TempShipServer;
+import com.fogok.spaceships.model.game.msdata.SpaceShipClient;
+import com.fogok.spaceships.model.game.opdata.SpaceShipServer;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
 public class GameSession {
@@ -27,8 +27,8 @@ public class GameSession {
         viewModelObjects = new ViewModelObject[3];
 
         viewModelObjects[0] = new Background(controllerManager);
-        viewModelObjects[1] = new SpaceShip(controllerManager);
-        viewModelObjects[2] = new TempShipServer(networkData);
+        viewModelObjects[1] = new SpaceShipClient(controllerManager);
+        viewModelObjects[2] = new SpaceShipServer(networkData);
     }
 
     public void draw(NativeGdxHelper nativeGdxHelper) {

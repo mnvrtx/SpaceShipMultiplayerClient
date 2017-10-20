@@ -2,7 +2,7 @@ package com.fogok.spaceships.model;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
-import com.fogok.spaceships.control.game.GameObject;
+import com.fogok.spaceships.model.game.dataobjects.GameObject;
 
 public class NetworkData {
 
@@ -32,38 +32,45 @@ public class NetworkData {
 
     public String getJSON(){
         stringBuilder.setLength(0);
-        stringBuilder.append(JSONElements[0]);
-        for (GameObject gameObject : gameObjects) {
+        stringBuilder.append(JSONElements[6]);
+        for (int q = 0; q < gameObjects.size; q++) {
+            GameObject gameObject = gameObjects.get(q);
+            if (q != 0)
+                stringBuilder.append(JSONElements[4]);
+            stringBuilder.append(JSONElements[0]);
+            long gameObjectLongFlags = gameObject.getLongFlags();
             for (int i = 0; i < JSONStrings.length; i++) {
-                addStartJSONString(i, false);
-                switch (i) {
-                    case 0:
-                        stringBuilder.append(gameObject.getType());
-                        break;
-                    case 1:
-                        stringBuilder.append(gameObject.getX());
-                        break;
-                    case 2:
-                        stringBuilder.append(gameObject.getY());
-                        break;
-                    case 3:
-                        stringBuilder.append(JSONElements[6]);
-                        float[] addPrms = gameObject.getAdditParams();
-                        for (int j = 0; j < addPrms.length; j++) {
-                            stringBuilder.append(addPrms[j]);
-                            addEndJSONString(false, j == addPrms.length - 1);
-                        }
-                        stringBuilder.append(JSONElements[7]);
-                        break;
-                    case 4:
-                        stringBuilder.append(gameObject.getLongFlags());
-                        break;
+                if (!(i == 3 && gameObject.getAdditParams().length == 0) && !(i == 4 && gameObjectLongFlags == 0)){     //не добавляем лишнего, если данных нет
+                    addEndJSONString(false, i == JSONStrings.length - 1 || i == 0);
+                    addStartJSONString(i, false);
+                    switch (i) {
+                        case 0:
+                            stringBuilder.append(gameObject.getType());
+                            break;
+                        case 1:
+                            stringBuilder.append(gameObject.getX());
+                            break;
+                        case 2:
+                            stringBuilder.append(gameObject.getY());
+                            break;
+                        case 3:
+                            stringBuilder.append(JSONElements[6]);
+                            float[] addPrms = gameObject.getAdditParams();
+                            for (int j = 0; j < addPrms.length; j++) {
+                                stringBuilder.append(addPrms[j]);
+                                addEndJSONString(false, j == addPrms.length - 1);
+                            }
+                            stringBuilder.append(JSONElements[7]);
+                            break;
+                        case 4:
+                            stringBuilder.append(gameObjectLongFlags);
+                            break;
+                    }
                 }
-                addEndJSONString(false, i == JSONStrings.length - 1);
             }
-
+            stringBuilder.append(JSONElements[1]);
         }
-        stringBuilder.append(JSONElements[1]);
+        stringBuilder.append(JSONElements[7]);
         return stringBuilder.toString();
     }
 

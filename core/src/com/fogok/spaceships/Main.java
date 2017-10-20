@@ -3,7 +3,7 @@ package com.fogok.spaceships;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.fogok.spaceships.utils.Assets;
+import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.screens.GameScreen;
 
 public class Main extends Game {

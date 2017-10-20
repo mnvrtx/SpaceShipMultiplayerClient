@@ -1,4 +1,4 @@
-package com.fogok.spaceships.utils;
+package com.fogok.spaceships.utils.gamedepended;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;

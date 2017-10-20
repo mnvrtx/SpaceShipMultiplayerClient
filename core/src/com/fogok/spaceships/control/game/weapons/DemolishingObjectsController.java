@@ -2,6 +2,8 @@ package com.fogok.spaceships.control.game.weapons;
 
 import com.fogok.spaceships.control.Controller;
 import com.fogok.spaceships.control.game.weapons.bullets.simplebluster.BlusterController;
+import com.fogok.spaceships.model.NetworkData;
+import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
 
 public class DemolishingObjectsController implements Controller {
 
@@ -11,8 +13,8 @@ public class DemolishingObjectsController implements Controller {
 
     private BlusterController blusterBulletController;
 
-    public DemolishingObjectsController() {
-        blusterBulletController = new BlusterController();
+    public DemolishingObjectsController(EveryBodyPool everyBodyPool, NetworkData networkData) {
+        blusterBulletController = new BlusterController(everyBodyPool, networkData);
     }
 
     @Override

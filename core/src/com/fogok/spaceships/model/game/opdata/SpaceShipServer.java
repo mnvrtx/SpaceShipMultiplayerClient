@@ -1,21 +1,21 @@
-package com.fogok.spaceships.model.game;
+package com.fogok.spaceships.model.game.opdata;
 
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.fogok.spaceships.control.game.gameobjects.SpaceShipController;
+import com.fogok.spaceships.control.game.gameobjects.SpaceShipServerController;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.ViewModelObject;
 import com.fogok.spaceships.view.game.SpaceShipView;
 
-public class TempShipServer implements ViewModelObject {
+public class SpaceShipServer implements ViewModelObject {
 
     private SpaceShipView spaceShipView;
-    private SpaceShipController controller;
+    private SpaceShipServerController controller;
     private NetworkData networkData;
 
-    public TempShipServer(NetworkData networkData) {
+    public SpaceShipServer(NetworkData networkData) {
         this.networkData = networkData;
-        controller = new SpaceShipController(networkData);
+        controller = new SpaceShipServerController(/*//TODO: COMPLETE THIS*/null, networkData);
         spaceShipView = new SpaceShipView();
     }
 

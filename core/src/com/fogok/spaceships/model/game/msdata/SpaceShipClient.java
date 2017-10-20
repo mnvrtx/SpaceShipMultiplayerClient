@@ -1,27 +1,27 @@
-package com.fogok.spaceships.model.game;
+package com.fogok.spaceships.model.game.msdata;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.ControllerManager;
-import com.fogok.spaceships.control.game.gameobjects.SpaceShipController;
+import com.fogok.spaceships.control.game.gameobjects.SpaceShipClientController;
 import com.fogok.spaceships.model.ViewModelObject;
 import com.fogok.spaceships.model.game.weapons.bullets.Bluster;
 import com.fogok.spaceships.view.game.SpaceShipView;
 
 
-public class SpaceShip implements ViewModelObject{
+public class SpaceShipClient implements ViewModelObject{
 
     private SpaceShipView spaceShipView;
-    private SpaceShipController spaceShipController;
+    private SpaceShipClientController spaceShipClientController;
 
     private float test;
 
     private Bluster bluster;
 
-    public SpaceShip(ControllerManager controllerManager) {
+    public SpaceShipClient(ControllerManager controllerManager) {
         spaceShipView = new SpaceShipView();
-        spaceShipController = controllerManager.getEverybodyObjectsController().getSpaceShipController();
+        spaceShipClientController = controllerManager.getEverybodyObjectsController().getMsDataController().getSpaceShipClientController();
 
         bluster = new Bluster(controllerManager);
     }
@@ -38,7 +38,7 @@ public class SpaceShip implements ViewModelObject{
             }
         }
 
-        spaceShipController.handle(false);
-        spaceShipView.draw(batch, spaceShipController);
+        spaceShipClientController.handle(false);
+        spaceShipView.draw(batch, spaceShipClientController);
     }
 }

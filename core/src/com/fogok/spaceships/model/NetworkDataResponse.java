@@ -2,7 +2,7 @@ package com.fogok.spaceships.model;
 
 
 import com.badlogic.gdx.utils.JsonValue;
-import com.fogok.spaceships.view.utils.JsonReader;
+import com.fogok.spaceships.utils.JsonReader;
 
 public class NetworkDataResponse {
 
@@ -22,7 +22,9 @@ public class NetworkDataResponse {
                 final JsonValue jsonValue = jsonReader.parse(json);
                 oldJsonResponse = jsonResponse != null ? jsonResponse : jsonValue;
                 jsonResponse = jsonValue;
-            }catch (Exception e){}
+            }catch (Exception e){
+                System.out.println("Err parse json");
+            }
         } else {
             jsonResponse = null;
         }

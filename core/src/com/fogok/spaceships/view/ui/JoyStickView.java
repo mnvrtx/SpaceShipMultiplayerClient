@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.Controller;
 import com.fogok.spaceships.control.ui.JoyStickController;
-import com.fogok.spaceships.utils.Assets;
+import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.View;
 import com.fogok.spaceships.view.utils.CORDCONV;
 

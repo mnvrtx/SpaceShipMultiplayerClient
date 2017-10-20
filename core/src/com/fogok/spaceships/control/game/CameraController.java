@@ -1,21 +1,22 @@
 package com.fogok.spaceships.control.game;
 
 import com.fogok.spaceships.control.Controller;
+import com.fogok.spaceships.control.game.gameobjects.SpaceShipServerController;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
 public class CameraController implements Controller{
 
     private NativeGdxHelper _nativeGdxHelper;
-    private com.fogok.spaceships.control.game.gameobjects.SpaceShipController spaceShipController;
+    private SpaceShipServerController spaceShipServerController;
 
-    public CameraController(NativeGdxHelper nativeGdxHelper, com.fogok.spaceships.control.game.gameobjects.SpaceShipController spaceShipController) {
+    public CameraController(NativeGdxHelper nativeGdxHelper, SpaceShipServerController spaceShipServerController) {
         _nativeGdxHelper = nativeGdxHelper;
-        this.spaceShipController = spaceShipController;
+        this.spaceShipServerController = spaceShipServerController;
     }
 
     @Override
     public void handle(boolean pause) {
-        _nativeGdxHelper.getGameSessionCamera().position.set(spaceShipController.getX(), spaceShipController.getY(), 0);
+        _nativeGdxHelper.getGameSessionCamera().position.set(spaceShipServerController.getX(), spaceShipServerController.getY(), 0);
         _nativeGdxHelper.getGameSessionCamera().update();
     }
 }

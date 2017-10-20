@@ -1,16 +1,17 @@
-package com.fogok.spaceships.control.game;
+package com.fogok.spaceships.model.game.dataobjects;
 
-import com.fogok.spaceships.view.utils.GMUtils;
+import com.fogok.spaceships.utils.GMUtils;
+import com.fogok.spaceships.utils.Pool;
 
 import java.util.BitSet;
 
-public abstract class GameObject {
+public abstract class GameObject implements Pool.Poolable {
 
     private int type;
     private BitSet flags = new BitSet(10);  //10 params avialable
     private float x;
     private float y;
-    private float[] additParams;
+    private float[] additParams = new float[0];
 
     public <E extends Enum<E>> float getAdditParam(E enumObject) {
         return additParams[enumObject.ordinal()];
@@ -32,8 +33,8 @@ public abstract class GameObject {
         return y;
     }
 
-    public void setType(GameObjectsTypes gameObjectsTypes) {
-        this.type = gameObjectsTypes.ordinal();
+    public void setType(GameObjectsType gameObjectsType) {
+        this.type = gameObjectsType.ordinal();
     }
 
     public void setPosition(float x, float y) {

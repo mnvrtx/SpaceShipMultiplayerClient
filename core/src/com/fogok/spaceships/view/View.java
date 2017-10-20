@@ -5,6 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.Controller;
 
 public interface View {
-    void draw(SpriteBatch batch, Controller controller);
+    void draw(SpriteBatch batch, Controller controller /*//TODO: тут должны быть DataObjects + ОПИСАТЬ В структуре*/);
     Sprite getSprite();
 }

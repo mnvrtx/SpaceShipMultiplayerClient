@@ -1,5 +1,6 @@
 package com.fogok.spaceships.net;
 
+import com.badlogic.gdx.Gdx;
 import com.fogok.spaceships.model.NetworkData;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
     private NetworkData networkData;
     private String uuid;
     private final static String encoding = "UTF-8";
-    private boolean blocker;
+    public static boolean blocker;
 
     public static float TIMEITERSSLEEP = 0.016f;  //in seconds
 
@@ -36,15 +37,21 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
             @Override
             public void run() {
 
-                if (!blocker) {
-                    System.out.print("Sending data to server...");
-                    String dataS = networkData.getJSON();
-                    ByteBuf byteBuf = Unpooled.copiedBuffer(dataS.getBytes(Charset.forName(encoding)));
-                    channel.write(byteBuf);
-                    ctx.flush();
-                    blocker = false;
-                    System.out.println("Complete:" + dataS);
-                }
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!blocker) {
+                            System.out.print("Sending data to server...");
+                            String dataS = networkData.getJSON();
+                            ByteBuf byteBuf = Unpooled.copiedBuffer(dataS.getBytes(Charset.forName(encoding)));
+                            channel.write(byteBuf);
+                            ctx.flush();
+                            System.out.println("Complete:" + dataS);
+                            blocker = true;
+                        }
+                    }
+                });
+
 
 
             }
@@ -62,12 +69,18 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
 
             String json = new String(req, encoding);
             networkData.refreshOtherDatas(json);
+            System.out.println("Server response:" + json);
         } finally {
             buf.release();
         }
 
-//        blocker = false;
-//        System.out.println("Server response:" + json);
+        blocker = false;
+
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+
     }
 
     @Override

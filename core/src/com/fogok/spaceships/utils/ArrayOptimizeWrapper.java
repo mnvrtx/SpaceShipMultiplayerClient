@@ -1,4 +1,4 @@
-package com.fogok.spaceships.view.utils;
+package com.fogok.spaceships.utils;
 
 import java.lang.reflect.Array;
 

@@ -1,29 +1,32 @@
 package com.fogok.spaceships.control.game.gameobjects;
 
 import com.fogok.spaceships.Main;
-import com.fogok.spaceships.control.game.GameObjectsTypes;
+import com.fogok.spaceships.control.Controller;
 import com.fogok.spaceships.control.ui.JoyStickController;
 import com.fogok.spaceships.model.NetworkData;
+import com.fogok.spaceships.model.game.dataobjects.GameObject;
+import com.fogok.spaceships.model.game.dataobjects.SpaceShipObject;
+import com.fogok.spaceships.utils.GMUtils;
 import com.fogok.spaceships.view.utils.CORDCONV;
-import com.fogok.spaceships.view.utils.GMUtils;
 
-import static com.fogok.spaceships.control.game.gameobjects.SpaceShipController.AdditParams.*;
+import static com.fogok.spaceships.model.game.dataobjects.SpaceShipObject.AdditParams.DIRECTION;
+import static com.fogok.spaceships.model.game.dataobjects.SpaceShipObject.AdditParams.SIZE;
+import static com.fogok.spaceships.model.game.dataobjects.SpaceShipObject.AdditParams.SPEED;
 
-public class SpaceShipClientController extends SpaceShipController {
+
+public class SpaceShipClientController implements Controller{
 
     private NetworkData networkData;
+    private SpaceShipObject spaceShipObject;
 
-    private float maxSpeed = 0.14f;
-    private float speedVelocityPercent = 0.03f;
-    JoyStickController joyStickController;
+    private JoyStickController joyStickController;
 
-    public SpaceShipClientController(NetworkData networkData, JoyStickController joyStickController) {
+    public SpaceShipClientController(GameObject spaceShipObject, NetworkData networkData, JoyStickController joyStickController) {
+        this.spaceShipObject = (SpaceShipObject) spaceShipObject;
         this.networkData = networkData;
         this.joyStickController = joyStickController;
-        setType(GameObjectsTypes.SpaceShip);
-        setPosition(Main.WIDTH / 2f, Main.HEIGHT / 2f);
-        initAdditParams(3);
-        setAdditParam(1.4f, SIZE);
+        this.spaceShipObject.setPosition(Main.WIDTH / 2f, Main.HEIGHT / 2f);
+        this.spaceShipObject.setAdditParam(1.4f, SIZE);
     }
 
     @Override
@@ -33,24 +36,26 @@ public class SpaceShipClientController extends SpaceShipController {
 
         boolean isMoving = x != 0 || y != 0;
 
-        setAdditParam(getAdditParam(SPEED) + (isMoving ? maxSpeed * speedVelocityPercent : maxSpeed * -speedVelocityPercent), SPEED);
+        float maxSpeed = 0.14f;
+        float speedVelocityPercent = 0.03f;
+        spaceShipObject.setAdditParam(spaceShipObject.getAdditParam(SPEED) + (isMoving ? maxSpeed * speedVelocityPercent : maxSpeed * -speedVelocityPercent), SPEED);
 
-        if (getAdditParam(SPEED) > maxSpeed)
-            setAdditParam(maxSpeed, SPEED);
-        if (getAdditParam(SPEED) < 0f)
-            setAdditParam(0f, SPEED);
+        if (spaceShipObject.getAdditParam(SPEED) > maxSpeed)
+            spaceShipObject.setAdditParam(maxSpeed, SPEED);
+        if (spaceShipObject.getAdditParam(SPEED) < 0f)
+            spaceShipObject.setAdditParam(0f, SPEED);
 
         float targetDir = 0f;
         if (isMoving) {
-            targetDir = GMUtils.getDeg(getX() + x, getY() + y, getX(), getY()) + 90;
+            targetDir = GMUtils.getDeg(spaceShipObject.getX() + x, spaceShipObject.getY() + y, spaceShipObject.getX(), spaceShipObject.getY()) + 90;
             targetDir += targetDir > 360 ? -360 : 0;
-            setAdditParam(GMUtils.lerpDirection(getAdditParam(DIRECTION),
-                    targetDir, 6 * Main.mdT * (getAdditParam(SPEED) / maxSpeed)), DIRECTION);
+            spaceShipObject.setAdditParam(GMUtils.lerpDirection(spaceShipObject.getAdditParam(DIRECTION),
+                    targetDir, 6 * Main.mdT * (spaceShipObject.getAdditParam(SPEED) / maxSpeed)), DIRECTION);
         }
 
 //        DebugGUI.DEBUG_TEXT = "{" + currentDirection + "} " + "{" + targetDir + "} ";
-        setPosition(getX() + GMUtils.getNextX(getAdditParam(SPEED), getAdditParam(DIRECTION) + 90) * Main.mdT, getY() + GMUtils.getNextY(getAdditParam(SPEED), getAdditParam(DIRECTION) + 90) * Main.mdT);
+        spaceShipObject.setPosition(spaceShipObject.getX() + GMUtils.getNextX(spaceShipObject.getAdditParam(SPEED), spaceShipObject.getAdditParam(DIRECTION) + 90) * Main.mdT, spaceShipObject.getY() + GMUtils.getNextY(spaceShipObject.getAdditParam(SPEED), spaceShipObject.getAdditParam(DIRECTION) + 90) * Main.mdT);
 
-        networkData.addObject(this);
+        networkData.addObject(spaceShipObject);
     }
 }

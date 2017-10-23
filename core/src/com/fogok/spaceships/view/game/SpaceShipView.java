@@ -9,6 +9,8 @@ import com.fogok.spaceships.view.View;
 
 public class SpaceShipView implements View {
 
+    //TODO: рефактор всего этого пакета, в соотвествии с контроллерами (Всего пакета view.game)
+
     private Sprite ship;
 
     public SpaceShipView() {

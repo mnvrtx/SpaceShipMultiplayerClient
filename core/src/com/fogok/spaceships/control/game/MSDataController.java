@@ -12,7 +12,7 @@ public class MSDataController implements Controller {
     private SpaceShipClientController spaceShipClientController;
 
     public MSDataController(EveryBodyPool everyBodyPool, NetworkData networkData, JoyStickController joyStickController) {
-        spaceShipClientController = new SpaceShipClientController(everyBodyPool.obtain(GameObjectsType.SpaceShip), networkData, joyStickController);
+        spaceShipClientController = new SpaceShipClientController(everyBodyPool.obtain(GameObjectsType.SimpleShip, false), networkData, joyStickController);
     }
 
     @Override

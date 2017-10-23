@@ -1,6 +1,5 @@
 package com.fogok.spaceships.control.game;
 
-import com.badlogic.gdx.utils.Array;
 import com.fogok.spaceships.control.Controller;
 import com.fogok.spaceships.control.game.weapons.DemolishingObjectsController;
 import com.fogok.spaceships.control.ui.JoyStickController;
@@ -49,7 +48,7 @@ public class EverybodyObjectsController implements Controller{
         return demolishingObjectsController;
     }
 
-    public Array<com.fogok.spaceships.model.game.dataobjects.GameObject> getEveryBodies(){
-        return everyBodyObjectsPool.getEveryBodies();
+    public EveryBodyPool getEveryBodyObjectsPool() {
+        return everyBodyObjectsPool;
     }
 }

@@ -3,14 +3,14 @@ package com.fogok.spaceships.model.game.weapons.bullets;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.game.gameobjects.SpaceShipClientController;
-import com.fogok.spaceships.control.game.weapons.bullets.simplebluster.BlusterController;
+import com.fogok.spaceships.control.game.weapons.bullets.simplebluster.UnionControllerBlusterObjects;
 import com.fogok.spaceships.model.ViewModelObject;
 import com.fogok.spaceships.view.game.SpaceShipView;
 import com.fogok.spaceships.view.game.weapons.bullets.simplebluster.SimpleBlusterView;
 
 public class Bluster implements ViewModelObject{
 
-    private BlusterController blusterController;
+    private UnionControllerBlusterObjects blusterController;
     private SimpleBlusterView blusterView;
 
     private SpaceShipClientController spaceShipClientController;
@@ -24,8 +24,8 @@ public class Bluster implements ViewModelObject{
 
     @Override
     public void draw(SpriteBatch batch) {
-        blusterController.handle(false);
-        blusterView.draw(batch, blusterController);
+        blusterController.handleClient(false);
+        blusterView.draw(batch, );
     }
 
     public void fire(SpaceShipView spaceShipView) {

@@ -1,24 +1,54 @@
 package com.fogok.spaceships.utils.gamedepended;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.BulletObject;
+import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
-import com.fogok.spaceships.model.game.dataobjects.SpaceShipObject;
+import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase;
 import com.fogok.spaceships.utils.Pool;
-
-/**
- * Created by FOGOK on 10/18/2017 8:55 PM.
- */
 
 public class EveryBodyPool extends Pool<GameObject> {
 
     private NetworkData networkData;
+    private Array<Array<GameObject>> typedObjects;
+    //двумерный массив, как работает рассказываю на примере:
+    /*
+
+    typedObjects.get(type.ordinal()).add(responseGameObject);
+    где Первый get выдаёт нам ArrayList с объектами, которые относятся
+    только к определённому типу
+
+    а дальше мы можем с ними уже работать
+    * */
+
+    private Array<IntArray> clientServerObjectsCount;
+    //двумерный массив, как работает рассказываю на примере:
+    /*
+
+    clientServerObjectCount.get(type.ordinal()).set($0/1$, count);
+    где Первый get выдаёт нам IntArray с объектами, которые относятся
+    только к определённому типу
+
+    $0/1$ = тут мы можем указать количество серверных/клиентских объектов
+    0 - количество серверных объектов
+    1 - количество клиентских объектов
+
+    * */
 
     public EveryBodyPool(NetworkData networkData, int initialCapacity) {
         super(initialCapacity);
-        this.networkData = networkData;
+        typedObjects = new Array<Array<GameObject>>(false, initialCapacity);
+        for (int i = 0; i < typedObjects.size; i++)
+            typedObjects.set(i, new Array<GameObject>(false, initialCapacity));
+
+        clientServerObjectsCount = new Array<IntArray>(false, initialCapacity);
+        for (int i = 0; i < clientServerObjectsCount.size; i++)
+            clientServerObjectsCount.set(i, new IntArray(false, 2));
+
+
+        this.networkData = networkData; //TODO: бряку сюад + сделать красивое отображение всех наших объектов для наглядности, что и как происходит
     }
 
     @Override
@@ -28,26 +58,80 @@ public class EveryBodyPool extends Pool<GameObject> {
 
     protected GameObject newObject(GameObjectsType type){
         switch (type) {
-            case Bluster:
-                return new BulletObject();
-            case SpaceShip:
-                return new SpaceShipObject();
+            case SimpleBluster:
+                return new BulletObjectBase();
+            case SimpleShip:
+                return new ShipObjectBase();
         }
         return null;
     }
 
-    public GameObject obtain(GameObjectsType type){
+    public GameObject obtain(GameObjectsType type, boolean isServer){
+
+        GameObject responseGameObject = null;
+        boolean needNew = true;
         for (int i = 0; i < freeObjects.size; i++) {
             GameObject gameObject = freeObjects.get(i);
-            freeObjects.removeIndex(i);
             if (type.ordinal() == gameObject.getType()) {
-                return gameObject;
+                freeObjects.removeIndex(i);
+                responseGameObject = gameObject;
+                needNew = false;
+                break;
             }
         }
-        return newObject(type);
+        if (needNew)
+            responseGameObject = newObject(type);
+
+        responseGameObject.setInsideField(false);
+        responseGameObject.setServer(isServer);
+
+
+        clientServerObjectsCount.get(type.ordinal()).incr(isServer ? 0 : 1, 1);
+        typedObjects.get(type.ordinal()).add(responseGameObject);
+
+        return responseGameObject;
+
     }
 
-    public Array<GameObject> getEveryBodies(){
+    @Override
+    public void free(GameObject object) {
+        super.free(object);
+        object.setInsideField(true);
+        if (typedObjects.get(object.getType()).removeValue(object, false)){
+            clientServerObjectsCount.get(object.getType()).incr(object.isServer() ? 0 : 1, -1);
+        }else{
+            throw new UnsupportedOperationException("Type object: " + object.getType() + " has not be removed");
+        }
+    }
+
+    public Array<GameObject> getAllObjectsFromType(GameObjectsType type){
+        return typedObjects.get(type.ordinal());
+    }
+
+    public int getClientServerObjectsCount(GameObjectsType type, boolean isServer){
+        return clientServerObjectsCount.get(type.ordinal()).get(isServer ? 0 : 1);
+    }
+
+    public Array<GameObject> getFreeEveryBodies(){
         return freeObjects;
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+        for (int i = 0; i < typedObjects.size; i++) {
+            typedObjects.get(i).clear();
+            typedObjects.set(i, null);
+        }
+        for (int i = 0; i < clientServerObjectsCount.size; i++) {
+            clientServerObjectsCount.get(i).clear();
+            clientServerObjectsCount.set(i, null);
+        }
+        typedObjects.clear();
+        typedObjects = null;
+
+        clientServerObjectsCount.clear();
+        clientServerObjectsCount = null;
+        //TODO: GC optimize
     }
 }

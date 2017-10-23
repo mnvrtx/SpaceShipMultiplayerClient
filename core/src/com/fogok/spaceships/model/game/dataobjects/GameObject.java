@@ -7,11 +7,16 @@ import java.util.BitSet;
 
 public abstract class GameObject implements Pool.Poolable {
 
+    public static int TYPE = 0, X = 1, Y = 2, ADIITPRMS = 3;
+
+    //TODO: рефактор всего этого пакета, в соотвествии с контроллерами (всего пакета MODEL!!!)
     private int type;
-    private BitSet flags = new BitSet(10);  //10 params avialable
+    private BitSet flags = new BitSet(10);  //10 params available
     private float x;
     private float y;
     private float[] additParams = new float[0];
+    private boolean isServer;   //означает, является ли объект внутри сервера
+    private boolean isInsideField;  //означает, находится ли объект в пуле или же он сейчас непосредственно находится на карте
 
     public <E extends Enum<E>> float getAdditParam(E enumObject) {
         return additParams[enumObject.ordinal()];
@@ -25,16 +30,24 @@ public abstract class GameObject implements Pool.Poolable {
         return type;
     }
 
+    public boolean isInsideField() {
+        return isInsideField;
+    }
+
     public float getX() {
         return x;
     }
-
+    
     public float getY() {
         return y;
     }
 
     public void setType(GameObjectsType gameObjectsType) {
         this.type = gameObjectsType.ordinal();
+    }
+
+    public void setServer(boolean server) {
+        isServer = server;
     }
 
     public void setPosition(float x, float y) {
@@ -69,6 +82,14 @@ public abstract class GameObject implements Pool.Poolable {
 
     public void setFlags(int flagNumber, boolean flag) {
         flags.set(flagNumber, flag);
+    }
+
+    public void setInsideField(boolean insideField) {
+        isInsideField = insideField;
+    }
+
+    public boolean isServer() {
+        return isServer;
     }
 
     public boolean getFlag(int i) {

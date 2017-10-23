@@ -18,7 +18,7 @@ public class ControllerManager {
     public ControllerManager(NetworkData networkData, NativeGdxHelper nativeGdxHelper){
         joyStickController = new JoyStickController(networkData);
         everybodyObjectsController = new EverybodyObjectsController(networkData, joyStickController);
-        cameraController = new CameraController(nativeGdxHelper, everybodyObjectsController.getMsDataController().getSpaceShipClientController());
+        cameraController = new CameraController(nativeGdxHelper, null /*TODO: описать тут структуру */);
         backgroundController = new BackgroundController();
     }
 

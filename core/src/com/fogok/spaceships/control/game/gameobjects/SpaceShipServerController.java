@@ -4,19 +4,18 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.fogok.spaceships.control.Controller;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
-import com.fogok.spaceships.model.game.dataobjects.SpaceShipObject;
+import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase;
 
-import static com.fogok.spaceships.control.game.gameobjects.SpaceShipServerController.AdditParams.DIRECTION;
-import static com.fogok.spaceships.control.game.gameobjects.SpaceShipServerController.AdditParams.SIZE;
-import static com.fogok.spaceships.control.game.gameobjects.SpaceShipServerController.AdditParams.SPEED;
+import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.*;
+
 
 public class SpaceShipServerController implements Controller {
 
     private NetworkData networkData;
-    private SpaceShipObject spaceShipObject;
+    private ShipObjectBase shipObjectBase;
 
     public SpaceShipServerController(GameObject spaceShipObject, NetworkData networkData){
-        this.spaceShipObject = (SpaceShipObject) spaceShipObject;
+        this.shipObjectBase = (ShipObjectBase) spaceShipObject;
         this.networkData = networkData;
     }
 
@@ -27,11 +26,11 @@ public class SpaceShipServerController implements Controller {
 
         oldRespJ = oldRespJ.get(0);
 
-        spaceShipObject.setX(oldRespJ.getFloat(1));
-        spaceShipObject.setY(oldRespJ.getFloat(2));
-        spaceShipObject.setAdditParam(oldRespJ.get(3).getFloat(DIRECTION.ordinal()), DIRECTION);
-        spaceShipObject.setAdditParam(oldRespJ.get(3).getFloat(SPEED.ordinal()), SPEED);
-        spaceShipObject.setAdditParam(oldRespJ.get(3).getFloat(SIZE.ordinal()), SIZE);
+        shipObjectBase.setX(oldRespJ.getFloat(1));
+        shipObjectBase.setY(oldRespJ.getFloat(2));
+        shipObjectBase.setAdditParam(oldRespJ.get(3).getFloat(DIRECTION.ordinal()), DIRECTION);
+        shipObjectBase.setAdditParam(oldRespJ.get(3).getFloat(SPEED.ordinal()), SPEED);
+        shipObjectBase.setAdditParam(oldRespJ.get(3).getFloat(SIZE.ordinal()), SIZE);
 
 //        setX(GMUtils.lerpValue(oldRespJ.getFloat(1), respJ.getFloat(1), getX()));
 //        setY(GMUtils.lerpValue(oldRespJ.getFloat(2), respJ.getFloat(2), getX()));

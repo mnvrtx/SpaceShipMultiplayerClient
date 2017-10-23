@@ -1,36 +1,40 @@
-package com.fogok.spaceships.control.game.gameobjects;
+package com.fogok.spaceships.control.game.gameobjects.ships;
 
 import com.fogok.spaceships.Main;
-import com.fogok.spaceships.control.Controller;
+import com.fogok.spaceships.control.game.ObjectController;
 import com.fogok.spaceships.control.ui.JoyStickController;
-import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase;
 import com.fogok.spaceships.utils.GMUtils;
 import com.fogok.spaceships.view.utils.CORDCONV;
 
-import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.DIRECTION;
-import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.SIZE;
-import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.SPEED;
+import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.*;
 
+public abstract class ShipObjectControllerBase implements ObjectController {
 
-public class SpaceShipClientController implements Controller{
+    /*
+     * Основа для любого космического корабля
+     */
 
-    private NetworkData networkData;
     private ShipObjectBase shipObjectBase;
-
     private JoyStickController joyStickController;
 
-    public SpaceShipClientController(GameObject spaceShipObject, NetworkData networkData, JoyStickController joyStickController) {
-        this.shipObjectBase = (ShipObjectBase) spaceShipObject;
-        this.networkData = networkData;
+    public ShipObjectControllerBase(JoyStickController joyStickController) {
         this.joyStickController = joyStickController;
-        this.shipObjectBase.setPosition(Main.WIDTH / 2f, Main.HEIGHT / 2f);
-        this.shipObjectBase.setAdditParam(1.4f, SIZE);
     }
 
     @Override
-    public void handle(boolean pause) {
+    public void setHandledObject(GameObject handledObject) {
+        shipObjectBase = (ShipObjectBase) handledObject;
+    }
+
+    public void add(){
+        shipObjectBase.setPosition(Main.WIDTH / 2f, Main.HEIGHT / 2f);
+        shipObjectBase.setAdditParam(1.4f, SIZE);
+    }
+
+    @Override
+    public void handleClient(boolean pause) {
         float x = CORDCONV.gCamX((int) joyStickController.joyStickOutputX);
         float y = CORDCONV.gCamY((int) joyStickController.joyStickOutputY);
 
@@ -55,7 +59,10 @@ public class SpaceShipClientController implements Controller{
 
 //        DebugGUI.DEBUG_TEXT = "{" + currentDirection + "} " + "{" + targetDir + "} ";
         shipObjectBase.setPosition(shipObjectBase.getX() + GMUtils.getNextX(shipObjectBase.getAdditParam(SPEED), shipObjectBase.getAdditParam(DIRECTION) + 90) * Main.mdT, shipObjectBase.getY() + GMUtils.getNextY(shipObjectBase.getAdditParam(SPEED), shipObjectBase.getAdditParam(DIRECTION) + 90) * Main.mdT);
+    }
 
-        networkData.addObject(shipObjectBase);
+    @Override
+    public boolean isAlive() {
+        return true;
     }
 }

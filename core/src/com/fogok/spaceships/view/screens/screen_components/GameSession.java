@@ -4,7 +4,8 @@ package com.fogok.spaceships.view.screens.screen_components;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.UnionViewModels;
+import com.fogok.spaceships.model.game.EveryBodyViewModels;
+import com.fogok.spaceships.view.game.EveryBodyViews;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
 public class GameSession {
@@ -12,16 +13,20 @@ public class GameSession {
     private SpriteBatch gameSpriteBatch;
     private NetworkData networkData;
 
-    private UnionViewModels unionViewModels;
+    private EveryBodyViews everyBodyViews;
+
+    private EveryBodyViewModels everyBodyViewModels;
 
     private ControllerManager controllerManager;
 
     public GameSession(NativeGdxHelper nativeGdxHelper, NetworkData networkData) {
         this.networkData = networkData;
         gameSpriteBatch = new SpriteBatch();
-        controllerManager = new ControllerManager(networkData, nativeGdxHelper);    //controller manager хранит в себе все контроллеры, в каждую модель передаём его
-        unionViewModels = new UnionViewModels(controllerManager); //теперь в controllerManager есть необходимые начальные объекты
-        controllerManager.postInitializate();
+
+        everyBodyViews = new EveryBodyViews();
+        controllerManager = new ControllerManager(everyBodyViews, nativeGdxHelper, networkData);    //controller manager хранит в себе все контроллеры, в каждую модель передаём его
+        everyBodyViewModels = new EveryBodyViewModels(controllerManager); //теперь в controllerManager есть необходимые начальные объекты
+        controllerManager.postInitialization();
     }
 
     public void draw(NativeGdxHelper nativeGdxHelper) {
@@ -30,7 +35,7 @@ public class GameSession {
         gameSpriteBatch.setProjectionMatrix(nativeGdxHelper.getGameSessionCamera().combined);
         gameSpriteBatch.begin();
 
-        unionViewModels.draw(gameSpriteBatch);
+        everyBodyViewModels.draw(gameSpriteBatch);
 
         gameSpriteBatch.end();
     }

@@ -1,10 +1,10 @@
-package com.fogok.spaceships.control.game;
+package com.fogok.spaceships.control.ui;
 
 import com.fogok.spaceships.control.Controller;
 import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
-public class CameraController implements Controller{
+public class CameraController implements Controller {
 
     private NativeGdxHelper _nativeGdxHelper;
     private ShipObjectBase shipObjectBase;

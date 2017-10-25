@@ -2,28 +2,29 @@ package com.fogok.spaceships.model.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.ControllerManager;
-import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.ViewModelObject;
+import com.fogok.spaceships.model.SimpleViewModelObject;
 import com.fogok.spaceships.model.game.gameobjects.ships.SimpleShip;
 
-public class UnionViewModels {
+public class EveryBodyViewModels {
 
-    private ViewModelObject[] viewModelObjects;
+    private SimpleViewModelObject[] simpleViewModelObjects;
     private ViewModelMemberBase[] viewModelMemberBase;
 
-    public UnionViewModels(ControllerManager controllerManager, NetworkData networkData) {
+    public EveryBodyViewModels(ControllerManager controllerManager) {
 
-        viewModelObjects = new ViewModelObject[1];
-        viewModelObjects[0] = new Background(controllerManager);
+        simpleViewModelObjects = new SimpleViewModelObject[1];
+        simpleViewModelObjects[0] = new Background(controllerManager);
 
         viewModelMemberBase = new ViewModelMemberBase[1];
         viewModelMemberBase[0] = new SimpleShip(controllerManager.getEverybodyObjectsController());
 
+
+        //TODO: сделать тут как в классе EveryBodyViews
     }
 
     public void draw(SpriteBatch batch){
-        for (ViewModelObject viewModelObject : viewModelObjects)
-            viewModelObject.draw(batch);
+        for (SimpleViewModelObject simpleViewModelObject : simpleViewModelObjects)
+            simpleViewModelObject.draw(batch);
         for (ViewModelMemberBase memberBase : viewModelMemberBase)
             memberBase.draw(batch);
     }

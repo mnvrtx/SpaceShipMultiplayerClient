@@ -1,9 +1,9 @@
 package com.fogok.spaceships.control.game.weapons;
 
 import com.fogok.spaceships.control.Controller;
+import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.game.weapons.bullets.simplebluster.UnionControllerBlusterObjects;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
 
 public class DemolishingObjectsController implements Controller {
 
@@ -13,13 +13,13 @@ public class DemolishingObjectsController implements Controller {
 
     private UnionControllerBlusterObjects blusterBulletController;
 
-    public DemolishingObjectsController(EveryBodyPool everyBodyPool, NetworkData networkData) {
-        blusterBulletController = new UnionControllerBlusterObjects(everyBodyPool, networkData);
+    public DemolishingObjectsController(ControllerManager controllerManager, NetworkData networkData) {
+        blusterBulletController = new UnionControllerBlusterObjects(controllerManager, networkData);
     }
 
     @Override
     public void handle(boolean pause) {
-
+        blusterBulletController.handleClient(pause);
     }
 
     public UnionControllerBlusterObjects getBlusterBulletController() {

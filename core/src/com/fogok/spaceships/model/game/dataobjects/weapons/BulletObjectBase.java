@@ -8,12 +8,4 @@ public abstract class BulletObjectBase extends GameObject {
         SPEED, TIMEALIVE, DIRECTION
     }
 
-    public BulletObjectBase(){
-
-    }
-
-    @Override
-    public void reset() {
-
-    }
 }

@@ -9,4 +9,8 @@ public class SimpleShipObject extends ShipObjectBase {
         setType(GameObjectsType.SimpleShip);
     }
 
+    @Override
+    public void reset() {
+
+    }
 }

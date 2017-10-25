@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class AspectRatioHelper {
 
-    public static void setSpriteSize(Sprite sprite, float targetValue, boolean widthHeight){
+    public static void setSpriteSize(Sprite sprite, float targetValue, boolean widthHeight) {
         float width, height;
         if (widthHeight) {
             width = targetValue;

@@ -8,5 +8,4 @@ public class SimpleShipObjectController extends ShipObjectControllerBase {
     public SimpleShipObjectController(JoyStickController joyStickController) {
         super(joyStickController);
     }
-
 }

@@ -3,10 +3,10 @@ package com.fogok.spaceships.model.ui;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.ui.JoyStickController;
-import com.fogok.spaceships.model.ViewModelObject;
+import com.fogok.spaceships.model.SimpleViewModelObject;
 import com.fogok.spaceships.view.ui.JoyStickView;
 
-public class JoyStick implements ViewModelObject {
+public class JoyStick implements SimpleViewModelObject {
 
     private JoyStickController joyStickController;
     private JoyStickView joyStickView;

@@ -5,7 +5,7 @@ import com.fogok.spaceships.Main;
 import com.fogok.spaceships.control.Controller;
 import com.fogok.spaceships.model.NetworkData;
 
-public class JoyStickController implements Controller{
+public class JoyStickController implements Controller {
 
     public float touchedXJoystick, touchedYJoystick;
     public int sizeBackJoystick, posXJoystick, posYJoystick;  /// BackJoyStick
@@ -14,8 +14,6 @@ public class JoyStickController implements Controller{
     public float joyStickOutputX, joyStickOutputY;
 
     private NetworkData _networkData;
-
-
 
     public JoyStickController(NetworkData networkData){
         _networkData = networkData;

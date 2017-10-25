@@ -8,12 +8,4 @@ public abstract class ShipObjectBase extends GameObject {
         DIRECTION, SPEED, SIZE
     }
 
-    public ShipObjectBase(){
-
-    }
-
-    @Override
-    public void reset() {
-
-    }
 }

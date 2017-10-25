@@ -1,10 +1,10 @@
 package com.fogok.spaceships.control.game.weapons.bullets.simplebluster;
 
+import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.game.weapons.bullets.UnionControllerBulletObjectsBase;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.weapons.SimpleBlusterObject;
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
-import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
+import com.fogok.spaceships.model.game.dataobjects.weapons.SimpleBlusterObject;
 
 public class UnionControllerBlusterObjects extends UnionControllerBulletObjectsBase<SimpleBlusterObject, BlusterObjectController> {
 
@@ -12,8 +12,8 @@ public class UnionControllerBlusterObjects extends UnionControllerBulletObjectsB
      * Контроллер бластера
      */
 
-    public UnionControllerBlusterObjects(EveryBodyPool everyBodyPool, NetworkData networkData) {
-        super(GameObjectsType.SimpleBluster, everyBodyPool, new BlusterObjectController(), networkData);
+    public UnionControllerBlusterObjects(ControllerManager controllerManager, NetworkData networkData) {
+        super(GameObjectsType.SimpleBluster, controllerManager.getEverybodyObjectsController().getEveryBodyObjectsPool(), new BlusterObjectController(), networkData);
     }
 
     @Override

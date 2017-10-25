@@ -18,7 +18,7 @@ public class JoyStickView{
 
 
     public void draw(SpriteBatch batch, Controller controller) {
-        JoyStickController jController = (JoyStickController)controller;
+        JoyStickController jController = (JoyStickController) controller;
         coverJoyStick.setBounds(CORDCONV.gCamX(jController.posXJoystick), CORDCONV.gCamY(jController.posYJoystick), CORDCONV.gCamX(jController.sizeBackJoystick), CORDCONV.gCamX(jController.sizeBackJoystick));
         coverJoyStick.draw(batch);
         joyStick.setBounds(CORDCONV.gCamX((int) jController.touchedXJoystick), CORDCONV.gCamY((int) jController.touchedYJoystick), CORDCONV.gCamX(jController.sizeJoystick), CORDCONV.gCamX(jController.sizeJoystick));

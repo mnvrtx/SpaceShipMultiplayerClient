@@ -9,4 +9,8 @@ public class SimpleBlusterObject extends BulletObjectBase {
         setType(GameObjectsType.SimpleBluster);
     }
 
+    @Override
+    public void reset() {
+
+    }
 }

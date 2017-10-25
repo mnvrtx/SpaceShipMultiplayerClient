@@ -10,13 +10,13 @@ import com.fogok.spaceships.view.utils.AspectRatioHelper;
 
 import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.*;
 
-public class ShipView implements View {
+public class SimpleShipView implements View {
 
     //TODO: рефактор всего этого пакета, в соотвествии с контроллерами (Всего пакета view.game)
 
     private Sprite ship;
 
-    public ShipView() {
+    public SimpleShipView() {
         ship = Assets.getNewSprite(0);
     }
 
@@ -27,14 +27,6 @@ public class ShipView implements View {
         ship.setPosition(gameObject.getX(), gameObject.getY());
         ship.setRotation(gameObject.getAdditParam(DIRECTION));
         ship.draw(batch);
-
-//        SpaceShipServerController ssController = (SpaceShipServerController)controller;
-//
-//        AspectRatioHelper.setSpriteSize(ship, ssController.getAdditParam(SIZE), true);
-//        ship.setOriginCenter();
-//        ship.setPosition(ssController.getX(), ssController.getY());
-//        ship.setRotation(ssController.getAdditParam(DIRECTION));
-//        ship.draw(batch);
     }
 
     @Override

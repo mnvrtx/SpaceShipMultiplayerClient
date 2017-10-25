@@ -1,14 +1,20 @@
 package com.fogok.spaceships.control.game.gameobjects.ships;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.fogok.spaceships.Main;
 import com.fogok.spaceships.control.game.ObjectController;
+import com.fogok.spaceships.control.game.weapons.Weapon;
 import com.fogok.spaceships.control.ui.JoyStickController;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase;
 import com.fogok.spaceships.utils.GMUtils;
+import com.fogok.spaceships.view.utils.AspectRatioHelper;
 import com.fogok.spaceships.view.utils.CORDCONV;
 
-import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.*;
+import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.DIRECTION;
+import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.SIZE;
+import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.SPEED;
 
 public abstract class ShipObjectControllerBase implements ObjectController {
 
@@ -18,9 +24,11 @@ public abstract class ShipObjectControllerBase implements ObjectController {
 
     private ShipObjectBase shipObjectBase;
     private JoyStickController joyStickController;
+    private Weapon weapon;
 
-    public ShipObjectControllerBase(JoyStickController joyStickController) {
+    public ShipObjectControllerBase(JoyStickController joyStickController, Weapon weapon) {
         this.joyStickController = joyStickController;
+        this.weapon = weapon;
     }
 
     @Override
@@ -59,6 +67,13 @@ public abstract class ShipObjectControllerBase implements ObjectController {
 
 //        DebugGUI.DEBUG_TEXT = "{" + currentDirection + "} " + "{" + targetDir + "} ";
         shipObjectBase.setPosition(shipObjectBase.getX() + GMUtils.getNextX(shipObjectBase.getAdditParam(SPEED), shipObjectBase.getAdditParam(DIRECTION) + 90) * Main.mdT, shipObjectBase.getY() + GMUtils.getNextY(shipObjectBase.getAdditParam(SPEED), shipObjectBase.getAdditParam(DIRECTION) + 90) * Main.mdT);
+
+        fireLogicHandle();
+    }
+
+    private void fireLogicHandle(){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+            weapon.fire(shipObjectBase.getX() + , shipObjectBase.getY(), );
     }
 
     @Override

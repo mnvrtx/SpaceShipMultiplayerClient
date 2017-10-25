@@ -1,8 +1,8 @@
-package com.fogok.spaceships.control.game;
+package com.fogok.spaceships.control.other;
 
 import com.fogok.spaceships.control.Controller;
 
-public class BackgroundController implements Controller{
+public class BackgroundController implements Controller {
 
 
     public BackgroundController() {

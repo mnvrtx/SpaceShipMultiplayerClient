@@ -1,14 +1,13 @@
 package com.fogok.spaceships.control.game.weapons.bullets;
 
 import com.fogok.spaceships.control.game.UnionControllerBase;
-import com.fogok.spaceships.control.game.weapons.Weapon;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
+import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
 import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
 
-public abstract class UnionControllerBulletObjectsBase<T extends BulletObjectBase, E extends BulletObjectControllerBase> extends UnionControllerBase implements Weapon {
+public abstract class UnionControllerBulletObjectsBase<T extends BulletObjectBase, E extends BulletObjectControllerBase> extends UnionControllerBase {
 
     /*
      * Основа для контроллера любой коллекции пулек
@@ -21,7 +20,6 @@ public abstract class UnionControllerBulletObjectsBase<T extends BulletObjectBas
         this.bulletObjectController = bulletObjectController;
     }
 
-    @Override
     public void fire(float x, float y, float speed, int direction){
         @SuppressWarnings("unchecked")
         T item = (T) everyBodyPool.obtain(objectType, false);

@@ -3,10 +3,10 @@ package com.fogok.spaceships.utils.gamedepended;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
-import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase;
+import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.SimpleShipObject;
+import com.fogok.spaceships.model.game.dataobjects.weapons.SimpleBlusterObject;
 import com.fogok.spaceships.utils.Pool;
 
 public class EveryBodyPool extends Pool<GameObject> {
@@ -37,15 +37,22 @@ public class EveryBodyPool extends Pool<GameObject> {
 
     * */
 
+    //TODO: УБРАТЬ ЛИШНИЕ ТУДУ ОЧЕНЬ ВАЖНО!!!!!
+
     public EveryBodyPool(NetworkData networkData, int initialCapacity) {
         super(initialCapacity);
         typedObjects = new Array<Array<GameObject>>(false, initialCapacity);
-        for (int i = 0; i < typedObjects.size; i++)
-            typedObjects.set(i, new Array<GameObject>(false, initialCapacity));
+        for (int i = 0; i < initialCapacity; i++) {
+            //TODO: increment new arrays
+            typedObjects.add(new Array<GameObject>(false, initialCapacity));
+        }
 
         clientServerObjectsCount = new Array<IntArray>(false, initialCapacity);
-        for (int i = 0; i < clientServerObjectsCount.size; i++)
-            clientServerObjectsCount.set(i, new IntArray(false, 2));
+        for (int i = 0; i < initialCapacity; i++) {
+            clientServerObjectsCount.add(new IntArray(false, 2));
+            clientServerObjectsCount.peek().add(0);
+            clientServerObjectsCount.peek().add(0);
+        }
 
 
         this.networkData = networkData; //TODO: бряку сюад + сделать красивое отображение всех наших объектов для наглядности, что и как происходит
@@ -59,9 +66,9 @@ public class EveryBodyPool extends Pool<GameObject> {
     protected GameObject newObject(GameObjectsType type){
         switch (type) {
             case SimpleBluster:
-                return new BulletObjectBase();
+                return new SimpleBlusterObject();
             case SimpleShip:
-                return new ShipObjectBase();
+                return new SimpleShipObject();
         }
         return null;
     }

@@ -4,10 +4,7 @@ package com.fogok.spaceships.view.screens.screen_components;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.ViewModelObject;
-import com.fogok.spaceships.model.game.Background;
-import com.fogok.spaceships.model.game.msdata.SpaceShipClient;
-import com.fogok.spaceships.model.game.opdata.SpaceShipServer;
+import com.fogok.spaceships.model.game.UnionViewModels;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
 public class GameSession {
@@ -15,30 +12,31 @@ public class GameSession {
     private SpriteBatch gameSpriteBatch;
     private NetworkData networkData;
 
-    private ViewModelObject[] viewModelObjects;
+    private UnionViewModels unionViewModels;
 
-    private ControllerManager _controllerManager;
+    private ControllerManager controllerManager;
 
-    public GameSession(ControllerManager controllerManager, NetworkData networkData) {
+    public GameSession(NativeGdxHelper nativeGdxHelper, NetworkData networkData) {
         this.networkData = networkData;
-        _controllerManager = controllerManager;
         gameSpriteBatch = new SpriteBatch();
-
-        viewModelObjects = new ViewModelObject[3];
-
-        viewModelObjects[0] = new Background(controllerManager);
-        viewModelObjects[1] = new SpaceShipClient(controllerManager);
-        viewModelObjects[2] = new SpaceShipServer(networkData);
+        controllerManager = new ControllerManager(networkData, nativeGdxHelper);    //controller manager хранит в себе все контроллеры, в каждую модель передаём его
+        unionViewModels = new UnionViewModels(controllerManager); //теперь в controllerManager есть необходимые начальные объекты
+        controllerManager.postInitializate();
     }
 
     public void draw(NativeGdxHelper nativeGdxHelper) {
         networkData.resetSize();
-        _controllerManager.getCameraController().handle(false);
+        controllerManager.getCameraController().handle(false);
         gameSpriteBatch.setProjectionMatrix(nativeGdxHelper.getGameSessionCamera().combined);
         gameSpriteBatch.begin();
-        for (ViewModelObject viewModelObject : viewModelObjects)
-            viewModelObject.draw(gameSpriteBatch);
+
+        unionViewModels.draw(gameSpriteBatch);
+
         gameSpriteBatch.end();
+    }
+
+    public ControllerManager getControllerManager() {
+        return controllerManager;
     }
 
     public void dispose() {

@@ -5,10 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.Controller;
 import com.fogok.spaceships.control.ui.JoyStickController;
 import com.fogok.spaceships.utils.gamedepended.Assets;
-import com.fogok.spaceships.view.View;
 import com.fogok.spaceships.view.utils.CORDCONV;
 
-public class JoyStickView implements View{
+public class JoyStickView{
 
     private Sprite coverJoyStick, joyStick;
 
@@ -17,7 +16,7 @@ public class JoyStickView implements View{
         joyStick = Assets.getNewSprite(2);
     }
 
-    @Override
+
     public void draw(SpriteBatch batch, Controller controller) {
         JoyStickController jController = (JoyStickController)controller;
         coverJoyStick.setBounds(CORDCONV.gCamX(jController.posXJoystick), CORDCONV.gCamY(jController.posYJoystick), CORDCONV.gCamX(jController.sizeBackJoystick), CORDCONV.gCamX(jController.sizeBackJoystick));
@@ -26,7 +25,6 @@ public class JoyStickView implements View{
         joyStick.draw(batch);
     }
 
-    @Override
     public Sprite getSprite() {
         return coverJoyStick;
     }

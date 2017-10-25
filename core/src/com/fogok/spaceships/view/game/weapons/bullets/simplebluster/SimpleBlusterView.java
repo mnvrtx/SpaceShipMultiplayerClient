@@ -2,7 +2,7 @@ package com.fogok.spaceships.view.game.weapons.bullets.simplebluster;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.fogok.spaceships.control.Controller;
+import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.View;
 import com.fogok.spaceships.view.utils.AspectRatioHelper;
@@ -18,7 +18,7 @@ public class SimpleBlusterView implements View {
     }
 
     @Override
-    public void draw(SpriteBatch batch, Controller controller) {
+    public void draw(SpriteBatch batch, GameObject gameObject) {
 
 //        Array<BlusterBulletControllerController> array = ((BlusterController)controller).getActiveBullets();
 //        for (BlusterBulletControllerController blusterBulletController : array) {

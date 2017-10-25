@@ -1,6 +1,7 @@
 package com.fogok.spaceships.control.game;
 
 import com.fogok.spaceships.control.Controller;
+import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.game.weapons.DemolishingObjectsController;
 import com.fogok.spaceships.control.ui.JoyStickController;
 import com.fogok.spaceships.model.NetworkData;
@@ -22,7 +23,7 @@ public class EverybodyObjectsController implements Controller{
 
     private MSDataController msDataController;
 
-    public EverybodyObjectsController(NetworkData networkData, JoyStickController joyStickController) {
+    public EverybodyObjectsController(ControllerManager controllerManager, NetworkData networkData, JoyStickController joyStickController) {
         this.networkData = networkData;
         everyBodyObjectsPool = new EveryBodyPool(networkData, bufferSize);
 

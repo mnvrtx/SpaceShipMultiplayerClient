@@ -1,16 +1,16 @@
 package com.fogok.spaceships.control.game.gameobjects.ships.simpleship;
 
+import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.game.gameobjects.ships.UnionControllerShipObjsBase;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
-import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.SimpleShip;
-import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
+import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.SimpleShipObject;
 
-public class UnionControllerSimpleShipObjs extends UnionControllerShipObjsBase<SimpleShip, SimpleShipObjectController> {
+public class UnionControllerSimpleShipObjs extends UnionControllerShipObjsBase<SimpleShipObject, SimpleShipObjectController> {
 
 
-    public UnionControllerSimpleShipObjs(GameObjectsType objectType, EveryBodyPool everyBodyPool, SimpleShipObjectController shipObjectController, NetworkData networkData) {
-        super(objectType, everyBodyPool, shipObjectController, networkData);
+    public UnionControllerSimpleShipObjs(ControllerManager controllerManager, NetworkData networkData) {
+        super(GameObjectsType.SimpleShip, controllerManager.getEverybodyObjectsController().getEveryBodyObjectsPool(), new SimpleShipObjectController(controllerManager.getJoyStickController()), networkData);
     }
 
 }

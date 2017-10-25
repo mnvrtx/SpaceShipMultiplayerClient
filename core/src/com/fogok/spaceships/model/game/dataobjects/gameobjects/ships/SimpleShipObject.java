@@ -2,9 +2,9 @@ package com.fogok.spaceships.model.game.dataobjects.gameobjects.ships;
 
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
 
-public class SimpleShip extends ShipObjectBase {
+public class SimpleShipObject extends ShipObjectBase {
 
-    public SimpleShip() {
+    public SimpleShipObject() {
         initAdditParams(AdditParams.values().length);
         setType(GameObjectsType.SimpleShip);
     }

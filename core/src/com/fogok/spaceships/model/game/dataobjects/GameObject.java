@@ -16,7 +16,7 @@ public abstract class GameObject implements Pool.Poolable {
     private float y;
     private float[] additParams = new float[0];
     private boolean isServer;   //означает, является ли объект внутри сервера
-    private boolean isInsideField;  //означает, находится ли объект в пуле или же он сейчас непосредственно находится на карте
+    private boolean isInsideField;  //означает, находится ли объект в пуле или же он сейчас непосредственно находится на карте, true - значит, что он внутри пула
 
     public <E extends Enum<E>> float getAdditParam(E enumObject) {
         return additParams[enumObject.ordinal()];

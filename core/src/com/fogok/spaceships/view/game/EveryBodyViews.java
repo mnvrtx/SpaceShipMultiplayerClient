@@ -1,8 +1,10 @@
 package com.fogok.spaceships.view.game;
 
+
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
 import com.fogok.spaceships.view.View;
-import com.fogok.spaceships.view.game.weapons.bullets.simplebluster.SimpleBlusterView;
+import com.fogok.spaceships.view.game.ships.SimpleShipView;
+import com.fogok.spaceships.view.game.weapons.bullets.SimpleBlusterView;
 
 public class EveryBodyViews {
 

@@ -9,7 +9,6 @@ import com.fogok.spaceships.control.ui.JoyStickController;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase;
 import com.fogok.spaceships.utils.GMUtils;
-import com.fogok.spaceships.view.utils.AspectRatioHelper;
 import com.fogok.spaceships.view.utils.CORDCONV;
 
 import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.DIRECTION;
@@ -57,7 +56,7 @@ public abstract class ShipObjectControllerBase implements ObjectController {
         if (shipObjectBase.getAdditParam(SPEED) < 0f)
             shipObjectBase.setAdditParam(0f, SPEED);
 
-        float targetDir = 0f;
+        float targetDir;
         if (isMoving) {
             targetDir = GMUtils.getDeg(shipObjectBase.getX() + x, shipObjectBase.getY() + y, shipObjectBase.getX(), shipObjectBase.getY()) + 90;
             targetDir += targetDir > 360 ? -360 : 0;
@@ -72,8 +71,11 @@ public abstract class ShipObjectControllerBase implements ObjectController {
     }
 
     private void fireLogicHandle(){
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-            weapon.fire(shipObjectBase.getX() + , shipObjectBase.getY(), );
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            float height = shipObjectBase.getAdditParam(SIZE);
+            float width = height * shipObjectBase.getWidthDivHeight();
+            weapon.fire(shipObjectBase.getX() + width / 2f, shipObjectBase.getY() + height / 2f, 0.1f, (int) shipObjectBase.getAdditParam(DIRECTION) + 90);
+        }
     }
 
     @Override

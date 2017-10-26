@@ -1,11 +1,14 @@
 package com.fogok.spaceships.control.game;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
+import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
 import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
+import com.fogok.spaceships.view.game.EveryBodyViews;
 
 public abstract class UnionControllerBase {
 
@@ -22,11 +25,13 @@ public abstract class UnionControllerBase {
 
     protected NetworkData networkData;
     protected EveryBodyPool everyBodyPool;
+    protected EveryBodyViews everyBodyViews;
     protected GameObjectsType objectType;
 
-    public UnionControllerBase(GameObjectsType objectType, EveryBodyPool everyBodyPool, NetworkData networkData) {
+    public UnionControllerBase(GameObjectsType objectType, ControllerManager controllerManager, NetworkData networkData) {
         this.networkData = networkData;
-        this.everyBodyPool = everyBodyPool;
+        this.everyBodyPool = controllerManager.getEveryBodyObjectsPool();
+        this.everyBodyViews = controllerManager.getEveryBodyViews();
         this.objectType = objectType;
     }
 
@@ -35,9 +40,19 @@ public abstract class UnionControllerBase {
         int len = activeObjects.size;
         for (int i = len; --i >= 0;)
             if (!activeObjects.get(i).isServer())
-                handleClientNetworkLogic(activeObjects.get(i), handleClientOneObject(activeObjects.get(i)), i);
+                handleClientNetworkLogic(activeObjects.get(i), preLogicHandeObjectAndHandleObject(activeObjects.get(i)), i);
     }
 
+    private boolean preLogicHandeObjectAndHandleObject(GameObject gameObject) {
+        final Sprite targetSprite = everyBodyViews.getView(objectType).getSprite();
+        gameObject.setWidthDivHeight(targetSprite.getWidth() / targetSprite.getHeight());   //preLogic - тут я тупо даю объекту текущее соотношение сторон
+        return handleClientOneObject(gameObject);
+    }
+
+    /**
+     * Обработка серверных данных
+     * @param jsonValue в этом массиве массив ровно тех объектов, которые относятся к objectType
+     */
     public void handleServer(JsonValue jsonValue, boolean pause) {
         int len = jsonValue.size;
         Array<GameObject> activeObjects = everyBodyPool.getAllObjectsFromType(objectType);
@@ -76,13 +91,12 @@ public abstract class UnionControllerBase {
 
     protected void handleClientNetworkLogic(GameObject handledObject, boolean isInsideField, int i){
         Array<GameObject> activeObjects = everyBodyPool.getAllObjectsFromType(objectType);
-        if (isInsideField) {
-            activeObjects.removeIndex(i);
+        if (isInsideField)
             everyBodyPool.free(handledObject);
-        }else{
+        else
             //if object is not isInsideField, then add itself to networkdata
             networkData.addObject(handledObject);
-        }
+
     }
 
     /**

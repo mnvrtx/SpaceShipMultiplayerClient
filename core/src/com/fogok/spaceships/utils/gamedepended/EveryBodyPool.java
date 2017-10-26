@@ -2,7 +2,6 @@ package com.fogok.spaceships.utils.gamedepended;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
-import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
@@ -38,13 +37,8 @@ public class EveryBodyPool extends Pool<GameObject> {
 
     * */
 
-    //TODO: УБРАТЬ ЛИШНИЕ ТУДУ ОЧЕНЬ ВАЖНО!!!!!
-
-    private ControllerManager controllerManager;
-
-    public EveryBodyPool(ControllerManager controllerManager, NetworkData networkData, int initialCapacity) {
+    public EveryBodyPool(NetworkData networkData, int initialCapacity) {
         super(initialCapacity);
-        this.controllerManager = controllerManager;
         typedObjects = new Array<Array<GameObject>>(false, initialCapacity);
         for (int i = 0; i < initialCapacity; i++) {
             //TODO: increment new arrays
@@ -90,14 +84,8 @@ public class EveryBodyPool extends Pool<GameObject> {
                 break;
             }
         }
-        if (needNew) {
+        if (needNew)
             responseGameObject = newObject(type);
-            switch (type) {
-                case SimpleShip:
-                    responseGameObject.initLocators(1);
-                    break;
-            }
-        }
 
         responseGameObject.setInsideField(false);
         responseGameObject.setServer(isServer);
@@ -118,7 +106,7 @@ public class EveryBodyPool extends Pool<GameObject> {
         if (typedObjects.get(object.getType()).removeValue(object, false)){
             clientServerObjectsCount.get(object.getType()).incr(object.isServer() ? 0 : 1, -1);
         }else{
-            throw new UnsupportedOperationException("Type object: " + object.getType() + " has not be removed");
+            throw new UnsupportedOperationException("Type object: " + GameObjectsType.values()[object.getType()].name() + " has not be removed");
         }
     }
 

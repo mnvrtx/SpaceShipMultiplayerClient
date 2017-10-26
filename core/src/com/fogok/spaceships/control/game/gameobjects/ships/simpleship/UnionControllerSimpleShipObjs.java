@@ -9,8 +9,8 @@ import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.SimpleShipO
 public class UnionControllerSimpleShipObjs extends UnionControllerShipObjsBase<SimpleShipObject, SimpleShipObjectController> {
 
 
-    public UnionControllerSimpleShipObjs(ControllerManager controllerManager, NetworkData networkData) {
-        super(GameObjectsType.SimpleShip, controllerManager.getEverybodyObjectsController().getEveryBodyObjectsPool(), new SimpleShipObjectController(controllerManager.getJoyStickController()), networkData);
+    public UnionControllerSimpleShipObjs(ControllerManager controllerManager, SimpleShipObjectController simpleShipObjectController, NetworkData networkData) {
+        super(GameObjectsType.SimpleShip, controllerManager, simpleShipObjectController, networkData);
     }
 
 }

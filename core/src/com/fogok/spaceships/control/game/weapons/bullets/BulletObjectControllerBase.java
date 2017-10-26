@@ -2,14 +2,15 @@ package com.fogok.spaceships.control.game.weapons.bullets;
 
 import com.badlogic.gdx.Gdx;
 import com.fogok.spaceships.control.game.ObjectController;
-import com.fogok.spaceships.control.game.weapons.Weapon;
-import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
+import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
 import com.fogok.spaceships.utils.GMUtils;
 
-import static com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase.AdditParams.*;
+import static com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase.AdditParams.DIRECTION;
+import static com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase.AdditParams.SPEED;
+import static com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase.AdditParams.TIMEALIVE;
 
-public abstract class BulletObjectControllerBase implements ObjectController, Weapon{
+public abstract class BulletObjectControllerBase implements ObjectController{
 
     /*
      * Основа для любой пульки
@@ -23,7 +24,6 @@ public abstract class BulletObjectControllerBase implements ObjectController, We
     }
 
 
-    @Override
     public void fire(float x, float y, float speed, int direction) {
         bulletObjectBase.setPosition(x, y);
         bulletObjectBase.setAdditParam(speed, SPEED);
@@ -39,7 +39,7 @@ public abstract class BulletObjectControllerBase implements ObjectController, We
             float plusX = GMUtils.getNextX(bulletObjectBase.getAdditParam(SPEED), bulletObjectBase.getAdditParam(DIRECTION)), plusY = GMUtils.getNextY(bulletObjectBase.getAdditParam(SPEED), bulletObjectBase.getAdditParam(DIRECTION));
             bulletObjectBase.setPosition(bulletObjectBase.getX() + plusX, bulletObjectBase.getY() + plusY);
             bulletObjectBase.setAdditParam(bulletObjectBase.getAdditParam(TIMEALIVE) - Gdx.graphics.getDeltaTime(), TIMEALIVE);
-            if (getCondtitionToDead(bulletObjectBase))
+            if (isDead(bulletObjectBase))
                 postClientAction(bulletObjectBase);
         }
     }
@@ -51,12 +51,11 @@ public abstract class BulletObjectControllerBase implements ObjectController, We
     public abstract void postClientAction(BulletObjectBase bulletObjectBase);
 
 
-
-    public abstract boolean getCondtitionToDead(BulletObjectBase bulletObjectBase);
+    public abstract boolean isDead(BulletObjectBase bulletObjectBase);
 
     @Override
     public boolean isAlive(){
-        return !getCondtitionToDead(bulletObjectBase);
+        return !isDead(bulletObjectBase);
     }
 
 }

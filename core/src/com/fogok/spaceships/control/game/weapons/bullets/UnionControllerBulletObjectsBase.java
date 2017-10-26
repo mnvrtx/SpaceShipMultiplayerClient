@@ -1,13 +1,14 @@
 package com.fogok.spaceships.control.game.weapons.bullets;
 
+import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.game.UnionControllerBase;
+import com.fogok.spaceships.control.game.weapons.Weapon;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
 import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
-import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
 
-public abstract class UnionControllerBulletObjectsBase<T extends BulletObjectBase, E extends BulletObjectControllerBase> extends UnionControllerBase {
+public abstract class UnionControllerBulletObjectsBase<T extends BulletObjectBase, E extends BulletObjectControllerBase> extends UnionControllerBase implements Weapon {
 
     /*
      * Основа для контроллера любой коллекции пулек
@@ -15,11 +16,12 @@ public abstract class UnionControllerBulletObjectsBase<T extends BulletObjectBas
 
     private E bulletObjectController;
 
-    public UnionControllerBulletObjectsBase(GameObjectsType objectType, EveryBodyPool everyBodyPool, E bulletObjectController, NetworkData networkData) {
-        super(objectType, everyBodyPool, networkData);
+    public UnionControllerBulletObjectsBase(GameObjectsType objectType, ControllerManager controllerManager, E bulletObjectController, NetworkData networkData) {
+        super(objectType, controllerManager, networkData);
         this.bulletObjectController = bulletObjectController;
     }
 
+    @Override
     public void fire(float x, float y, float speed, int direction){
         @SuppressWarnings("unchecked")
         T item = (T) everyBodyPool.obtain(objectType, false);

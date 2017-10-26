@@ -2,17 +2,15 @@ package com.fogok.spaceships.model.game.dataobjects;
 
 import com.fogok.spaceships.utils.GMUtils;
 import com.fogok.spaceships.utils.Pool;
-import com.fogok.spaceships.utils.gamedepended.LocatorsAddon;
 
 import java.util.BitSet;
 
 public abstract class GameObject implements Pool.Poolable {
 
-    public static int TYPE = 0, X = 1, Y = 2, ADIITPRMS = 3; //TODO: поставить эти параметры куда надо
+//    public static int TYPE = 0, X = 1, Y = 2, ADIITPRMS = 3, BOOLEANS = 4; //TODO: убрать это, когда сделаем ЛОГИКА ПЕРЕВОДА ЛЮБОГО ОБЪЕКТА В GAMEOBJECT
 
-    //TODO: рефактор всего этого пакета, в соотвествии с контроллерами (всего пакета MODEL!!!)
     private BitSet flags = new BitSet(10);  //10 params available
-    private LocatorsAddon locatorsAddon = null;
+    private float widthDivHeight;
     private int type;
     private float x;
     private float y;
@@ -39,17 +37,8 @@ public abstract class GameObject implements Pool.Poolable {
         setY(y);
     }
 
-    public void initLocators(int locatorsCount){
-        locatorsAddon = new LocatorsAddon(new float[locatorsCount * 2]);
-    }
-
-    public void setLocator(float x, float y, int i) {
-        locatorsAddon.setLocator(x, i);
-        locatorsAddon.setLocator(y, i + 1);
-    }
-
-    public float getLocator(int i) {     //TODO: сделать адекватное доставание
-        return locatorsAddon.getLocators()[i];
+    public void setWidthDivHeight(float widthDivHeight) {
+        this.widthDivHeight = widthDivHeight;
     }
 
     public void initAdditParams(int size) {
@@ -58,6 +47,10 @@ public abstract class GameObject implements Pool.Poolable {
 
     public <E extends Enum<E>> void setAdditParam(float param, E enumObject) {
         additParams[enumObject.ordinal()] = GMUtils.getRoundedVal(param);
+    }
+
+    public void setInsideField(boolean insideField) {
+        isInsideField = insideField;
     }
 
     public void setX(float x) {
@@ -83,8 +76,8 @@ public abstract class GameObject implements Pool.Poolable {
         return convert(flags);
     }
 
-    public void setInsideField(boolean insideField) {
-        isInsideField = insideField;
+    public float getWidthDivHeight() {
+        return widthDivHeight;
     }
 
     public boolean isServer() {

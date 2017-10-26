@@ -1,4 +1,4 @@
-package com.fogok.spaceships.view.game;
+package com.fogok.spaceships.view.game.ships;
 
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,8 +11,6 @@ import com.fogok.spaceships.view.utils.AspectRatioHelper;
 import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.*;
 
 public class SimpleShipView implements View {
-
-    //TODO: рефактор всего этого пакета, в соотвествии с контроллерами (Всего пакета view.game)
 
     private Sprite ship;
 

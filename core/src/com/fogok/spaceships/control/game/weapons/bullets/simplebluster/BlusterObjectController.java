@@ -31,7 +31,7 @@ public class BlusterObjectController extends BulletObjectControllerBase {
     }
 
     @Override
-    public boolean getCondtitionToDead(BulletObjectBase bulletObjectBase) {
+    public boolean isDead(BulletObjectBase bulletObjectBase) {
         return bulletObjectBase.getAdditParam(TIMEALIVE) < 0f;
     }
 
@@ -52,7 +52,7 @@ public class BlusterObjectController extends BulletObjectControllerBase {
 //    }
 //
 //    @Override
-//    public boolean getCondtitionToDead() {
+//    public boolean isDead() {
 //        return getTimeAlive() < 0f;
 //    }
 //

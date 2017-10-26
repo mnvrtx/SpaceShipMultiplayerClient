@@ -35,6 +35,7 @@ public class GameSession {
         gameSpriteBatch.setProjectionMatrix(nativeGdxHelper.getGameSessionCamera().combined);
         gameSpriteBatch.begin();
 
+        controllerManager.handle(false);
         everyBodyViewModels.draw(gameSpriteBatch);
 
         gameSpriteBatch.end();
@@ -46,5 +47,6 @@ public class GameSession {
 
     public void dispose() {
         gameSpriteBatch.dispose();
+        controllerManager.dispose();
     }
 }

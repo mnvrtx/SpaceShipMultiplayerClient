@@ -13,7 +13,7 @@ public class UnionControllerBlusterObjects extends UnionControllerBulletObjectsB
      */
 
     public UnionControllerBlusterObjects(ControllerManager controllerManager, NetworkData networkData) {
-        super(GameObjectsType.SimpleBluster, controllerManager.getEverybodyObjectsController().getEveryBodyObjectsPool(), new BlusterObjectController(), networkData);
+        super(GameObjectsType.SimpleBluster, controllerManager, new BlusterObjectController(), networkData);
     }
 
     @Override

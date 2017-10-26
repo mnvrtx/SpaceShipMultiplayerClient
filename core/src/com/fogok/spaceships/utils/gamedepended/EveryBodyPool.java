@@ -114,6 +114,10 @@ public class EveryBodyPool extends Pool<GameObject> {
         return typedObjects.get(type.ordinal());
     }
 
+    public Array<Array<GameObject>> getAllObjects() {
+        return typedObjects;
+    }
+
     public int getClientServerObjectsCount(GameObjectsType type, boolean isServer){
         return clientServerObjectsCount.get(type.ordinal()).get(isServer ? 0 : 1);
     }

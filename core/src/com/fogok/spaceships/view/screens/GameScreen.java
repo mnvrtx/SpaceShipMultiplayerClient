@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.view.screens.screen_components.GUI;
 import com.fogok.spaceships.view.screens.screen_components.GameSession;
+import com.fogok.spaceships.view.utils.DebugGUI;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
 public class GameScreen implements Screen {
@@ -33,6 +34,8 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         gameSession.draw(nativeGdxHelper);
+        DebugGUI.DEBUG_TEXT.setLength(0);
+        DebugGUI.DEBUG_TEXT.append(networkData.getJSON());
         gui.draw(nativeGdxHelper);
     }
 

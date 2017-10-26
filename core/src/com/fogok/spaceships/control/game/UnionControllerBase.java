@@ -9,6 +9,7 @@ import com.fogok.spaceships.model.game.dataobjects.GameObject;
 import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
 import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
 import com.fogok.spaceships.view.game.EveryBodyViews;
+import com.fogok.spaceships.view.utils.DebugGUI;
 
 public abstract class UnionControllerBase {
 
@@ -41,6 +42,25 @@ public abstract class UnionControllerBase {
         for (int i = len; --i >= 0;)
             if (!activeObjects.get(i).isServer())
                 handleClientNetworkLogic(activeObjects.get(i), preLogicHandeObjectAndHandleObject(activeObjects.get(i)), i);
+
+        if (DebugGUI.DEBUG)
+            handleDebug(everyBodyPool);
+    }
+
+    private void handleDebug(EveryBodyPool everyBodyPool){
+        DebugGUI.EVERYBODYPOOLVISUAL.setLength(0);
+        for (int i = 0; i < everyBodyPool.getAllObjects().size; i++) {
+            Array<GameObject> array = everyBodyPool.getAllObjects().get(i);
+            if (array.size != 0) {
+                for (int j = 0; j < array.size; j++) {
+                    GameObject gameObject = array.get(j);
+                    DebugGUI.EVERYBODYPOOLVISUAL.append("[");
+                    DebugGUI.EVERYBODYPOOLVISUAL.append(GameObjectsType.values()[gameObject.getType()].name());
+                    DebugGUI.EVERYBODYPOOLVISUAL.append("]");
+                }
+                DebugGUI.EVERYBODYPOOLVISUAL.append("\n");
+            }
+        }
     }
 
     private boolean preLogicHandeObjectAndHandleObject(GameObject gameObject) {

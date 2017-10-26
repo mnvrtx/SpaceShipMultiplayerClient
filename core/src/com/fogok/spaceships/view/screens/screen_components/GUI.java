@@ -24,6 +24,7 @@ public class GUI {
         joyStick.draw(uiSpriteBatch);
         debugGUI.draw(uiSpriteBatch);
         uiSpriteBatch.end();
+        debugGUI.drawScene();
     }
 
     public void dispose(){

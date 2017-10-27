@@ -17,14 +17,14 @@ public class SimpleBlusterView implements View {
     private final float startFading = 0.15f;
 
     public SimpleBlusterView() {
-        bluster = Assets.getNewSprite(3);
-        AspectRatioHelper.setSpriteSize(bluster, 0.2f, true);
+        bluster = Assets.getNewSprite(0);
+        AspectRatioHelper.setSpriteSize(bluster, 0.5f, true);
         bluster.setOriginCenter();
     }
 
     @Override
     public void draw(SpriteBatch batch, GameObject gameObject) {
-        bluster.setPosition(gameObject.getX(), gameObject.getY());
+        bluster.setCenter(gameObject.getX(), gameObject.getY());
         bluster.setRotation(gameObject.getAdditParam(DIRECTION) - 90);
         bluster.setAlpha(gameObject.getAdditParam(TIMEALIVE) < startFading ? GMUtils.normalizeOneZero(gameObject.getAdditParam(TIMEALIVE) / startFading) : 1f);
         bluster.draw(batch);

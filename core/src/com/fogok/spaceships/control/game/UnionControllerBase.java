@@ -36,6 +36,12 @@ public abstract class UnionControllerBase {
         this.objectType = objectType;
     }
 
+    public void handleComplex(JsonValue jsonValue, boolean pause){
+        handleClient(pause);
+        if (jsonValue != null)
+            handleServer(jsonValue, pause);
+    }
+
     public void handleClient(boolean pause) {
         Array<GameObject> activeObjects = everyBodyPool.getAllObjectsFromType(objectType);
         int len = activeObjects.size;
@@ -134,5 +140,6 @@ public abstract class UnionControllerBase {
      */
     protected void handleServerOneObject(JsonValue referenceObject, GameObject handledServerObject){
         //TODO: здесь логика перевода любого объекта в GameObject
+        System.out.println(referenceObject.toString() + " " + handledServerObject.getType());
     }
 }

@@ -15,8 +15,10 @@ public class PlayerObjectsController implements Controller{
      */
 
     private UnionControllerSimpleShipObjs unionControllerSimpleShipObjs;
+    private NetworkData networkData;
 
     public PlayerObjectsController(DemolishingObjectsController demolishingObjectsController, ControllerManager controllerManager, NetworkData networkData) {
+        this.networkData = networkData;
         SimpleShipObjectController simpleShipObjectController = new SimpleShipObjectController(controllerManager.getJoyStickController(), demolishingObjectsController.getBlusterBulletController());
         unionControllerSimpleShipObjs = new UnionControllerSimpleShipObjs(controllerManager, simpleShipObjectController, networkData);
         simpleShipObjectController.setHandledObject(controllerManager.getEveryBodyObjectsPool().obtain(GameObjectsType.SimpleShip, false));
@@ -25,7 +27,7 @@ public class PlayerObjectsController implements Controller{
 
     @Override
     public void handle(boolean pause) {
-        unionControllerSimpleShipObjs.handleClient(pause);
+        unionControllerSimpleShipObjs.handleComplex(networkData.getResponseJson(), pause);
     }
 
     public UnionControllerSimpleShipObjs getUnionControllerSimpleShipObjs() {

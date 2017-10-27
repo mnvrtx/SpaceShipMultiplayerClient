@@ -74,7 +74,7 @@ public abstract class ShipObjectControllerBase implements ObjectController {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             float height = shipObjectBase.getAdditParam(SIZE);
             float width = height * shipObjectBase.getWidthDivHeight();
-            weapon.fire(shipObjectBase.getX() + width / 2f, shipObjectBase.getY() + height / 2f, 0.1f, (int) shipObjectBase.getAdditParam(DIRECTION) + 90);
+            weapon.fire(shipObjectBase.getX() + width / 2f, shipObjectBase.getY() + height / 2f, 0.3f, (int) shipObjectBase.getAdditParam(DIRECTION) + 90);
         }
     }
 

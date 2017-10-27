@@ -12,14 +12,16 @@ public class DemolishingObjectsController implements Controller {
      */
 
     private UnionControllerBlusterObjects blusterBulletController;
+    private NetworkData networkData;
 
     public DemolishingObjectsController(ControllerManager controllerManager, NetworkData networkData) {
+        this.networkData = networkData;
         blusterBulletController = new UnionControllerBlusterObjects(controllerManager, networkData);
     }
 
     @Override
     public void handle(boolean pause) {
-        blusterBulletController.handleClient(pause);
+        blusterBulletController.handleComplex(networkData.getResponseJson(), pause);
     }
 
     public UnionControllerBlusterObjects getBlusterBulletController() {

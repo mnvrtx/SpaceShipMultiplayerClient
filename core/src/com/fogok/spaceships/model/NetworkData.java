@@ -3,11 +3,16 @@ package com.fogok.spaceships.model;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
+import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
 
 public class NetworkData {
 
     private StringBuilder stringBuilder = new StringBuilder(100);
-    private Array<GameObject> gameObjects = new Array<GameObject>(false, 100);
+//    private Array<GameObject> gameObjects = new Array<GameObject>(false, 100);
+
+    private Array<Array<GameObject>> typedObjects;
+
+
     private NetworkDataResponse networkDataResponse = new NetworkDataResponse();
 
     private static final char[] JSONElements = new char[]{
@@ -15,72 +20,108 @@ public class NetworkData {
         '{', '}', ':', '"', ',', 'N', '[', ']'
     };
 
-    private static final String[] JSONStrings = new String[]{
-            //0   1    2    3    4
-            "t", "x", "y", "a", "b"
+    public static final String[] JSONStrings = new String[]{
+            //0    1    2    3
+            "x", "y", "a", "b"
             //type; x;  y; additPrms; booleans
     };
 
+    public void setTypedObjets(Array<Array<GameObject>> typedObjects) {
+        this.typedObjects = typedObjects;
 
-    public void addObject(GameObject gameObject){
-        gameObjects.add(gameObject);
     }
 
-    public void resetSize(){
-        gameObjects.setSize(0);
-    }
-
+    /**
+     * Структура JSON
+     *
+     *
+     * [//объекты всех типов
+     *
+     *      [//объекты определённого типа
+     *
+     *          {
+     *              "x":0.0
+     *              "y":0.0
+     *              "a":[0.0, 0.0, 0.0]
+     *          },
+     *          {
+     *              "x":0.0
+     *              "y":0.0
+     *              "a":[0.0, 0.0, 0.0]
+     *          },
+     *          {
+     *              "x":0.0
+     *              "y":0.0
+     *              "a":[0.0, 0.0, 0.0]
+     *          }
+     *      ],
+     *
+     *      [//объекты определённого типа
+     *
+     *      ]
+     *
+     * ]
+     *
+     *
+     * @return
+     */
     public String getJSON(){
         stringBuilder.setLength(0);
-        stringBuilder.append(JSONElements[6]);
-        for (int q = 0; q < gameObjects.size; q++) {
-            GameObject gameObject = gameObjects.get(q);
-            if (q != 0)
-                stringBuilder.append(JSONElements[4]);
-            stringBuilder.append(JSONElements[0]);
-            long gameObjectLongFlags = gameObject.getLongFlags();
-            for (int i = 0; i < JSONStrings.length; i++) {
-                if (!(i == 3 && gameObject.getAdditParams().length == 0) && !(i == 4 && gameObjectLongFlags == 0)){     //не добавляем лишнего, если данных нет
-                    addEndJSONString(false, i == JSONStrings.length - 1 || i == 0);
-                    addStartJSONString(i, false);
-                    switch (i) {
-                        case 0:
-                            stringBuilder.append(gameObject.getType());
-                            break;
-                        case 1:
-                            stringBuilder.append(gameObject.getX());
-                            break;
-                        case 2:
-                            stringBuilder.append(gameObject.getY());
-                            break;
-                        case 3:
-                            stringBuilder.append(JSONElements[6]);
-                            float[] addPrms = gameObject.getAdditParams();
-                            for (int j = 0; j < addPrms.length; j++) {
-                                stringBuilder.append(addPrms[j]);
-                                addEndJSONString(false, j == addPrms.length - 1);
+        stringBuilder.append(JSONElements[0]);
+        int typesIters = 0, objectsIters = 0;
+        for (int k = 0; k < typedObjects.size; k++) {   //проходимся по всем типам объектов
+            Array<GameObject> typedGameObjects = typedObjects.get(k);
+            if (typedGameObjects.size != 0){    //если в массиве типов есть >=1 элемента, то проходимся по им всем
+                addEndJSONString(false, typesIters++ == 0);    //если не первый объект, ставим впереди запятую
+                addStartJSONString(k, true);
+                stringBuilder.append(JSONElements[6]);
+                for (int q = 0; q < typedGameObjects.size; q++) {   //проходимся по всем объектам, которые касаются определённого типа
+                    GameObject gameObject = typedGameObjects.get(q);
+                    if (!gameObject.isServer()) {     //если объект не серверный, а непосредственно наш
+                        addEndJSONString(false, objectsIters++ == 0);
+                        stringBuilder.append(JSONElements[0]);
+                        long gameObjectLongFlags = gameObject.getLongFlags();
+                        for (int i = 0; i < JSONStrings.length; i++) {          //проходимся по параметрам объекта
+                            if (!(i == GameObject.ADIITPRMS && gameObject.getAdditParams().length == 0) && !(i == GameObject.BOOLEANS && gameObjectLongFlags == 0)){     //не добавляем лишнего, если данных нет
+                                addEndJSONString(false, i == 0);
+                                addStartJSONString(i, false);
+                                switch (i) {
+                                    case GameObject.X:
+                                        stringBuilder.append(gameObject.getX());
+                                        break;
+                                    case GameObject.Y:
+                                        stringBuilder.append(gameObject.getY());
+                                        break;
+                                    case GameObject.ADIITPRMS:
+                                        stringBuilder.append(JSONElements[6]);
+                                        float[] addPrms = gameObject.getAdditParams();
+                                        for (int j = 0; j < addPrms.length; j++) {
+                                            stringBuilder.append(addPrms[j]);
+                                            addEndJSONString(false, j == addPrms.length - 1);
+                                        }
+                                        stringBuilder.append(JSONElements[7]);
+                                        break;
+                                    case GameObject.BOOLEANS:
+                                        stringBuilder.append(gameObjectLongFlags);
+                                        break;
+                                }
                             }
-                            stringBuilder.append(JSONElements[7]);
-                            break;
-                        case 4:
-                            stringBuilder.append(gameObjectLongFlags);
-                            break;
+                        }
+                        stringBuilder.append(JSONElements[1]);
                     }
                 }
+                stringBuilder.append(JSONElements[7]);
             }
-            stringBuilder.append(JSONElements[1]);
         }
-        stringBuilder.append(JSONElements[7]);
+        stringBuilder.append(JSONElements[1]);
         return stringBuilder.toString();
     }
 
-    private void addStartJSONString(int i, boolean enableScobe){
+    private void addStartJSONString(int i, boolean isNumberIsNameParam){
         stringBuilder.append(JSONElements[3]);
-        stringBuilder.append(JSONStrings[i]);
+        stringBuilder.append(isNumberIsNameParam ? i : JSONStrings[i]);
         stringBuilder.append(JSONElements[3]);
         stringBuilder.append(JSONElements[2]);
-        if (enableScobe)
-            stringBuilder.append(JSONElements[3]);
     }
 
     private void addEndJSONString(boolean enableScobe, boolean last){
@@ -94,8 +135,8 @@ public class NetworkData {
         networkDataResponse.handle(json);
     }
 
-    public JsonValue getResponseJson(){
-        return networkDataResponse.getJsonResponse();
+    public JsonValue getResponseJson(GameObjectsType gameObjectsType){
+        return networkDataResponse.getJsonResponse(gameObjectsType);
     }
 
     public JsonValue getOldJsonResponse(){
@@ -103,6 +144,59 @@ public class NetworkData {
     }
 
 
-
+//    public static void main(String[] args) {
+//        NetworkData networkData = new NetworkData();
+//        GameObject gameObject = new GameObject() {
+//            @Override
+//            public void reset() {
+//
+//            }
+//        };
+//        GameObject gameObject2 = new GameObject() {
+//            @Override
+//            public void reset() {
+//
+//            }
+//        };
+//
+//        networkData.typedObjects = new Array<Array<GameObject>>(false, 100);
+//        for (int i = 0; i < 100; i++) {
+//            networkData.typedObjects.add(new Array<GameObject>(false, 100));
+//        }
+//
+//        gameObject.setType(GameObjectsType.SimpleBluster);
+//        gameObject.setX(0.3f);
+//        gameObject.setY(0.256f);
+//        gameObject.setFlags(0, false);
+//        gameObject.setFlags(1, true);
+//        gameObject.setFlags(2, true);
+//        gameObject.setFlags(3, false);
+//
+//        networkData.typedObjects.get(GameObjectsType.SimpleBluster.ordinal()).add(gameObject);
+//        networkData.typedObjects.get(GameObjectsType.SimpleBluster.ordinal()).add(gameObject);
+//        networkData.typedObjects.get(GameObjectsType.SimpleBluster.ordinal()).add(gameObject);
+//
+//        gameObject2.setType(GameObjectsType.SimpleShip);
+//        gameObject2.setPosition(5.6f, 0.12f);
+//        gameObject2.initAdditParams(3);
+//        gameObject2.setAdditParam(46f, ShipObjectBase.AdditParams.DIRECTION);
+//        gameObject2.setAdditParam(1.4f, ShipObjectBase.AdditParams.SIZE);
+//        gameObject2.setAdditParam(0.3f, ShipObjectBase.AdditParams.SIZE);
+//        gameObject2.setFlags(0, true);
+//        gameObject2.setFlags(1, false);
+//        gameObject2.setFlags(2, true);
+//        gameObject2.setFlags(3, true);
+//
+//        networkData.typedObjects.get(GameObjectsType.SimpleShip.ordinal()).add(gameObject2);
+//        networkData.typedObjects.get(GameObjectsType.SimpleShip.ordinal()).add(gameObject2);
+//        networkData.typedObjects.get(GameObjectsType.SimpleShip.ordinal()).add(gameObject2);
+//        networkData.typedObjects.get(GameObjectsType.SimpleShip.ordinal()).add(gameObject2);
+//        networkData.typedObjects.get(GameObjectsType.SimpleShip.ordinal()).add(gameObject2);
+//        networkData.typedObjects.get(GameObjectsType.SimpleShip.ordinal()).add(gameObject2);
+//
+//
+//        System.out.println(networkData.getJSON());
+//        System.out.println(DebugGUI.jsonReader.parse(networkData.getJSON()).prettyPrint(JsonWriter.OutputType.json, 2));
+//    }
 
 }

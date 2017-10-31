@@ -41,6 +41,7 @@ public class ServerLogicWrapper {
                     e.printStackTrace();
                 } finally {
                     workingGroup.shutdownGracefully();
+                    System.out.println("ConnectedShutDowned");
                 }
 
             }

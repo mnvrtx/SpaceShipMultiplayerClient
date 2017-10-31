@@ -2,13 +2,14 @@ package com.fogok.spaceships.model;
 
 
 import com.badlogic.gdx.utils.JsonValue;
+import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
 import com.fogok.spaceships.utils.JsonReader;
 
 public class NetworkDataResponse {
 
     private JsonReader jsonReader;
-    private volatile JsonValue jsonResponse;
-    private volatile JsonValue oldJsonResponse;
+    private JsonValue jsonResponse;
+    private JsonValue oldJsonResponse;
 
 
     public NetworkDataResponse() {
@@ -30,8 +31,8 @@ public class NetworkDataResponse {
         }
     }
 
-    public JsonValue getJsonResponse() {
-        return jsonResponse;
+    public JsonValue getJsonResponse(GameObjectsType gameObjectsType) {
+        return jsonResponse == null ? null : jsonResponse.get(String.valueOf(gameObjectsType.ordinal()));
     }
 
     public JsonValue getOldJsonResponse() {

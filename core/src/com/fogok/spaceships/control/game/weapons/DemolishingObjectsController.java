@@ -21,7 +21,7 @@ public class DemolishingObjectsController implements Controller {
 
     @Override
     public void handle(boolean pause) {
-        blusterBulletController.handleComplex(networkData.getResponseJson(), pause);
+        blusterBulletController.handleComplex(networkData, pause);
     }
 
     public UnionControllerBlusterObjects getBlusterBulletController() {

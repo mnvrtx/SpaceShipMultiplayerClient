@@ -27,7 +27,7 @@ public class PlayerObjectsController implements Controller{
 
     @Override
     public void handle(boolean pause) {
-        unionControllerSimpleShipObjs.handleComplex(networkData.getResponseJson(), pause);
+        unionControllerSimpleShipObjs.handleComplex(networkData, pause);
     }
 
     public UnionControllerSimpleShipObjs getUnionControllerSimpleShipObjs() {

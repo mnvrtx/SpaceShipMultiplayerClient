@@ -17,7 +17,7 @@ public class BlusterObjectController extends BulletObjectControllerBase {
 
     @Override
     public void preClientAction(BulletObjectBase bulletObjectBase) {
-        bulletObjectBase.setAdditParam(0.6f, TIMEALIVE);
+        bulletObjectBase.setAdditParam(10.6f, TIMEALIVE);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.fogok.spaceships.model.NetworkData;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -62,19 +63,28 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf buf = (ByteBuf)msg;
-        try {
-            byte[] req = new byte[buf.readableBytes()];
-            buf.readBytes(req);
 
-            String json = new String(req, encoding);
-            networkData.refreshOtherDatas(json);
-            System.out.println("Server response:" + json);
-        } finally {
-            buf.release();
-        }
+        final ByteBuf buf = (ByteBuf)msg;
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    byte[] req = new byte[buf.readableBytes()];
+                    buf.readBytes(req);
 
-        blocker = false;
+                    final String json = new String(req, encoding);
+                    networkData.refreshOtherDatas(json);
+                    System.out.println("Server response:" + json);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } finally {
+                    buf.release();
+                }
+
+                blocker = false;
+            }
+        });
+
 
     }
 

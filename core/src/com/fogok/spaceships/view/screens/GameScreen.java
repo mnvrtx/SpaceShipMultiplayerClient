@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.JsonWriter;
 import com.fogok.spaceships.model.NetworkData;
+import com.fogok.spaceships.net.ServerLogicWrapper;
 import com.fogok.spaceships.view.screens.screen_components.GUI;
 import com.fogok.spaceships.view.screens.screen_components.GameSession;
 import com.fogok.spaceships.view.utils.DebugGUI;
@@ -26,7 +27,9 @@ public class GameScreen implements Screen {
         gameSession = new GameSession(nativeGdxHelper, networkData);
         gui = new GUI(gameSession.getControllerManager());
 
-//        ServerLogicWrapper.openServerSocket(networkData);
+        networkData.setTypedObjets(gameSession.getControllerManager().getEveryBodyObjectsPool().getAllObjects());
+
+        ServerLogicWrapper.openServerSocket(networkData);
     }
 
     @Override

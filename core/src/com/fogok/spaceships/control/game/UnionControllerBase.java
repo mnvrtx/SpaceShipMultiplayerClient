@@ -36,8 +36,9 @@ public abstract class UnionControllerBase {
         this.objectType = objectType;
     }
 
-    public void handleComplex(JsonValue jsonValue, boolean pause){
+    public void handleComplex(NetworkData networkData, boolean pause){
         handleClient(pause);
+        JsonValue jsonValue = networkData.getResponseJson(objectType);
         if (jsonValue != null)
             handleServer(jsonValue, pause);
     }
@@ -53,7 +54,8 @@ public abstract class UnionControllerBase {
             handleDebug(everyBodyPool);
     }
 
-    private void handleDebug(EveryBodyPool everyBodyPool){
+    //region Debug
+    private void handleDebug(EveryBodyPool everyBodyPool){  ///вызывается трильиарды раз, но мне похер)))0)
         DebugGUI.EVERYBODYPOOLVISUAL.setLength(0);
         for (int i = 0; i < everyBodyPool.getAllObjects().size; i++) {
             Array<GameObject> array = everyBodyPool.getAllObjects().get(i);
@@ -61,13 +63,16 @@ public abstract class UnionControllerBase {
                 for (int j = 0; j < array.size; j++) {
                     GameObject gameObject = array.get(j);
                     DebugGUI.EVERYBODYPOOLVISUAL.append("[");
-                    DebugGUI.EVERYBODYPOOLVISUAL.append(GameObjectsType.values()[gameObject.getType()].name());
+                    DebugGUI.EVERYBODYPOOLVISUAL.append(GameObjectsType.values()[gameObject.getType()].name() + (gameObject.isServer() ? "Server" : "Client"));
                     DebugGUI.EVERYBODYPOOLVISUAL.append("]");
                 }
                 DebugGUI.EVERYBODYPOOLVISUAL.append("\n");
             }
         }
     }
+
+    //endregion
+
 
     private boolean preLogicHandeObjectAndHandleObject(GameObject gameObject) {
         final Sprite targetSprite = everyBodyViews.getView(objectType).getSprite();
@@ -90,7 +95,7 @@ public abstract class UnionControllerBase {
         for (int i = aoLen; --i >= 0;)
             if (activeObjects.get(i).isServer()){
                 handleServerOneObject(jsonValue.get(jsonIters), activeObjects.get(i));
-                jsonIters--;
+                jsonIters++;
             }
 
     }
@@ -119,9 +124,9 @@ public abstract class UnionControllerBase {
         Array<GameObject> activeObjects = everyBodyPool.getAllObjectsFromType(objectType);
         if (isInsideField)
             everyBodyPool.free(handledObject);
-        else
-            //if object is not isInsideField, then add itself to networkdata
-            networkData.addObject(handledObject);
+//        else
+//            //if object is not isInsideField, then add itself to networkdata
+//            networkData.addObject(handledObject);
 
     }
 
@@ -140,6 +145,15 @@ public abstract class UnionControllerBase {
      */
     protected void handleServerOneObject(JsonValue referenceObject, GameObject handledServerObject){
         //TODO: здесь логика перевода любого объекта в GameObject
-        System.out.println(referenceObject.toString() + " " + handledServerObject.getType());
+        if (referenceObject.has(NetworkData.JSONStrings[GameObject.BOOLEANS]))
+            handledServerObject.setLongFlags(referenceObject.getLong(GameObject.BOOLEANS));
+        if (referenceObject.has(NetworkData.JSONStrings[GameObject.ADIITPRMS])) {
+            JsonValue jsonValue = referenceObject.get(GameObject.ADIITPRMS);
+            for (int i = 0; i < jsonValue.size; i++)
+                handledServerObject.setAdditParam(referenceObject.get(GameObject.ADIITPRMS).getFloat(i), i);
+        }
+
+        handledServerObject.setPosition(referenceObject.getFloat(GameObject.X), referenceObject.getFloat(GameObject.Y));
+        handledServerObject.setType(objectType);
     }
 }

@@ -7,7 +7,7 @@ import java.util.BitSet;
 
 public abstract class GameObject implements Pool.Poolable {
 
-//    public static int TYPE = 0, X = 1, Y = 2, ADIITPRMS = 3, BOOLEANS = 4; //TODO: убрать это, когда сделаем ЛОГИКА ПЕРЕВОДА ЛЮБОГО ОБЪЕКТА В GAMEOBJECT
+    public static final int X = 0, Y = 1, ADIITPRMS = 2, BOOLEANS = 3;
 
     private BitSet flags = new BitSet(10);  //10 params available
     private float widthDivHeight;
@@ -25,7 +25,11 @@ public abstract class GameObject implements Pool.Poolable {
     //region Setters
 
     public void setType(GameObjectsType gameObjectsType) {
-        this.type = gameObjectsType.ordinal();
+        setType(gameObjectsType.ordinal());
+    }
+
+    public void setType(int i) {
+        this.type = i;
     }
 
     public void setServer(boolean server) {
@@ -46,7 +50,11 @@ public abstract class GameObject implements Pool.Poolable {
     }
 
     public <E extends Enum<E>> void setAdditParam(float param, E enumObject) {
-        additParams[enumObject.ordinal()] = GMUtils.getRoundedVal(param);
+        setAdditParam(param, enumObject.ordinal());
+    }
+
+    public void setAdditParam(float param, int i){
+        additParams[i] = GMUtils.getRoundedVal(param);
     }
 
     public void setInsideField(boolean insideField) {

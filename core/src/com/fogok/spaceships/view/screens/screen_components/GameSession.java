@@ -30,7 +30,6 @@ public class GameSession {
     }
 
     public void draw(NativeGdxHelper nativeGdxHelper) {
-        networkData.resetSize();
         controllerManager.getCameraController().handle(false);
         gameSpriteBatch.setProjectionMatrix(nativeGdxHelper.getGameSessionCamera().combined);
         gameSpriteBatch.begin();

@@ -36,14 +36,31 @@ public abstract class UnionControllerBase {
         this.objectType = objectType;
     }
 
-    public void handleComplex(NetworkData networkData, boolean pause){
+    public void handleComplex(boolean pause){
         handleClient(pause);
-        JsonValue jsonValue = networkData.getResponseJson(objectType);
-        if (jsonValue != null)
-            handleServer(jsonValue, pause);
+        handleAllServerObjects(pause);
     }
 
-    public void handleClient(boolean pause) {
+    private void handleAllServerObjects(boolean pause){
+        if (networkData.isResponseNormal()) {
+            balanceServerResponseObjects(calculateSizeAllObjectsTypeFromAllServerPlayers(networkData.getResponseJson()),
+                    everyBodyPool.getAllObjectsFromType(objectType));
+            handleServer(networkData.getResponseJson(), pause);
+        }
+    }
+
+    private int calculateSizeAllObjectsTypeFromAllServerPlayers(JsonValue jsonValue){
+        int resp = 0;
+        for (int i = 0; i < jsonValue.size; i++) {
+            JsonValue objectsInType = networkData.getResponseJson().get(i).get(String.valueOf(objectType.ordinal()));
+            if (objectsInType != null)
+                resp += objectsInType.size;
+        }
+
+        return resp;
+    }
+
+    private void handleClient(boolean pause) {
         Array<GameObject> activeObjects = everyBodyPool.getAllObjectsFromType(objectType);
         int len = activeObjects.size;
         for (int i = len; --i >= 0;)
@@ -73,7 +90,6 @@ public abstract class UnionControllerBase {
 
     //endregion
 
-
     private boolean preLogicHandeObjectAndHandleObject(GameObject gameObject) {
         final Sprite targetSprite = everyBodyViews.getView(objectType).getSprite();
         gameObject.setWidthDivHeight(targetSprite.getWidth() / targetSprite.getHeight());   //preLogic - тут я тупо даю объекту текущее соотношение сторон
@@ -84,19 +100,33 @@ public abstract class UnionControllerBase {
      * Обработка серверных данных
      * @param jsonValue в этом массиве массив ровно тех объектов, которые относятся к objectType
      */
-    public void handleServer(JsonValue jsonValue, boolean pause) {
-        int len = jsonValue.size;
+    private void handleServer(JsonValue jsonValue, boolean pause) {
         Array<GameObject> activeObjects = everyBodyPool.getAllObjectsFromType(objectType);
-        balanceServerResponseObjects(len, activeObjects);
+        int currentServerObjectIndex = 0;
+        for (int i = 0; i < jsonValue.size; i++) {
+            JsonValue allObjectsInOnePlayer = jsonValue.get(i).get(String.valueOf(objectType.ordinal()));
+            if (allObjectsInOnePlayer != null) {
+                for (int j = 0; j < allObjectsInOnePlayer.size; j++) {
 
-        int jsonIters = 0;
-        int aoLen = activeObjects.size;
+                    for (int k = currentServerObjectIndex; k < activeObjects.size; k++)
+                        if (activeObjects.get(k).isServer()) {
+                            currentServerObjectIndex = k;
+                            break;
+                        }
 
-        for (int i = aoLen; --i >= 0;)
-            if (activeObjects.get(i).isServer()){
-                handleServerOneObject(jsonValue.get(jsonIters), activeObjects.get(i));
-                jsonIters++;
+                    handleServerOneObject(allObjectsInOnePlayer.get(j), activeObjects.get(currentServerObjectIndex++));
+                }
             }
+        }
+
+//        int jsonIters = 0;
+//        int aoLen = activeObjects.size;
+//
+//        for (int i = aoLen; --i >= 0;)
+//            if (activeObjects.get(i).isServer()){
+//                handleServerOneObject(jsonValue.get(jsonIters), activeObjects.get(i));
+//                jsonIters++;
+//            }
 
     }
 
@@ -120,7 +150,7 @@ public abstract class UnionControllerBase {
         }
     }
 
-    protected void handleClientNetworkLogic(GameObject handledObject, boolean isInsideField, int i){
+    protected void handleClientNetworkLogic(GameObject handledObject, boolean isInsideField, int i){    //TODO: REFACTOR THIS
         Array<GameObject> activeObjects = everyBodyPool.getAllObjectsFromType(objectType);
         if (isInsideField)
             everyBodyPool.free(handledObject);

@@ -20,7 +20,7 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
     private NetworkData networkData;
     private String uuid;
     private final static String encoding = "UTF-8";
-    public static boolean blocker;
+    public static boolean blocker;  //не послыаем новые данные, пока не получим старые :) *ВРЕМЕННАЯ ХРЕНЬ, НАДО ЕЁ УБРАТЬ
 
     public static float TIMEITERSSLEEP = 0.016f;  //in seconds
 
@@ -33,6 +33,8 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
         final Channel channel = ctx.channel();
         final int sleepTimeMilliSeconds = (int) (TIMEITERSSLEEP * 1000);
+
+        channel.writeAndFlush(Unpooled.copiedBuffer("l TESTUSER".getBytes(Charset.forName(encoding))));
 
         channel.eventLoop().scheduleAtFixedRate(new Runnable() {
             @Override

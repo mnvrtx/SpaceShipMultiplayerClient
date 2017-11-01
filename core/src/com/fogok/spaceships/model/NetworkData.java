@@ -3,7 +3,6 @@ package com.fogok.spaceships.model;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.fogok.spaceships.model.game.dataobjects.GameObject;
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
 
 public class NetworkData {
 
@@ -33,34 +32,23 @@ public class NetworkData {
 
     /**
      * Структура JSON
+     * [
+     * {
      *
-     *
-     * [//объекты всех типов
-     *
-     *      [//объекты определённого типа
-     *
-     *          {
-     *              "x":0.0
-     *              "y":0.0
-     *              "a":[0.0, 0.0, 0.0]
-     *          },
-     *          {
-     *              "x":0.0
-     *              "y":0.0
-     *              "a":[0.0, 0.0, 0.0]
-     *          },
-     *          {
-     *              "x":0.0
-     *              "y":0.0
-     *              "a":[0.0, 0.0, 0.0]
-     *          }
-     *      ],
-     *
-     *      [//объекты определённого типа
-     *
+     *      "1":[
+     *              {"x":10.0,"y":5.62,"a":[0.0,0.0,1.4]}
      *      ]
      *
+     * },
+     * {
+     *
+     *      "1":[
+     *              {"x":10.0,"y":5.62,"a":[0.0,0.0,1.4]}
+     *      ]
+     *
+     * }
      * ]
+     *
      *
      *
      * @return
@@ -75,6 +63,7 @@ public class NetworkData {
                 addEndJSONString(false, typesIters++ == 0);    //если не первый объект, ставим впереди запятую
                 addStartJSONString(k, true);
                 stringBuilder.append(JSONElements[6]);
+                objectsIters = 0;
                 for (int q = 0; q < typedGameObjects.size; q++) {   //проходимся по всем объектам, которые касаются определённого типа
                     GameObject gameObject = typedGameObjects.get(q);
                     if (!gameObject.isServer()) {     //если объект не серверный, а непосредственно наш
@@ -135,8 +124,12 @@ public class NetworkData {
         networkDataResponse.handle(json);
     }
 
-    public JsonValue getResponseJson(GameObjectsType gameObjectsType){
-        return networkDataResponse.getJsonResponse(gameObjectsType);
+    public boolean isResponseNormal(){
+        return networkDataResponse.isResponseNormal();
+    }
+
+    public JsonValue getResponseJson(){
+        return networkDataResponse.getJsonResponse();
     }
 
     public JsonValue getOldJsonResponse(){

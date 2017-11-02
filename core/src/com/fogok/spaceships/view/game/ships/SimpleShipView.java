@@ -3,12 +3,12 @@ package com.fogok.spaceships.view.game.ships;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
+import com.fogok.dataobjects.GameObject;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.View;
 import com.fogok.spaceships.view.utils.AspectRatioHelper;
 
-import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.*;
+import static com.fogok.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.*;
 
 public class SimpleShipView implements View {
 

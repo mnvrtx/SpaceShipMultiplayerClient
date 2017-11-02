@@ -4,9 +4,9 @@ import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.game.UnionControllerBase;
 import com.fogok.spaceships.control.game.weapons.Weapon;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
-import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
+import com.fogok.dataobjects.GameObject;
+import com.fogok.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.weapons.BulletObjectBase;
 
 public abstract class UnionControllerBulletObjectsBase<T extends BulletObjectBase, E extends BulletObjectControllerBase> extends UnionControllerBase implements Weapon {
 

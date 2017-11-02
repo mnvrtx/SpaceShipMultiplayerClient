@@ -1,6 +1,6 @@
-package com.fogok.spaceships.model.game.dataobjects.gameobjects.ships;
+package com.fogok.dataobjects.gameobjects.ships;
 
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.GameObjectsType;
 
 public class SimpleShipObject extends ShipObjectBase {
 

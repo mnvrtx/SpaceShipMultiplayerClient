@@ -2,13 +2,13 @@ package com.fogok.spaceships.control.game.weapons.bullets;
 
 import com.badlogic.gdx.Gdx;
 import com.fogok.spaceships.control.game.ObjectController;
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
-import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
-import com.fogok.spaceships.utils.GMUtils;
+import com.fogok.dataobjects.GameObject;
+import com.fogok.dataobjects.weapons.BulletObjectBase;
+import com.fogok.dataobjects.utils.GMUtils;
 
-import static com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase.AdditParams.DIRECTION;
-import static com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase.AdditParams.SPEED;
-import static com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase.AdditParams.TIMEALIVE;
+import static com.fogok.dataobjects.weapons.BulletObjectBase.AdditParams.DIRECTION;
+import static com.fogok.dataobjects.weapons.BulletObjectBase.AdditParams.SPEED;
+import static com.fogok.dataobjects.weapons.BulletObjectBase.AdditParams.TIMEALIVE;
 
 public abstract class BulletObjectControllerBase implements ObjectController{
 

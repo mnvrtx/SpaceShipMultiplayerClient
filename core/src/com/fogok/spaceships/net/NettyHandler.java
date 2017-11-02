@@ -35,6 +35,7 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
         final int sleepTimeMilliSeconds = (int) (TIMEITERSSLEEP * 1000);
 
         channel.writeAndFlush(Unpooled.copiedBuffer("l TESTUSER".getBytes(Charset.forName(encoding))));
+        blocker = true;
 
         channel.eventLoop().scheduleAtFixedRate(new Runnable() {
             @Override

@@ -1,13 +1,14 @@
 package com.fogok.spaceships.control.game;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonValue;
+import com.fogok.dataobjects.GameObject;
+import com.fogok.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.utils.EveryBodyPool;
+import com.fogok.dataobjects.utils.FastJsonWriter;
+import com.fogok.dataobjects.utils.libgdxexternals.Array;
+import com.fogok.dataobjects.utils.libgdxexternals.JsonValue;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
-import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
 import com.fogok.spaceships.view.game.EveryBodyViews;
 import com.fogok.spaceships.view.utils.DebugGUI;
 
@@ -175,9 +176,9 @@ public abstract class UnionControllerBase {
      */
     protected void handleServerOneObject(JsonValue referenceObject, GameObject handledServerObject){
         //TODO: здесь логика перевода любого объекта в GameObject
-        if (referenceObject.has(NetworkData.JSONStrings[GameObject.BOOLEANS]))
+        if (referenceObject.has(FastJsonWriter.JSONStrings[GameObject.BOOLEANS]))
             handledServerObject.setLongFlags(referenceObject.getLong(GameObject.BOOLEANS));
-        if (referenceObject.has(NetworkData.JSONStrings[GameObject.ADIITPRMS])) {
+        if (referenceObject.has(FastJsonWriter.JSONStrings[GameObject.ADIITPRMS])) {
             JsonValue jsonValue = referenceObject.get(GameObject.ADIITPRMS);
             for (int i = 0; i < jsonValue.size; i++)
                 handledServerObject.setAdditParam(referenceObject.get(GameObject.ADIITPRMS).getFloat(i), i);

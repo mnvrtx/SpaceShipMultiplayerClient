@@ -1,6 +1,6 @@
 package com.fogok.spaceships.control.game;
 
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
+import com.fogok.dataobjects.GameObject;
 
 public interface ObjectController {
 

@@ -1,9 +1,9 @@
 package com.fogok.spaceships.control.game.weapons.bullets.simplebluster;
 
 import com.fogok.spaceships.control.game.weapons.bullets.BulletObjectControllerBase;
-import com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase;
+import com.fogok.dataobjects.weapons.BulletObjectBase;
 
-import static com.fogok.spaceships.model.game.dataobjects.weapons.BulletObjectBase.AdditParams.*;
+import static com.fogok.dataobjects.weapons.BulletObjectBase.AdditParams.*;
 
 public class BlusterObjectController extends BulletObjectControllerBase {
 

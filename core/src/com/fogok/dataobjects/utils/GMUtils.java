@@ -1,10 +1,4 @@
-package com.fogok.spaceships.utils;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Rectangle;
-import com.fogok.spaceships.net.NettyHandler;
+package com.fogok.dataobjects.utils;
 
 import java.util.Random;
 
@@ -19,14 +13,14 @@ public class GMUtils {
 //        shapeRenderer.activateEnd();
 //        batch.begin();
 
-    private static Rectangle displayBounds;
+//    private static Rectangle displayBounds;
     private static Random rnd;
-
-    public static Rectangle getDisplayBounds() {
-        if (displayBounds == null)
-            displayBounds = new Rectangle();
-        return displayBounds;
-    }
+//
+//    public static Rectangle getDisplayBounds() {
+//        if (displayBounds == null)
+//            displayBounds = new Rectangle();
+//        return displayBounds;
+//    }
 
     public static Random getRnd() {
         if (rnd == null)
@@ -61,15 +55,15 @@ public class GMUtils {
         return currentVal;
     }
 
-    public static float lerpValue(float targetVal, float startVal, float currentVal) {
-        float absDif = Math.abs(targetVal - startVal);
-        float change = (Math.min(Gdx.graphics.getDeltaTime(), NettyHandler.TIMEITERSSLEEP) / NettyHandler.TIMEITERSSLEEP) * absDif;
-        if (absDif < change * 2f)
-            return targetVal;
-        change = currentVal > targetVal ? -change : change;
-        currentVal += change;
-        return absDif != 0f ? currentVal : targetVal;
-    }
+//    public static float lerpValue(float deltaTime, float targetVal, float startVal, float currentVal) {
+//        float absDif = Math.abs(targetVal - startVal);
+//        float change = (Math.min(deltaTime, NettyHandler.TIMEITERSSLEEP) / NettyHandler.TIMEITERSSLEEP) * absDif;
+//        if (absDif < change * 2f)
+//            return targetVal;
+//        change = currentVal > targetVal ? -change : change;
+//        currentVal += change;
+//        return absDif != 0f ? currentVal : targetVal;
+//    }
 
     public static float getRoundedVal(float nonRoundedVal){
         return (int)(nonRoundedVal * 1000) / 1000f;
@@ -86,24 +80,24 @@ public class GMUtils {
 //    }
 
 
-    private static Texture texture;
-
-    public static Texture generateBlankTexture(){
-        if (texture == null){
-            int div = 30;
-            Pixmap pixmap = new Pixmap(div, div, Pixmap.Format.RGB565);
-            pixmap.setColor(1f, 1f, 1f, 1f);
-            pixmap.fillRectangle(0, 0, div, div);
-            texture = new Texture(pixmap);
-            pixmap.dispose();
-        }
-        return texture;
-    }
-
-    public static void disposeBlankTexture(){
-        if (texture != null)
-            texture.dispose();
-    }
+//    private static Texture texture;
+//
+//    public static Texture generateBlankTexture(){
+//        if (texture == null){
+//            int div = 30;
+//            Pixmap pixmap = new Pixmap(div, div, Pixmap.Format.RGB565);
+//            pixmap.setColor(1f, 1f, 1f, 1f);
+//            pixmap.fillRectangle(0, 0, div, div);
+//            texture = new Texture(pixmap);
+//            pixmap.dispose();
+//        }
+//        return texture;
+//    }
+//
+//    public static void disposeBlankTexture(){
+//        if (texture != null)
+//            texture.dispose();
+//    }
 
 
     public static float normalizeOneZero(float alpha){

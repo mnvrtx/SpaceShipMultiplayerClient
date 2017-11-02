@@ -1,4 +1,4 @@
-package com.fogok.spaceships.model.game.dataobjects;
+package com.fogok.dataobjects;
 
 public enum GameObjectsType {
     SimpleBluster, SimpleShip

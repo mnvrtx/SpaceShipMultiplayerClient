@@ -7,14 +7,11 @@ import com.fogok.spaceships.control.game.weapons.DemolishingObjectsController;
 import com.fogok.spaceships.model.NetworkData;
 
 public class EverybodyObjectsController implements Controller {
-    private NetworkData networkData;
 
     private DemolishingObjectsController demolishingObjectsController;
     private PlayerObjectsController playerObjectsController;
 
     public EverybodyObjectsController(ControllerManager controllerManager, NetworkData networkData) {
-        this.networkData = networkData;
-
         demolishingObjectsController = new DemolishingObjectsController(controllerManager, networkData);
         playerObjectsController = new PlayerObjectsController(demolishingObjectsController, controllerManager, networkData);
     }

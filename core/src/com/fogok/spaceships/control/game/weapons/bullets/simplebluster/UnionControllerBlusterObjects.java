@@ -3,8 +3,8 @@ package com.fogok.spaceships.control.game.weapons.bullets.simplebluster;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.control.game.weapons.bullets.UnionControllerBulletObjectsBase;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
-import com.fogok.spaceships.model.game.dataobjects.weapons.SimpleBlusterObject;
+import com.fogok.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.weapons.SimpleBlusterObject;
 
 public class UnionControllerBlusterObjects extends UnionControllerBulletObjectsBase<SimpleBlusterObject, BlusterObjectController> {
 

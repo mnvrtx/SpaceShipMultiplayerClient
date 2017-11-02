@@ -107,7 +107,7 @@ public class FloatAnimator {
 
         time += delta;
 
-        current = interp.apply( from, to, GMUtils.normalizeOneZero(time / animationTime));
+        current = interp.apply( from, to, com.fogok.dataobjects.utils.GMUtils.normalizeOneZero(time / animationTime));
 
         // Если "отведённое время" минус "прошедшее время" всё ещё больше нуля, то апдейтим
         if ( animationTime - time > 0 ) { needToUpdate = true; }
@@ -130,7 +130,7 @@ public class FloatAnimator {
             resetTime();
             response = true;
         } else {
-            current = interp.apply( from, to, GMUtils.normalizeOneZero(time / animationTime ));
+            current = interp.apply( from, to, com.fogok.dataobjects.utils.GMUtils.normalizeOneZero(time / animationTime ));
             time += delta;
         }
 
@@ -174,7 +174,7 @@ public class FloatAnimator {
     }
 
     public float getCurrentTime(){
-        return GMUtils.normalizeOneZero(time / animationTime);
+        return com.fogok.dataobjects.utils.GMUtils.normalizeOneZero(time / animationTime);
     }
 
     public FloatAnimator setTime(float time) {

@@ -5,16 +5,15 @@ import com.fogok.spaceships.control.ui.CameraController;
 import com.fogok.spaceships.control.game.EverybodyObjectsController;
 import com.fogok.spaceships.control.ui.JoyStickController;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
-import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.SimpleShipObject;
-import com.fogok.spaceships.utils.gamedepended.EveryBodyPool;
+import com.fogok.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.gameobjects.ships.SimpleShipObject;
+import com.fogok.dataobjects.utils.EveryBodyPool;
 import com.fogok.spaceships.view.game.EveryBodyViews;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
 public class ControllerManager implements Controller {
 
     private NativeGdxHelper nativeGdxHelper;
-    private NetworkData networkData;
     private EveryBodyViews everyBodyViews;
 
     //region Pool system
@@ -31,9 +30,8 @@ public class ControllerManager implements Controller {
 
     public ControllerManager(EveryBodyViews everyBodyViews, NativeGdxHelper nativeGdxHelper, NetworkData networkData){
         this.nativeGdxHelper = nativeGdxHelper;
-        this.networkData = networkData;
         this.everyBodyViews = everyBodyViews;
-        everyBodyObjectsPool = new EveryBodyPool(networkData, bufferSize);
+        everyBodyObjectsPool = new EveryBodyPool(bufferSize);
 
         joyStickController = new JoyStickController(networkData);
         everybodyObjectsController = new EverybodyObjectsController(this, networkData);   //на этом этапе тут объектов нет

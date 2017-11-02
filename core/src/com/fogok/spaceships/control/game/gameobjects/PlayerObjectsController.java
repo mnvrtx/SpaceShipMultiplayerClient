@@ -6,7 +6,7 @@ import com.fogok.spaceships.control.game.gameobjects.ships.simpleship.SimpleShip
 import com.fogok.spaceships.control.game.gameobjects.ships.simpleship.UnionControllerSimpleShipObjs;
 import com.fogok.spaceships.control.game.weapons.DemolishingObjectsController;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.GameObjectsType;
 
 public class PlayerObjectsController implements Controller{
 

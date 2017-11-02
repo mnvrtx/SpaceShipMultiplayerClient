@@ -1,10 +1,10 @@
 package com.fogok.spaceships.model.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
+import com.fogok.dataobjects.GameObject;
+import com.fogok.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.utils.libgdxexternals.Array;
 import com.fogok.spaceships.control.ControllerManager;
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
 import com.fogok.spaceships.view.View;
 
 public abstract class ViewModelMemberBase<T extends GameObject> {

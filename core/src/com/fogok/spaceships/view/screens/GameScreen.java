@@ -18,9 +18,7 @@ public class GameScreen implements Screen {
     private GUI gui;
     private GameSession gameSession;
 
-    @Override
-    public void show() {
-
+    public GameScreen() {
         nativeGdxHelper = new NativeGdxHelper();
         networkData = new NetworkData();
 
@@ -30,6 +28,12 @@ public class GameScreen implements Screen {
         networkData.setTypedObjets(gameSession.getControllerManager().getEveryBodyObjectsPool().getAllObjects());
 
         ServerLogicWrapper.openServerSocket(networkData);
+    }
+
+    @Override
+    public void show() {
+
+
     }
 
     @Override

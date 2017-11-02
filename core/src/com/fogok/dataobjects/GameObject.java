@@ -1,7 +1,7 @@
-package com.fogok.spaceships.model.game.dataobjects;
+package com.fogok.dataobjects;
 
-import com.fogok.spaceships.utils.GMUtils;
-import com.fogok.spaceships.utils.Pool;
+import com.fogok.dataobjects.utils.GMUtils;
+import com.fogok.dataobjects.utils.Pool;
 
 import java.util.BitSet;
 

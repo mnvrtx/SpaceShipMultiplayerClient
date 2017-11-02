@@ -6,14 +6,12 @@ import com.fogok.spaceships.Main;
 import com.fogok.spaceships.control.game.ObjectController;
 import com.fogok.spaceships.control.game.weapons.Weapon;
 import com.fogok.spaceships.control.ui.JoyStickController;
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
-import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase;
-import com.fogok.spaceships.utils.GMUtils;
+import com.fogok.dataobjects.GameObject;
+import com.fogok.dataobjects.gameobjects.ships.ShipObjectBase;
+import com.fogok.dataobjects.utils.GMUtils;
 import com.fogok.spaceships.view.utils.CORDCONV;
 
-import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.DIRECTION;
-import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.SIZE;
-import static com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.SPEED;
+import static com.fogok.dataobjects.gameobjects.ships.ShipObjectBase.AdditParams.*;
 
 public abstract class ShipObjectControllerBase implements ObjectController {
 

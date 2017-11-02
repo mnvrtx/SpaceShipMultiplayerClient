@@ -1,4 +1,4 @@
-package com.fogok.spaceships.utils;
+package com.fogok.dataobjects.utils;
 
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
@@ -16,7 +16,8 @@ package com.fogok.spaceships.utils;
  * limitations under the License.
  ******************************************************************************/
 
-import com.badlogic.gdx.utils.Array;
+
+import com.fogok.dataobjects.utils.libgdxexternals.Array;
 
 /** A pool of objects that can be reused to avoid allocation.
  * @author Nathan Sweet */

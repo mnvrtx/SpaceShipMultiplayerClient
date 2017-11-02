@@ -3,7 +3,7 @@ package com.fogok.spaceships.view.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
+import com.fogok.dataobjects.GameObject;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.View;
 import com.fogok.spaceships.view.utils.AspectRatioHelper;

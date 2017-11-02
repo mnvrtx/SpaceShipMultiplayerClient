@@ -1,6 +1,6 @@
-package com.fogok.spaceships.model.game.dataobjects.weapons;
+package com.fogok.dataobjects.weapons;
 
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
+import com.fogok.dataobjects.GameObject;
 
 public abstract class BulletObjectBase extends GameObject {
 

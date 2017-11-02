@@ -1,8 +1,8 @@
 package com.fogok.spaceships.model;
 
 
-import com.badlogic.gdx.utils.JsonValue;
-import com.fogok.spaceships.utils.JsonReader;
+import com.fogok.dataobjects.utils.JsonReader;
+import com.fogok.dataobjects.utils.libgdxexternals.JsonValue;
 
 public class NetworkDataResponse {
 
@@ -45,7 +45,7 @@ public class NetworkDataResponse {
     private boolean isNormalJson(String jsonValue){
         if (jsonValue == null) return false;
         if (jsonValue.equals("")) return false;
-        if (jsonValue.length() <= 3) return false;
+//        if (jsonValue.length() <= 3) return false;
         return true;
     }
 }

@@ -1,17 +1,11 @@
-package com.fogok.spaceships.utils.gamedepended;
+package com.fogok.dataobjects.utils;
 
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.IntArray;
-import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.model.game.dataobjects.GameObject;
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
-import com.fogok.spaceships.model.game.dataobjects.gameobjects.ships.SimpleShipObject;
-import com.fogok.spaceships.model.game.dataobjects.weapons.SimpleBlusterObject;
-import com.fogok.spaceships.utils.Pool;
+import com.fogok.dataobjects.GameObject;
+import com.fogok.dataobjects.utils.libgdxexternals.Array;
+import com.fogok.dataobjects.utils.libgdxexternals.IntArray;
 
 public class EveryBodyPool extends Pool<GameObject> {
 
-    private NetworkData networkData;
     private Array<Array<GameObject>> typedObjects;
     //двумерный массив, как работает рассказываю на примере:
     /*
@@ -37,7 +31,7 @@ public class EveryBodyPool extends Pool<GameObject> {
 
     * */
 
-    public EveryBodyPool(NetworkData networkData, int initialCapacity) {
+    public EveryBodyPool(int initialCapacity) {
         super(initialCapacity);
         typedObjects = new Array<Array<GameObject>>(false, initialCapacity);
         for (int i = 0; i < initialCapacity; i++) {
@@ -52,8 +46,6 @@ public class EveryBodyPool extends Pool<GameObject> {
             clientServerObjectsCount.peek().add(0);
         }
 
-
-        this.networkData = networkData; //TODO: бряку сюад + сделать красивое отображение всех наших объектов для наглядности, что и как происходит
     }
 
     @Override
@@ -61,17 +53,17 @@ public class EveryBodyPool extends Pool<GameObject> {
         return null;
     }
 
-    protected GameObject newObject(GameObjectsType type){
+    protected GameObject newObject(com.fogok.dataobjects.GameObjectsType type){
         switch (type) {
             case SimpleBluster:
-                return new SimpleBlusterObject();
+                return new com.fogok.dataobjects.weapons.SimpleBlusterObject();
             case SimpleShip:
-                return new SimpleShipObject();
+                return new com.fogok.dataobjects.gameobjects.ships.SimpleShipObject();
         }
         return null;
     }
 
-    public GameObject obtain(GameObjectsType type, boolean isServer){
+    public GameObject obtain(com.fogok.dataobjects.GameObjectsType type, boolean isServer){
 
         GameObject responseGameObject = null;
         boolean needNew = true;
@@ -106,11 +98,11 @@ public class EveryBodyPool extends Pool<GameObject> {
         if (typedObjects.get(object.getType()).removeValue(object, false)){
             clientServerObjectsCount.get(object.getType()).incr(object.isServer() ? 0 : 1, -1);
         }else{
-            throw new UnsupportedOperationException("Type object: " + GameObjectsType.values()[object.getType()].name() + " has not be removed");
+            throw new UnsupportedOperationException("Type object: " + com.fogok.dataobjects.GameObjectsType.values()[object.getType()].name() + " has not be removed");
         }
     }
 
-    public Array<GameObject> getAllObjectsFromType(GameObjectsType type){
+    public Array<GameObject> getAllObjectsFromType(com.fogok.dataobjects.GameObjectsType type){
         return typedObjects.get(type.ordinal());
     }
 
@@ -118,7 +110,7 @@ public class EveryBodyPool extends Pool<GameObject> {
         return typedObjects;
     }
 
-    public int getClientServerObjectsCount(GameObjectsType type, boolean isServer){
+    public int getClientServerObjectsCount(com.fogok.dataobjects.GameObjectsType type, boolean isServer){
         return clientServerObjectsCount.get(type.ordinal()).get(isServer ? 0 : 1);
     }
 

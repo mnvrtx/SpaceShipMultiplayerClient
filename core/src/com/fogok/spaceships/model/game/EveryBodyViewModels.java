@@ -3,7 +3,7 @@ package com.fogok.spaceships.model.game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.model.SimpleViewModelObject;
-import com.fogok.spaceships.model.game.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.GameObjectsType;
 import com.fogok.spaceships.model.game.gameobjects.ships.SimpleShip;
 import com.fogok.spaceships.model.game.weapons.bullets.SimpleBluster;
 

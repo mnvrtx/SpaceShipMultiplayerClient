@@ -1,4 +1,4 @@
-package com.fogok.dataobjects.weapons;
+package com.fogok.dataobjects.gameobjects.weapons;
 
 import com.fogok.dataobjects.GameObjectsType;
 

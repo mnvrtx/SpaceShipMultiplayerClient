@@ -1,6 +1,6 @@
 package com.fogok.spaceships.net;
 
-public class UserInfo {
+public class UserInfo { //TODO: resolve this
 	private String username;
 	private long userId;
 	

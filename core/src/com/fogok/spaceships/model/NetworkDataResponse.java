@@ -30,10 +30,6 @@ public class NetworkDataResponse {
         }
     }
 
-    public boolean isResponseNormal(){
-        return jsonResponse != null;
-    }
-
     public JsonValue getJsonResponse() {
         return jsonResponse == null ? null : jsonResponse;
     }

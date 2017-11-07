@@ -56,7 +56,7 @@ public class EveryBodyPool extends Pool<GameObject> {
     protected GameObject newObject(com.fogok.dataobjects.GameObjectsType type){
         switch (type) {
             case SimpleBluster:
-                return new com.fogok.dataobjects.weapons.SimpleBlusterObject();
+                return new com.fogok.dataobjects.gameobjects.weapons.SimpleBlusterObject();
             case SimpleShip:
                 return new com.fogok.dataobjects.gameobjects.ships.SimpleShipObject();
         }

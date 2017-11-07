@@ -15,7 +15,7 @@ public abstract class GameObject implements Pool.Poolable {
     private float x;
     private float y;
     private float[] additParams = new float[0];
-    private boolean isServer;   //означает, является ли объект внутри сервера
+
 
     private boolean isInsideField;  //означает, находится ли объект в пуле или же он сейчас непосредственно находится на карте, true - значит, что он внутри пула
 
@@ -32,9 +32,7 @@ public abstract class GameObject implements Pool.Poolable {
         this.type = i;
     }
 
-    public void setServer(boolean server) {
-        isServer = server;
-    }
+
 
     public void setPosition(float x, float y) {
         setX(x);
@@ -88,9 +86,7 @@ public abstract class GameObject implements Pool.Poolable {
         return widthDivHeight;
     }
 
-    public boolean isServer() {
-        return isServer;
-    }
+
 
     public boolean getFlag(int i) {
         return flags.get(i);

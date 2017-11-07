@@ -24,10 +24,6 @@ public class NetworkData {
         networkDataResponse.handle(json);
     }
 
-    public boolean isResponseNormal(){
-        return networkDataResponse.isResponseNormal();
-    }
-
     public JsonValue getResponseJson(){
         return networkDataResponse.getJsonResponse();
     }

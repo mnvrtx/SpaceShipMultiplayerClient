@@ -4,9 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.fogok.dataobjects.GameObject;
 import com.fogok.dataobjects.GameObjectsType;
 import com.fogok.dataobjects.utils.EveryBodyPool;
-import com.fogok.dataobjects.utils.FastJsonWriter;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
-import com.fogok.dataobjects.utils.libgdxexternals.JsonValue;
 import com.fogok.spaceships.control.ControllerManager;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.view.game.EveryBodyViews;
@@ -39,26 +37,7 @@ public abstract class UnionControllerBase {
 
     public void handleComplex(boolean pause){
         handleClient(pause);
-        handleAllServerObjects(pause);
-    }
-
-    private void handleAllServerObjects(boolean pause){
-        if (networkData.isResponseNormal()) {
-            balanceServerResponseObjects(calculateSizeAllObjectsTypeFromAllServerPlayers(networkData.getResponseJson()),
-                    everyBodyPool.getAllObjectsFromType(objectType));
-            handleServer(networkData.getResponseJson(), pause);
-        }
-    }
-
-    private int calculateSizeAllObjectsTypeFromAllServerPlayers(JsonValue jsonValue){
-        int resp = 0;
-        for (int i = 0; i < jsonValue.size; i++) {
-            JsonValue objectsInType = networkData.getResponseJson().get(i).get(String.valueOf(objectType.ordinal()));
-            if (objectsInType != null)
-                resp += objectsInType.size;
-        }
-
-        return resp;
+//        handleAllServerObjects(pause);
     }
 
     private void handleClient(boolean pause) {
@@ -97,59 +76,7 @@ public abstract class UnionControllerBase {
         return handleClientOneObject(gameObject);
     }
 
-    /**
-     * Обработка серверных данных
-     * @param jsonValue в этом массиве массив ровно тех объектов, которые относятся к objectType
-     */
-    private void handleServer(JsonValue jsonValue, boolean pause) {
-        Array<GameObject> activeObjects = everyBodyPool.getAllObjectsFromType(objectType);
-        int currentServerObjectIndex = 0;
-        for (int i = 0; i < jsonValue.size; i++) {
-            JsonValue allObjectsInOnePlayer = jsonValue.get(i).get(String.valueOf(objectType.ordinal()));
-            if (allObjectsInOnePlayer != null) {
-                for (int j = 0; j < allObjectsInOnePlayer.size; j++) {
 
-                    for (int k = currentServerObjectIndex; k < activeObjects.size; k++)
-                        if (activeObjects.get(k).isServer()) {
-                            currentServerObjectIndex = k;
-                            break;
-                        }
-
-                    handleServerOneObject(allObjectsInOnePlayer.get(j), activeObjects.get(currentServerObjectIndex++));
-                }
-            }
-        }
-
-//        int jsonIters = 0;
-//        int aoLen = activeObjects.size;
-//
-//        for (int i = aoLen; --i >= 0;)
-//            if (activeObjects.get(i).isServer()){
-//                handleServerOneObject(jsonValue.get(jsonIters), activeObjects.get(i));
-//                jsonIters++;
-//            }
-
-    }
-
-    protected void balanceServerResponseObjects(int targetLenght, Array<GameObject> activeObjects){  //TODO: test this method
-        int currLenght = everyBodyPool.getClientServerObjectsCount(objectType, true);
-        if (targetLenght > currLenght)  // если нужное число больше текущего - надо добавить объектов
-            for (int i = 0; i < targetLenght - currLenght; i++)
-                everyBodyPool.obtain(objectType, true);
-        else if (targetLenght < currLenght){    //если нужное число меньше текущего - надо делитнуть лишнее
-            int currentDeletedObjects = 0, targetDeletedObjects = currLenght - targetLenght;
-            int len = activeObjects.size;
-            for (int i = len; --i >= 0;){    //проходимся по всем абсолютно объектам
-                GameObject gameObject = activeObjects.get(i);
-                if (gameObject.isServer()) {    //если объект серверный делитим егo
-                    everyBodyPool.free(gameObject);
-                    currentDeletedObjects++;    //инкрементим число делитнутых объектов
-                    if (currentDeletedObjects == targetDeletedObjects)  //если делитнули нужное кол-во
-                        break;                                          //выходим нах!
-                }
-            }
-        }
-    }
 
     protected void handleClientNetworkLogic(GameObject handledObject, boolean isInsideField, int i){    //TODO: REFACTOR THIS
         Array<GameObject> activeObjects = everyBodyPool.getAllObjectsFromType(objectType);
@@ -167,24 +94,4 @@ public abstract class UnionControllerBase {
      * @return находится ли объект в игре, или же внутри пула (нужно вернуть true, чтобы добавить объект в пул снова)
      */
     protected abstract boolean handleClientOneObject(GameObject handledClientObject);
-
-    /**
-     * Значит этот метод вызывается в цикле (тобишь тупо проходим по всем объектам)
-     * @param referenceObject объект, который пришёл с сервера, передаём его, чтобы с ним работать
-     * @param handledServerObject непосредственно тот объект, с котороым работаем. Внутри метода
-     *                            надо будет в него пихать нужные данные
-     */
-    protected void handleServerOneObject(JsonValue referenceObject, GameObject handledServerObject){
-        //TODO: здесь логика перевода любого объекта в GameObject
-        if (referenceObject.has(FastJsonWriter.JSONStrings[GameObject.BOOLEANS]))
-            handledServerObject.setLongFlags(referenceObject.getLong(GameObject.BOOLEANS));
-        if (referenceObject.has(FastJsonWriter.JSONStrings[GameObject.ADIITPRMS])) {
-            JsonValue jsonValue = referenceObject.get(GameObject.ADIITPRMS);
-            for (int i = 0; i < jsonValue.size; i++)
-                handledServerObject.setAdditParam(referenceObject.get(GameObject.ADIITPRMS).getFloat(i), i);
-        }
-
-        handledServerObject.setPosition(referenceObject.getFloat(GameObject.X), referenceObject.getFloat(GameObject.Y));
-        handledServerObject.setType(objectType);
-    }
 }

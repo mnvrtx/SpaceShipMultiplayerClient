@@ -1,12 +1,14 @@
 package com.fogok.dataobjects.utils;
 
 import com.fogok.dataobjects.GameObject;
+import com.fogok.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.gameobjects.ships.SimpleShipObject;
+import com.fogok.dataobjects.gameobjects.weapons.SimpleBlusterObject;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
 
 public class EveryBodyPool extends Pool<GameObject> {
 
     private Array<Array<GameObject>> typedObjects;
-    //двумерный массив, как работает рассказываю на примере:
     /*
 
     typedObjects.get(type.ordinal()).add(responseGameObject);
@@ -16,6 +18,11 @@ public class EveryBodyPool extends Pool<GameObject> {
     а дальше мы можем с ними уже работать
     * */
 
+//    private IntArray objectsCount;
+    private int typeObjectsCount;    //количество типов, в которых количество объектов не равно 0
+
+
+    //двумерный массив, как работает рассказываю на примере:
 //    private Array<IntArray> clientServerObjectsCount;     //oldRealization
     //двумерный массив, как работает рассказываю на примере:
     /*
@@ -32,11 +39,13 @@ public class EveryBodyPool extends Pool<GameObject> {
 
     public EveryBodyPool(int initialCapacity) {
         super(initialCapacity);
-        typedObjects = new Array<>(false, initialCapacity);
+        typedObjects = new Array<Array<GameObject>>(false, initialCapacity);
         for (int i = 0; i < initialCapacity; i++) {
             //TODO: increment new arrays
-            typedObjects.add(new Array<>(false, initialCapacity));
+            typedObjects.add(new Array<GameObject>(false, initialCapacity));
         }
+
+//        objectsCount = new IntArray(initialCapacity);
 
 //        clientServerObjectsCount = new Array<IntArray>(false, initialCapacity);
 //        for (int i = 0; i < initialCapacity; i++) {
@@ -55,9 +64,9 @@ public class EveryBodyPool extends Pool<GameObject> {
     protected GameObject newObject(com.fogok.dataobjects.GameObjectsType type){
         switch (type) {
             case SimpleBluster:
-                return new com.fogok.dataobjects.gameobjects.weapons.SimpleBlusterObject();
+                return new SimpleBlusterObject();
             case SimpleShip:
-                return new com.fogok.dataobjects.gameobjects.ships.SimpleShipObject();
+                return new SimpleShipObject();
         }
         return null;
     }
@@ -81,21 +90,30 @@ public class EveryBodyPool extends Pool<GameObject> {
         responseGameObject.setInsideField(false);
 
 //        clientServerObjectsCount.get(type.ordinal()).incr(isServer ? 0 : 1, 1);
+//        objectsCount.incr(type.ordinal(), 1);
+        if (typedObjects.get(type.ordinal()).size == 0)
+            typeObjectsCount++;
         typedObjects.get(type.ordinal()).add(responseGameObject);
 
         return responseGameObject;
 
     }
 
+    public void free(GameObjectsType gameObjectsType) {
+        free(typedObjects.get(gameObjectsType.ordinal()).peek());
+    }
+
     @Override
     public void free(GameObject object) {
         super.free(object);
         object.setInsideField(true);
-//        if (typedObjects.get(object.getType()).removeValue(object, false)){
-//            clientServerObjectsCount.get(object.getType()).incr(object.isServer() ? 0 : 1, -1);
-//        }else{
-//            throw new UnsupportedOperationException("Type object: " + com.fogok.dataobjects.GameObjectsType.values()[object.getType()].name() + " has not be removed");
-//        }
+        if (typedObjects.get(object.getType()).removeValue(object, false)){
+//            objectsCount.incr(object.getType(), -1);
+            if (typedObjects.get(object.getType()).size == 0)
+                typeObjectsCount--;
+        }else{
+            throw new UnsupportedOperationException("Type object: " + com.fogok.dataobjects.GameObjectsType.values()[object.getType()].name() + " has not be removed");
+        }
     }
 
     public Array<GameObject> getAllObjectsFromType(com.fogok.dataobjects.GameObjectsType type){
@@ -112,6 +130,10 @@ public class EveryBodyPool extends Pool<GameObject> {
 
     public Array<GameObject> getFreeEveryBodies(){
         return freeObjects;
+    }
+
+    public int getTypeObjectsCount() {
+        return typeObjectsCount;
     }
 
     @Override

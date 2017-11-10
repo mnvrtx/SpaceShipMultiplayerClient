@@ -37,6 +37,15 @@ allprojects {
     }
 }
 
+project (":dataobjects"){
+    apply plugin: "java"
+
+    dependencies{
+        compile fileTree(dir: 'libs', include: ['*.jar'])
+        compile "com.esotericsoftware:kryo:4.0.1"
+    }
+}
+
 project(":desktop") {
     apply plugin: "java"
 
@@ -78,7 +87,6 @@ project(":core") {
 
     dependencies {
         compile "io.netty:netty-all:4.0.36.Final"
-        compile "com.esotericsoftware:kryo:4.0.1"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     }

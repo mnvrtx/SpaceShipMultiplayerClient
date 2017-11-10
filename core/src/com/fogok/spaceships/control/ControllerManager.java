@@ -1,13 +1,10 @@
 package com.fogok.spaceships.control;
 
+import com.fogok.dataobjects.utils.EveryBodyPool;
 import com.fogok.spaceships.control.other.BackgroundController;
 import com.fogok.spaceships.control.ui.CameraController;
-import com.fogok.spaceships.control.game.EverybodyObjectsController;
 import com.fogok.spaceships.control.ui.JoyStickController;
 import com.fogok.spaceships.model.NetworkData;
-import com.fogok.dataobjects.GameObjectsType;
-import com.fogok.dataobjects.gameobjects.ships.SimpleShipObject;
-import com.fogok.dataobjects.utils.EveryBodyPool;
 import com.fogok.spaceships.view.game.EveryBodyViews;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
@@ -17,12 +14,12 @@ public class ControllerManager implements Controller {
     private EveryBodyViews everyBodyViews;
 
     //region Pool system
-    private static final int bufferSize = 100;
+    public static final int bufferSize = 100;
 
     private final EveryBodyPool everyBodyObjectsPool;
     //endregion
 
-    private EverybodyObjectsController everybodyObjectsController;
+//    private EverybodyObjectsController everybodyObjectsController;
 
     private JoyStickController joyStickController;
     private BackgroundController backgroundController;
@@ -34,19 +31,19 @@ public class ControllerManager implements Controller {
         everyBodyObjectsPool = new EveryBodyPool(bufferSize);
 
         joyStickController = new JoyStickController(networkData);
-        everybodyObjectsController = new EverybodyObjectsController(this, networkData);   //на этом этапе тут объектов нет
+//        everybodyObjectsController = new EverybodyObjectsController(this, networkData);   //на этом этапе тут объектов нет
         backgroundController = new BackgroundController();
     }
 
 
     @Override
     public void handle(boolean pause) {
-        everybodyObjectsController.handle(false);
+//        everybodyObjectsController.handle(false);
     }
 
-    public void postInitialization() {    //здесь иниициализируем все, где нам нужжны уже созданные объекты модели
-        cameraController = new CameraController(nativeGdxHelper, (SimpleShipObject) everyBodyObjectsPool.getAllObjectsFromType(GameObjectsType.SimpleShip).get(0));
-    }
+//    public void postInitialization() {    //здесь иниициализируем все, где нам нужжны уже созданные объекты модели
+//        cameraController = new CameraController(nativeGdxHelper, (SimpleShipObject) everyBodyObjectsPool.getAllObjectsFromType(GameObjectsType.SimpleShip).get(0));
+//    }
 
     //region Getters
     public JoyStickController getJoyStickController() {
@@ -69,9 +66,9 @@ public class ControllerManager implements Controller {
         return everyBodyObjectsPool;
     }
 
-    public EverybodyObjectsController getEverybodyObjectsController() {
-        return everybodyObjectsController;
-    }
+//    public EverybodyObjectsController getEverybodyObjectsController() {
+//        return everybodyObjectsController;
+//    }
     //endregion
 
     public void dispose(){

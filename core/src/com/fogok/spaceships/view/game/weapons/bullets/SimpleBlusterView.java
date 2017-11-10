@@ -8,7 +8,7 @@ import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.View;
 import com.fogok.spaceships.view.utils.AspectRatioHelper;
 
-import static com.fogok.dataobjects.weapons.BulletObjectBase.AdditParams.*;
+import static com.fogok.dataobjects.gameobjects.weapons.BulletObjectBase.AdditParams.*;
 
 
 public class SimpleBlusterView implements View {

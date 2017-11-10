@@ -45,12 +45,12 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
                     @Override
                     public void run() {
                         if (!blocker) {
-                            System.out.print("Sending data to server...");
-                            String dataS = networkData.getJSON();
-                            ByteBuf byteBuf = Unpooled.copiedBuffer(dataS.getBytes(Charset.forName(encoding)));
-                            channel.write(byteBuf);
-                            ctx.flush();
-                            System.out.println("Complete:" + dataS);
+//                            System.out.print("Sending data to server...");
+//                            String dataS = networkData.getJSON();
+//                            ByteBuf byteBuf = Unpooled.copiedBuffer(dataS.getBytes(Charset.forName(encoding)));
+//                            channel.write(byteBuf);
+//                            ctx.flush();
+//                            System.out.println("Complete:" + dataS);
                             blocker = true;
                         }
                     }

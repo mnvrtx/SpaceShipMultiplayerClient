@@ -26,7 +26,7 @@ public class GameSession {
         everyBodyViews = new EveryBodyViews();
         controllerManager = new ControllerManager(everyBodyViews, nativeGdxHelper, networkData);    //controller manager хранит в себе все контроллеры, в каждую модель передаём его
         everyBodyViewModels = new EveryBodyViewModels(controllerManager); //теперь в controllerManager есть необходимые начальные объекты
-        controllerManager.postInitialization();
+//        controllerManager.postInitialization();
     }
 
     public void draw(NativeGdxHelper nativeGdxHelper) {

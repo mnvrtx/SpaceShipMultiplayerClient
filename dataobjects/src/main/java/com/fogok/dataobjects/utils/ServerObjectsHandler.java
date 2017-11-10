@@ -58,10 +58,10 @@ public class ServerObjectsHandler {
                 for (int j = 0; j < objTypeJ.size; j++) {       //обрабатываем каждый объект
 
                     for (int k = currentServerObjectIndex; k < activeObjects.size; k++)    //проходимся по всем объектам определённого типа внутри нашего пула, и
-                        if (activeObjects.get(k).isServer()) {
-                            currentServerObjectIndex = k;
-                            break;
-                        }
+//                        if (activeObjects.get(k).isServer()) {
+//                            currentServerObjectIndex = k;
+//                            break;
+//                        }
 
                     handleServerOneObject(objTypeJ.get(j), activeObjects.get(currentServerObjectIndex++));
                 }
@@ -95,23 +95,23 @@ public class ServerObjectsHandler {
      * @param activeObjects - объекты определённого типа
      */
     protected void balanceServerResponseObjects(int targetLenght, Array<GameObject> activeObjects){  //TODO: test this method
-        int currLenght = everyBodyPool.getClientServerObjectsCount(objectType, true);
-        if (targetLenght > currLenght)  // если нужное число больше текущего - надо добавить объектов
-            for (int i = 0; i < targetLenght - currLenght; i++)
-                everyBodyPool.obtain(objectType, true);
-        else if (targetLenght < currLenght){    //если нужное число меньше текущего - надо делитнуть лишнее
-            int currentDeletedObjects = 0, targetDeletedObjects = currLenght - targetLenght;
-            int len = activeObjects.size;
-            for (int i = len; --i >= 0;){    //проходимся по всем абсолютно объектам
-                GameObject gameObject = activeObjects.get(i);
-                if (gameObject.isServer()) {    //если объект серверный делитим егo
-                    everyBodyPool.free(gameObject);
-                    currentDeletedObjects++;    //инкрементим число делитнутых объектов
-                    if (currentDeletedObjects == targetDeletedObjects)  //если делитнули нужное кол-во
-                        break;                                          //выходим нах!
-                }
-            }
-        }
+//        int currLenght = everyBodyPool.getClientServerObjectsCount(objectType, true);
+//        if (targetLenght > currLenght)  // если нужное число больше текущего - надо добавить объектов
+//            for (int i = 0; i < targetLenght - currLenght; i++)
+//                everyBodyPool.obtain(objectType, true);
+//        else if (targetLenght < currLenght){    //если нужное число меньше текущего - надо делитнуть лишнее
+//            int currentDeletedObjects = 0, targetDeletedObjects = currLenght - targetLenght;
+//            int len = activeObjects.size;
+//            for (int i = len; --i >= 0;){    //проходимся по всем абсолютно объектам
+//                GameObject gameObject = activeObjects.get(i);
+//                if (gameObject.isServer()) {    //если объект серверный делитим егo
+//                    everyBodyPool.free(gameObject);
+//                    currentDeletedObjects++;    //инкрементим число делитнутых объектов
+//                    if (currentDeletedObjects == targetDeletedObjects)  //если делитнули нужное кол-во
+//                        break;                                          //выходим нах!
+//                }
+//            }
+//        }
     }
 }
 

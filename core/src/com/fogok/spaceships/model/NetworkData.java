@@ -32,9 +32,9 @@ public class NetworkData {
         return networkDataResponse.getOldJsonResponse();
     }
 
-    public String getJSON() {
-        return fastJsonWriter.getJSON();
-    }
+//    public String getJSON() {
+//        return fastJsonWriter.getJSON();
+//    }
 
 
 //    public static void main(String[] args) {

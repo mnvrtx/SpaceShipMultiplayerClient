@@ -3,7 +3,6 @@ package com.fogok.spaceships.view.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.utils.JsonWriter;
 import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.net.ServerLogicWrapper;
 import com.fogok.spaceships.view.screens.screen_components.GUI;
@@ -44,7 +43,7 @@ public class GameScreen implements Screen {
         gameSession.draw(nativeGdxHelper);
         if (DebugGUI.DEBUG) {
             DebugGUI.DEBUG_TEXT.setLength(0);
-            DebugGUI.DEBUG_TEXT.append(DebugGUI.jsonReader.parse(networkData.getJSON()).prettyPrint(JsonWriter.OutputType.json, 2));
+//            DebugGUI.DEBUG_TEXT.append(DebugGUI.jsonReader.parse(networkData.getJSON()).prettyPrint(JsonWriter.OutputType.json, 2));
         }
         gui.draw(nativeGdxHelper);
     }

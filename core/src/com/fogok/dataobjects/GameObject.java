@@ -2,6 +2,7 @@ package com.fogok.dataobjects;
 
 import com.fogok.dataobjects.utils.GMUtils;
 import com.fogok.dataobjects.utils.Pool;
+import com.fogok.dataobjects.utils.Serialization;
 
 import java.util.BitSet;
 
@@ -10,6 +11,8 @@ public abstract class GameObject implements Pool.Poolable {
     public static final int X = 0, Y = 1, ADIITPRMS = 2, BOOLEANS = 3;
 
     private BitSet flags = new BitSet(10);  //10 params available
+
+    private long playerId;
     private float widthDivHeight;
     private int type;
     private float x;
@@ -24,6 +27,11 @@ public abstract class GameObject implements Pool.Poolable {
 
     //region Setters
 
+
+    public void setPlayerId(long playerId) {
+        this.playerId = playerId;
+    }
+
     public void setType(GameObjectsType gameObjectsType) {
         setType(gameObjectsType.ordinal());
     }
@@ -31,8 +39,6 @@ public abstract class GameObject implements Pool.Poolable {
     public void setType(int i) {
         this.type = i;
     }
-
-
 
     public void setPosition(float x, float y) {
         setX(x);
@@ -55,6 +61,10 @@ public abstract class GameObject implements Pool.Poolable {
         additParams[i] = GMUtils.getRoundedVal(param);
     }
 
+    public void setAdditParams(float[] additParams) {
+        this.additParams = additParams;
+    }
+
     public void setInsideField(boolean insideField) {
         isInsideField = insideField;
     }
@@ -69,7 +79,7 @@ public abstract class GameObject implements Pool.Poolable {
 
     public void setLongFlags(long l){
         flags.clear();
-        convert(flags, l);
+        Serialization.convert(flags, l);
     }
 
     public void setFlags(int flagNumber, boolean flag) {
@@ -78,8 +88,14 @@ public abstract class GameObject implements Pool.Poolable {
     //endregion
 
     //region Getters
+
+
+    public long getPlayerId() {
+        return playerId;
+    }
+
     public long getLongFlags(){
-        return convert(flags);
+        return Serialization.convert(flags);
     }
 
     public float getWidthDivHeight() {
@@ -117,26 +133,6 @@ public abstract class GameObject implements Pool.Poolable {
     }
     //endregion
 
-    private static BitSet convert(BitSet bitSet, long value) {
-        bitSet.clear();
-        int index = 0;
-        while (value != 0L) {
-            if (value % 2L != 0) {
-                bitSet.set(index);
-            }
-            ++index;
-            value = value >>> 1;
-        }
-        return bitSet;
-    }
-
-    private static long convert(BitSet bits) {
-        long value = 0L;
-        for (int i = 0; i < bits.length(); ++i) {
-            value += bits.get(i) ? (1L << i) : 0L;
-        }
-        return value;
-    }
 
     //test
 

@@ -2,7 +2,6 @@ package com.fogok.dataobjects.utils;
 
 import com.fogok.dataobjects.GameObject;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
-import com.fogok.dataobjects.utils.libgdxexternals.IntArray;
 
 public class EveryBodyPool extends Pool<GameObject> {
 
@@ -17,7 +16,7 @@ public class EveryBodyPool extends Pool<GameObject> {
     а дальше мы можем с ними уже работать
     * */
 
-    private Array<IntArray> clientServerObjectsCount;
+//    private Array<IntArray> clientServerObjectsCount;     //oldRealization
     //двумерный массив, как работает рассказываю на примере:
     /*
 
@@ -33,18 +32,18 @@ public class EveryBodyPool extends Pool<GameObject> {
 
     public EveryBodyPool(int initialCapacity) {
         super(initialCapacity);
-        typedObjects = new Array<Array<GameObject>>(false, initialCapacity);
+        typedObjects = new Array<>(false, initialCapacity);
         for (int i = 0; i < initialCapacity; i++) {
             //TODO: increment new arrays
-            typedObjects.add(new Array<GameObject>(false, initialCapacity));
+            typedObjects.add(new Array<>(false, initialCapacity));
         }
 
-        clientServerObjectsCount = new Array<IntArray>(false, initialCapacity);
-        for (int i = 0; i < initialCapacity; i++) {
-            clientServerObjectsCount.add(new IntArray(false, 2));
-            clientServerObjectsCount.peek().add(0);
-            clientServerObjectsCount.peek().add(0);
-        }
+//        clientServerObjectsCount = new Array<IntArray>(false, initialCapacity);
+//        for (int i = 0; i < initialCapacity; i++) {
+//            clientServerObjectsCount.add(new IntArray(false, 2));
+//            clientServerObjectsCount.peek().add(0);
+//            clientServerObjectsCount.peek().add(0);
+//        }
 
     }
 
@@ -63,7 +62,7 @@ public class EveryBodyPool extends Pool<GameObject> {
         return null;
     }
 
-    public GameObject obtain(com.fogok.dataobjects.GameObjectsType type, boolean isServer){
+    public GameObject obtain(com.fogok.dataobjects.GameObjectsType type){
 
         GameObject responseGameObject = null;
         boolean needNew = true;
@@ -80,11 +79,8 @@ public class EveryBodyPool extends Pool<GameObject> {
             responseGameObject = newObject(type);
 
         responseGameObject.setInsideField(false);
-        responseGameObject.setServer(isServer);
 
-
-
-        clientServerObjectsCount.get(type.ordinal()).incr(isServer ? 0 : 1, 1);
+//        clientServerObjectsCount.get(type.ordinal()).incr(isServer ? 0 : 1, 1);
         typedObjects.get(type.ordinal()).add(responseGameObject);
 
         return responseGameObject;
@@ -95,11 +91,11 @@ public class EveryBodyPool extends Pool<GameObject> {
     public void free(GameObject object) {
         super.free(object);
         object.setInsideField(true);
-        if (typedObjects.get(object.getType()).removeValue(object, false)){
-            clientServerObjectsCount.get(object.getType()).incr(object.isServer() ? 0 : 1, -1);
-        }else{
-            throw new UnsupportedOperationException("Type object: " + com.fogok.dataobjects.GameObjectsType.values()[object.getType()].name() + " has not be removed");
-        }
+//        if (typedObjects.get(object.getType()).removeValue(object, false)){
+//            clientServerObjectsCount.get(object.getType()).incr(object.isServer() ? 0 : 1, -1);
+//        }else{
+//            throw new UnsupportedOperationException("Type object: " + com.fogok.dataobjects.GameObjectsType.values()[object.getType()].name() + " has not be removed");
+//        }
     }
 
     public Array<GameObject> getAllObjectsFromType(com.fogok.dataobjects.GameObjectsType type){
@@ -110,9 +106,9 @@ public class EveryBodyPool extends Pool<GameObject> {
         return typedObjects;
     }
 
-    public int getClientServerObjectsCount(com.fogok.dataobjects.GameObjectsType type, boolean isServer){
-        return clientServerObjectsCount.get(type.ordinal()).get(isServer ? 0 : 1);
-    }
+//    public int getClientServerObjectsCount(com.fogok.dataobjects.GameObjectsType type, boolean isServer){
+//        return clientServerObjectsCount.get(type.ordinal()).get(isServer ? 0 : 1);
+//    }
 
     public Array<GameObject> getFreeEveryBodies(){
         return freeObjects;
@@ -125,15 +121,15 @@ public class EveryBodyPool extends Pool<GameObject> {
             typedObjects.get(i).clear();
             typedObjects.set(i, null);
         }
-        for (int i = 0; i < clientServerObjectsCount.size; i++) {
-            clientServerObjectsCount.get(i).clear();
-            clientServerObjectsCount.set(i, null);
-        }
+//        for (int i = 0; i < clientServerObjectsCount.size; i++) {
+//            clientServerObjectsCount.get(i).clear();
+//            clientServerObjectsCount.set(i, null);
+//        }
         typedObjects.clear();
         typedObjects = null;
 
-        clientServerObjectsCount.clear();
-        clientServerObjectsCount = null;
+//        clientServerObjectsCount.clear();
+//        clientServerObjectsCount = null;
         //TODO: GC optimize
     }
 }

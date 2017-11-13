@@ -27,8 +27,22 @@ repeat: none
   index: -1
 3
   rotate: false
-  xy: 528, 357
+  xy: 811, 357
   size: 21, 80
   orig: 21, 80
+  offset: 0, 0
+  index: -1
+4
+  rotate: false
+  xy: 528, 368
+  size: 281, 69
+  orig: 281, 69
+  offset: 0, 0
+  index: -1
+5
+  rotate: false
+  xy: 528, 297
+  size: 281, 69
+  orig: 281, 69
   offset: 0, 0
   index: -1

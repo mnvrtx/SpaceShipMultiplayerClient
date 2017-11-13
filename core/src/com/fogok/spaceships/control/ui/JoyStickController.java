@@ -1,47 +1,62 @@
 package com.fogok.spaceships.control.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.fogok.dataobjects.ConsoleState;
 import com.fogok.spaceships.Main;
 import com.fogok.spaceships.control.Controller;
-import com.fogok.spaceships.model.NetworkData;
 
 public class JoyStickController implements Controller {
 
+    /**
+     * Выходные координаты для отрисовки dragButton
+     */
     public float touchedXJoystick, touchedYJoystick;
-    public int sizeBackJoystick, posXJoystick, posYJoystick;  /// BackJoyStick
-    public int sizeJoystick, centerJoystickX, centerJoystickY;   /// joyStick    /// 2 последние переменные - это центр джойстика
+    /**
+     * Размер контрола joystick, а так же координаты центра
+     */
+    public int sizeJoystickDragButton, sizeJoystickCircle, posXJoystick, posYJoystick, centerXJoystick, centerYJoystick;
 
-    public float joyStickOutputX, joyStickOutputY;
+    private ConsoleState consoleState;
 
-    private NetworkData _networkData;
-
-    public JoyStickController(NetworkData networkData){
-        _networkData = networkData;
-        sizeBackJoystick = (int) (Main.DGNL / 7f);
-        sizeJoystick = sizeBackJoystick / 2;
-        setPos(Gdx.graphics.getWidth() - 30 - sizeBackJoystick, 30);
+    public JoyStickController(ConsoleState consoleState){
+        this.consoleState = consoleState;
+        sizeJoystickCircle = (int) (Main.DGNL / 7f);
+        sizeJoystickDragButton = sizeJoystickCircle / 2;
+        setControlPosition(30, 30);
     }
 
+    /**
+     * Обрабатываем все
+     * @param pause
+     */
     public void handle(boolean pause){
-        int it1 = 0;
-        for (int i = 0; i < 5; i++) {
-            if (Gdx.input.isTouched(i) && isInJB(Gdx.input.getX(i), Gdx.graphics.getHeight() - Gdx.input.getY(i))){
-                setJoyStick(i, false);
-                it1++;
-            }else if (it1 == 0){
-                setJoyStick(i, true);
+        if (!pause) {
+            int it1 = 0;
+            for (int i = 0; i < 5; i++) {
+                if (Gdx.input.isTouched(i) && isContainsJoystick(Gdx.input.getX(i), Gdx.graphics.getHeight() - Gdx.input.getY(i))){
+                    refreshJoystick(i, true);
+                    it1++;
+                }else if (it1 == 0){
+                    refreshJoystick(i, false);
+                }
             }
         }
     }
 
-    private void setJoyStick(int i, boolean center){   //setJoyStick
-        if (!center){
-            float xT = (float) Gdx.input.getX(i);
-            float yT = (float) (Gdx.graphics.getHeight() - Gdx.input.getY(i));
+    /**
+     * Рефрешим джойстик
+     * @param tIdx индекс касания
+     * @param isTouched касаются ли joystick
+     */
+    private void refreshJoystick(int tIdx, boolean isTouched){   //refreshJoystick
+        float joyStickOutputX, joyStickOutputY;
+        if (isTouched){
+            float xT = (float) Gdx.input.getX(tIdx);
+            float yT = (float) (Gdx.graphics.getHeight() - Gdx.input.getY(tIdx));
 
-            float angle = (float) (Math.atan2(yT - centerJoystickY, xT - centerJoystickX) / Math.PI * 180) + 90f;
-            float distance = (float) Math.sqrt(Math.pow((xT - centerJoystickX), 2) + Math.pow((yT - centerJoystickY), 2));
-            float max_over_joystick_distance =  (float) sizeBackJoystick / 2f;
+            float angle = (float) (Math.atan2(yT - centerYJoystick, xT - centerXJoystick) / Math.PI * 180) + 90f;
+            float distance = (float) Math.sqrt(Math.pow((xT - centerXJoystick), 2) + Math.pow((yT - centerYJoystick), 2));
+            float max_over_joystick_distance =  (float) sizeJoystickCircle / 2f;
             if (distance > max_over_joystick_distance) distance = max_over_joystick_distance;
 
 //            NAPR_J = (int) (angle - 180f);
@@ -50,39 +65,41 @@ public class JoyStickController implements Controller {
             joyStickOutputX = (float) Math.sin(Math.toRadians(180f - angle)) * distance;
             joyStickOutputY = (float) Math.cos(Math.toRadians(180f - angle)) * distance;
 
-            touchedXJoystick = (float) (centerJoystickX - sizeJoystick / 2) + joyStickOutputX;
-            touchedYJoystick = (float) (centerJoystickY - sizeJoystick / 2) + joyStickOutputY;
+            touchedXJoystick = centerXJoystick - sizeJoystickDragButton / 2f + joyStickOutputX;
+            touchedYJoystick = centerYJoystick - sizeJoystickDragButton / 2f + joyStickOutputY;
 
-//            _networkData.setJoystickX(joyStickOutputX);
-//            _networkData.setJoystickY(joyStickOutputY);
         }else{
-            touchedXJoystick = (float) centerJoystickX - (float) sizeJoystick / 2f;
-            touchedYJoystick = (float) centerJoystickY - (float) sizeJoystick / 2f;
+            touchedXJoystick = centerXJoystick - sizeJoystickDragButton / 2f;
+            touchedYJoystick = centerYJoystick - sizeJoystickDragButton / 2f;
+
             joyStickOutputX = 0;
             joyStickOutputY = 0;
-//            _networkData.setJoystickX(0f);
-//            _networkData.setJoystickY(0f);
         }
 
-
-
+        consoleState.setX(joyStickOutputX);
+        consoleState.setY(joyStickOutputY);
     }
 
-    private boolean isInJB(int x, int y){    //// true, если касание внутри джойстика, false - если снаружи джойстика
-        int distance = (int) Math.sqrt(Math.pow((x - centerJoystickX), 2) + Math.pow((y - centerJoystickY), 2));
-        if (distance < sizeBackJoystick * 2)
+    /**
+     * Возвращаем true, если координаты внутри джойстика, false - если снаружи джойстика
+     */
+    private boolean isContainsJoystick(int x, int y){
+        int distance = (int) Math.sqrt(Math.pow((x - centerXJoystick), 2) + Math.pow((y - centerYJoystick), 2));
+        if (distance < sizeJoystickCircle * 2)
             return true;
         else
             return false;
     }
 
-
-    private void setPos(int x, int y){
+    /**
+     * Ставим сам контрол joystick куда нам надо
+     */
+    private void setControlPosition(int x, int y){
         posXJoystick = x;
         posYJoystick = y;
-        centerJoystickX = posXJoystick + sizeBackJoystick / 2;
-        centerJoystickY = posYJoystick + sizeBackJoystick / 2;
-        setJoyStick(0, true);
+        centerXJoystick = posXJoystick + sizeJoystickCircle / 2;
+        centerYJoystick = posYJoystick + sizeJoystickCircle / 2;
+        refreshJoystick(0, false);
     }
 
 }

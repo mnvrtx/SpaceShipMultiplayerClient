@@ -1,8 +1,5 @@
 package com.fogok.spaceships.net;
 
-
-import com.fogok.spaceships.model.NetworkData;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -14,39 +11,49 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 public class ServerLogicWrapper {
 
-    public static void openServerSocket(final NetworkData networkData){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+    public static boolean isThreadOnly;
+    public static void openServerSocket(final NetRootController netRootController){
+        if (!isThreadOnly) {
+            System.out.println("startSocketThread");
+            isThreadOnly = true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
 
-                EventLoopGroup workingGroup = new NioEventLoopGroup();
+                    EventLoopGroup workingGroup = new NioEventLoopGroup();
 
-                try {
-                    Bootstrap boot = new Bootstrap();
-                    boot.group(workingGroup)
-                            .channel(NioSocketChannel.class)
-                            .option(ChannelOption.TCP_NODELAY, true)
-                            .handler(new ChannelInitializer<SocketChannel>() {
-                                @Override
-                                protected void initChannel(SocketChannel ch) throws Exception {
-                                    ch.pipeline().addLast(new NettyHandler(networkData));
-                                }
-                            });
+                    try {
+                        Bootstrap boot = new Bootstrap();
+                        boot.group(workingGroup)
+                                .channel(NioSocketChannel.class)
+                                .option(ChannelOption.TCP_NODELAY, true)
+                                .handler(new ChannelInitializer<SocketChannel>() {
+                                    @Override
+                                    protected void initChannel(SocketChannel ch) throws Exception {
+                                        ch.pipeline().addLast(new NettyHandler(netRootController));
+                                        ch.pipeline().addLast(new ExceptionHandler(netRootController));
+                                    }
+                                });
 
-                    ChannelFuture future = boot.connect("127.0.0.1", 15505).sync();
 
-                    future.channel().closeFuture().sync();
+                        ChannelFuture future = boot.connect("127.0.0.1", 15505).sync();
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    workingGroup.shutdownGracefully();
-                    System.out.println("ConnectedShutDowned");
+                        future.channel().closeFuture().sync();
+
+                    } catch (InterruptedException e) {
+                        netRootController.getNetHallController().getConnectionCallBack().exceptionConnect();
+                        e.printStackTrace();
+                    } finally {
+                        workingGroup.shutdownGracefully();
+                        System.out.println("stopSocketThread");
+                        isThreadOnly = false;
+                    }
+
                 }
-
-            }
-        }).start();
+            }).start();
+        }
     }
+
 
 
 

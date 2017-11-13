@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Assets {
 
@@ -27,6 +28,10 @@ public class Assets {
 
     public static Sprite getNewSprite(int number){
         return textureAtlas.createSprite(number + "");
+    }
+
+    public static TextureRegion getRegion(int number){
+        return textureAtlas.findRegion(number + "");
     }
 
     public void dispose() {

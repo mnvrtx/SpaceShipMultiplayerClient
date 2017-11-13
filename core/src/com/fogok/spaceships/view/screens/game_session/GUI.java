@@ -1,4 +1,4 @@
-package com.fogok.spaceships.view.screens.screen_components;
+package com.fogok.spaceships.view.screens.game_session;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fogok.spaceships.control.ControllerManager;
@@ -9,13 +9,13 @@ import com.fogok.spaceships.view.utils.NativeGdxHelper;
 public class GUI {
 
     private JoyStick joyStick;
-    private SpriteBatch uiSpriteBatch;
     private DebugGUI debugGUI;
+    private SpriteBatch uiSpriteBatch;
 
-    public GUI(ControllerManager controllerManager) {
-        uiSpriteBatch = new SpriteBatch();
+    public GUI(NativeGdxHelper nativeGdxHelper, ControllerManager controllerManager) {
+        uiSpriteBatch = nativeGdxHelper.getUiSpriteBatch();
         joyStick = new JoyStick(controllerManager);
-        debugGUI = new DebugGUI();
+        debugGUI = new DebugGUI(nativeGdxHelper.getBitmapFont());
     }
 
     public void draw(NativeGdxHelper nativeGdxHelper){
@@ -27,8 +27,11 @@ public class GUI {
         debugGUI.drawScene();
     }
 
+    public SpriteBatch getUiSpriteBatch() {
+        return uiSpriteBatch;
+    }
+
     public void dispose(){
-        uiSpriteBatch.dispose();
         debugGUI.dispose();
     }
 }

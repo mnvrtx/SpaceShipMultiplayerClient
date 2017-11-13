@@ -1,9 +1,9 @@
-package com.fogok.spaceships.view.screens.screen_components;
+package com.fogok.spaceships.view.screens.game_session;
 
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.fogok.dataobjects.PlayerData;
 import com.fogok.spaceships.control.ControllerManager;
-import com.fogok.spaceships.model.NetworkData;
 import com.fogok.spaceships.model.game.EveryBodyViewModels;
 import com.fogok.spaceships.view.game.EveryBodyViews;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
@@ -11,7 +11,6 @@ import com.fogok.spaceships.view.utils.NativeGdxHelper;
 public class GameSession {
 
     private SpriteBatch gameSpriteBatch;
-    private NetworkData networkData;
 
     private EveryBodyViews everyBodyViews;
 
@@ -19,14 +18,13 @@ public class GameSession {
 
     private ControllerManager controllerManager;
 
-    public GameSession(NativeGdxHelper nativeGdxHelper, NetworkData networkData) {
-        this.networkData = networkData;
+    public GameSession(NativeGdxHelper nativeGdxHelper, PlayerData playerData) {
         gameSpriteBatch = new SpriteBatch();
 
         everyBodyViews = new EveryBodyViews();
-        controllerManager = new ControllerManager(everyBodyViews, nativeGdxHelper, networkData);    //controller manager хранит в себе все контроллеры, в каждую модель передаём его
-        everyBodyViewModels = new EveryBodyViewModels(controllerManager); //теперь в controllerManager есть необходимые начальные объекты
-//        controllerManager.postInitialization();
+        controllerManager = new ControllerManager(everyBodyViews, nativeGdxHelper, playerData.getConsoleState());    //контроллерманагер реализует контроль объектов, которые отображаются локально
+        everyBodyViewModels = new EveryBodyViewModels(controllerManager);   //теперь в controllerManager есть необходимые начальные объекты
+
     }
 
     public void draw(NativeGdxHelper nativeGdxHelper) {

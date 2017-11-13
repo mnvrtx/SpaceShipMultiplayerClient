@@ -2,11 +2,8 @@ package com.fogok.spaceships.view.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.JsonReader;
 import com.fogok.spaceships.Main;
 
@@ -16,19 +13,13 @@ public class DebugGUI {
     public static StringBuilder DEBUG_TEXT;
     public static StringBuilder EVERYBODYPOOLVISUAL;
     public static JsonReader jsonReader = new JsonReader();
+    private BitmapFont debugFont;
 
     private int screen;
-    private BitmapFont debugFont;
-    private Stage stage;
 
-    public DebugGUI() {
+    public DebugGUI(BitmapFont bitmapFont) {
         DEBUG = true;
-        debugFont = new BitmapFont();
-        debugFont.setColor(Color.WHITE);
-        debugFont.getData().setScale(0.03f);
-        debugFont.setUseIntegerPositions(false);
-        debugFont.getData().markupEnabled = true;
-        debugFont.getRegion(0).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        debugFont = bitmapFont;
         DEBUG_TEXT = new StringBuilder("EMPTY_LOG");
         EVERYBODYPOOLVISUAL = new StringBuilder("EMPTY_LOG");
     }

@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fogok.dataobjects.GameObject;
 import com.fogok.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.PlayerData;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
 
 import java.util.BitSet;
@@ -20,18 +21,48 @@ public class Serialization {
 
     private Kryo kryo;
     private EveryBodyPool everyBodyPool;
-    private boolean isRead;
+    private PlayerData playerData;
 
-    public void setParams(EveryBodyPool everyBodyPool, boolean isRead) {
+    public void setParams(EveryBodyPool everyBodyPool) {
         this.everyBodyPool = everyBodyPool;
-        this.isRead = isRead;
     }
 
-
+    public void setPlayerData(PlayerData playerData) {
+        this.playerData = playerData;
+    }
 
     public Serialization() {
 
         kryo = new Kryo();
+
+        kryo.register(PlayerData.class, new Serializer<PlayerData>(){
+
+            @Override
+            public void write(Kryo kryo, Output output, PlayerData playerData) {
+
+                output.writeInt(playerData.getAUID(), true);
+                output.writeFloat(playerData.getConsoleState().getX(), 0.02f, false);
+                output.writeFloat(playerData.getConsoleState().getY(), 0.02f, false);
+                output.writeInt(playerData.getConsoleState().getAdditParams().length, true);
+                output.writeFloats(playerData.getConsoleState().getAdditParams());
+                output.writeLong(convert(playerData.getConsoleState().getLongFlags()), true);
+
+            }
+
+            @Override
+            public PlayerData read(Kryo kryo, Input input, Class<PlayerData> aClass) {
+
+                playerData.setAUID(input.readInt(true));
+                playerData.getConsoleState().setX(input.readFloat(0.02f, false));
+                playerData.getConsoleState().setY(input.readFloat(0.02f, false));
+                int additParamsLength = input.readInt(true);
+                playerData.getConsoleState().setAdditParams(input.readFloats(additParamsLength));
+                convert(playerData.getConsoleState().getLongFlags(), input.readLong());
+
+                return null;
+            }
+
+        });
 
         kryo.register(EveryBodyPool.class, new Serializer<EveryBodyPool>() {
 

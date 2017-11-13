@@ -1,37 +1,29 @@
-package com.fogok.spaceships.view.screens;
+package com.fogok.spaceships.view.screens.game_session;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.fogok.spaceships.model.NetworkData;
-import com.fogok.spaceships.net.ServerLogicWrapper;
-import com.fogok.spaceships.view.screens.screen_components.GUI;
-import com.fogok.spaceships.view.screens.screen_components.GameSession;
+import com.fogok.dataobjects.PlayerData;
 import com.fogok.spaceships.view.utils.DebugGUI;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
-public class GameScreen implements Screen {
+public class GameProcess implements Screen {
 
-    private NetworkData networkData;
     private NativeGdxHelper nativeGdxHelper;
     private GUI gui;
     private GameSession gameSession;
+    private PlayerData playerData;
 
-    public GameScreen() {
-        nativeGdxHelper = new NativeGdxHelper();
-        networkData = new NetworkData();
+    public GameProcess(NativeGdxHelper nativeGdxHelper) {
+        this.nativeGdxHelper = nativeGdxHelper;
+        playerData = new PlayerData();
 
-        gameSession = new GameSession(nativeGdxHelper, networkData);
-        gui = new GUI(gameSession.getControllerManager());
-
-        networkData.setTypedObjets(gameSession.getControllerManager().getEveryBodyObjectsPool().getAllObjects());
-
-        ServerLogicWrapper.openServerSocket(networkData);
+        gameSession = new GameSession(nativeGdxHelper, playerData);
+        gui = new GUI(nativeGdxHelper, gameSession.getControllerManager());
     }
 
     @Override
     public void show() {
-
 
     }
 

@@ -8,7 +8,7 @@ import com.fogok.dataobjects.utils.libgdxexternals.Array;
 
 public class EveryBodyPool extends Pool<GameObject> {
 
-    private Array<Array<GameObject>> typedObjects;
+    private final Array<Array<GameObject>> typedObjects;
     /*
 
     typedObjects.get(type.ordinal()).add(responseGameObject);
@@ -148,10 +148,177 @@ public class EveryBodyPool extends Pool<GameObject> {
 //            clientServerObjectsCount.set(i, null);
 //        }
         typedObjects.clear();
-        typedObjects = null;
 
 //        clientServerObjectsCount.clear();
 //        clientServerObjectsCount = null;
         //TODO: GC optimize
     }
+
+    private StringBuilder stringBuilder = new StringBuilder(1000);
+
+    @Override
+    public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean modern) {
+
+        stringBuilder.setLength(0);
+        stringBuilder.append(JSONElements[0]);
+        int typesIters = 0, objectsIters = 0;
+        for (int k = 0; k < typedObjects.size; k++) {   //проходимся по всем типам объектов
+            Array<GameObject> typedGameObjects = typedObjects.get(k);
+            if (typedGameObjects.size != 0){    //если в массиве типов есть >=1 элемента, то проходимся по им всем
+                addEndJSONString(false, typesIters++ == 0);    //если не первый объект, ставим впереди запятую
+                addStartJSONString(k, true);
+                stringBuilder.append(JSONElements[6]);
+                objectsIters = 0;
+                for (int q = 0; q < typedGameObjects.size; q++) {   //проходимся по всем объектам, которые касаются определённого типа
+                    GameObject gameObject = typedGameObjects.get(q);
+
+                        addEndJSONString(false, objectsIters++ == 0);
+                        stringBuilder.append(JSONElements[0]);
+                        long gameObjectLongFlags = gameObject.getLongFlags();
+                        for (int i = 0; i < JSONStrings.length; i++) {          //проходимся по параметрам объекта
+                            if (!(i == GameObject.ADIITPRMS && gameObject.getAdditParams().length == 0) && !(i == GameObject.BOOLEANS && gameObjectLongFlags == 0)){     //не добавляем лишнего, если данных нет
+                                addEndJSONString(false, i == 0);
+                                addStartJSONString(i, false);
+                                switch (i) {
+                                    case GameObject.X:
+                                        stringBuilder.append(gameObject.getX());
+                                        break;
+                                    case GameObject.Y:
+                                        stringBuilder.append(gameObject.getY());
+                                        break;
+                                    case GameObject.ADIITPRMS:
+                                        stringBuilder.append(JSONElements[6]);
+                                        float[] addPrms = gameObject.getAdditParams();
+                                        for (int j = 0; j < addPrms.length; j++) {
+                                            stringBuilder.append(addPrms[j]);
+                                            addEndJSONString(false, j == addPrms.length - 1);
+                                        }
+                                        stringBuilder.append(JSONElements[7]);
+                                        break;
+                                    case GameObject.BOOLEANS:
+                                        stringBuilder.append(gameObjectLongFlags);
+                                        break;
+                                }
+                            }
+                        }
+                        stringBuilder.append(JSONElements[1]);
+
+                }
+                stringBuilder.append(JSONElements[7]);
+            }
+        }
+        stringBuilder.append(JSONElements[1]);
+        return modern ? format(stringBuilder.toString()) : stringBuilder.toString();
+    }
+
+    private void addStartJSONString(int i, boolean isNumberIsNameParam){
+        stringBuilder.append(JSONElements[3]);
+        stringBuilder.append(isNumberIsNameParam ? i : JSONStrings[i]);
+        stringBuilder.append(JSONElements[3]);
+        stringBuilder.append(JSONElements[2]);
+    }
+
+    private void addEndJSONString(boolean enableScobe, boolean last){
+        if (enableScobe)
+            stringBuilder.append(JSONElements[3]);
+        if (!last)
+            stringBuilder.append(JSONElements[4]);
+    }
+
+    private static final char[] JSONElements = new char[]{
+            //  0    1    2    3    4    5    6     7
+            '{', '}', ':', '"', ',', 'N', '[', ']'
+    };
+
+    public static final String[] JSONStrings = new String[]{
+            //0    1    2    3
+            "x", "y", "a", "b"
+            //type; x;  y; additPrms; booleans
+    };
+
+    public static String format(String json){
+        try {
+            int empty=0;
+            char[]chs=json.toCharArray();
+            StringBuilder stringBuilder=new StringBuilder();
+            for (int i = 0; i < chs.length;) {
+                if (chs[i]=='\"') {
+
+                    stringBuilder.append(chs[i]);
+                    i++;
+                    for ( ; i < chs.length;) {
+                        if ( chs[i]=='\"'&&isDoubleSerialBackslash(chs,i-1)) {
+                            stringBuilder.append(chs[i]);
+                            i++;
+                            break;
+                        } else{
+                            stringBuilder.append(chs[i]);
+                            i++;
+                        }
+
+                    }
+                }else if (chs[i]==',') {
+                    stringBuilder.append(',').append('\n').append(getEmpty(empty));
+
+                    i++;
+                }else if (chs[i]=='{'||chs[i]=='[') {
+                    empty++;
+                    stringBuilder.append(chs[i]).append('\n').append(getEmpty(empty));
+
+                    i++;
+                }else if (chs[i]=='}'||chs[i]==']') {
+                    empty--;
+                    stringBuilder.append('\n').append(getEmpty(empty)).append(chs[i]);
+
+                    i++;
+                }else {
+                    stringBuilder.append(chs[i]);
+                    i++;
+                }
+
+
+            }
+
+
+
+            return stringBuilder.toString();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return json;
+        }
+
+    }
+    private static boolean isDoubleSerialBackslash(char[] chs, int i) {
+        int count=0;
+        for (int j = i; j >-1; j--) {
+            if (chs[j]=='\\') {
+                count++;
+            }else{
+                return count%2==0;
+            }
+        }
+
+        return count%2==0;
+    }
+    /**
+     * 缩进
+     * @param count
+     * @return
+     */
+    private static final String empty="    ";
+
+    private static String getEmpty(int count){
+        StringBuilder stringBuilder=new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            stringBuilder.append(empty) ;
+        }
+
+        return stringBuilder.toString();
+    }
+
 }

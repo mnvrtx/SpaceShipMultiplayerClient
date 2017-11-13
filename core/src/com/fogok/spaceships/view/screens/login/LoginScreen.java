@@ -17,6 +17,7 @@ import com.fogok.spaceships.Main;
 import com.fogok.spaceships.net.NetHallController;
 import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.utils.gamedepended.Assets;
+import com.fogok.spaceships.view.screens.ScreenSwitcher;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 import com.fogok.spaceships.view.utils.NormalLabel;
 
@@ -50,6 +51,9 @@ public class LoginScreen implements Screen{
         password.setPasswordCharacter('*');
         password.setPasswordMode(true);
 
+        login.setText("test1@test.com");
+        password.setText("123456");
+
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.up = new TextureRegionDrawable(Assets.getRegion(4));
         textButtonStyle.down = new TextureRegionDrawable(Assets.getRegion(5));
@@ -66,7 +70,7 @@ public class LoginScreen implements Screen{
 
             @Override
             public void succesConnect(String token) {
-
+                Main.getScreenSwitcher().setCurrentScreen(ScreenSwitcher.Screens.HALL);
             }
         });
 
@@ -106,7 +110,6 @@ public class LoginScreen implements Screen{
         table.row();
         table.add(statusBar).colspan(2);
 
-        table.setDebug(true);
         table.setPosition(Main.WIDTH / 2f, Main.HEIGHT / 2f, Align.center);
         stage.addActor(table);
 

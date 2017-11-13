@@ -22,6 +22,7 @@ public class NativeGdxHelper {
     public NativeGdxHelper() {
         uiSpriteBatch = new SpriteBatch();
         stage = new Stage(new ScreenViewport());
+        stage.setDebugAll(true);
         bitmapFont = new BitmapFont();  setUPFont();
         uiBitmapFont = new BitmapFont(); setUPUIFont();
         Gdx.input.setInputProcessor(stage);

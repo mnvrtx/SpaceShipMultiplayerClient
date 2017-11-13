@@ -4,9 +4,19 @@ public class PlayerData {
 
     private int AUID;
     private ConsoleState consoleState;
+    private boolean hasServeredPlayerData;
 
     public PlayerData() {
-        this.consoleState = new ConsoleState();
+
+    }
+
+    public void setConsoleState(ConsoleState consoleState) {
+        this.consoleState = consoleState;
+        hasServeredPlayerData = true;
+    }
+
+    public boolean isHasServeredPlayerData() {
+        return hasServeredPlayerData;
     }
 
     public ConsoleState getConsoleState() {

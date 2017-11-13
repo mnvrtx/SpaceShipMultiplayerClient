@@ -69,7 +69,7 @@ public class FastJsonWriter {
 //                        stringBuilder.append(JSONElements[0]);
 //                        long gameObjectLongFlags = gameObject.getLongFlags();
 //                        for (int i = 0; i < JSONStrings.length; i++) {          //проходимся по параметрам объекта
-//                            if (!(i == GameObject.ADIITPRMS && gameObject.getAdditParams().length == 0) && !(i == GameObject.BOOLEANS && gameObjectLongFlags == 0)){     //не добавляем лишнего, если данных нет
+//                            if (!(i == GameObject.ADIITPRMS && gameObject.getDataFloats().length == 0) && !(i == GameObject.BOOLEANS && gameObjectLongFlags == 0)){     //не добавляем лишнего, если данных нет
 //                                addEndJSONString(false, i == 0);
 //                                addStartJSONString(i, false);
 //                                switch (i) {
@@ -81,7 +81,7 @@ public class FastJsonWriter {
 //                                        break;
 //                                    case GameObject.ADIITPRMS:
 //                                        stringBuilder.append(JSONElements[6]);
-//                                        float[] addPrms = gameObject.getAdditParams();
+//                                        float[] addPrms = gameObject.getDataFloats();
 //                                        for (int j = 0; j < addPrms.length; j++) {
 //                                            stringBuilder.append(addPrms[j]);
 //                                            addEndJSONString(false, j == addPrms.length - 1);

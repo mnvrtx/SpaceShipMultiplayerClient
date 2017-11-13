@@ -1,9 +1,10 @@
 package com.fogok.spaceships.net;
 
+import com.fogok.dataobjects.ServerState;
+
 public class NetHallController {
 
     //region Native
-    private ConnectionCallBack connectionCallBack;
     private NetRootController netRootController;
     //endregion
 
@@ -21,7 +22,6 @@ public class NetHallController {
     }
 
     //region Getters
-
     public String getLogin() {
         return login;
     }
@@ -29,10 +29,11 @@ public class NetHallController {
     public String getPassword() {
         return password;
     }
-
     //endregion
 
-    //region CallBack
+    //region ConnectionCallBack
+    private ConnectionCallBack connectionCallBack;
+
     public void setConnectionCallBack(ConnectionCallBack connectionCallBack) {
         this.connectionCallBack = connectionCallBack;
     }
@@ -44,6 +45,22 @@ public class NetHallController {
     public interface ConnectionCallBack{
         void exceptionConnect();
         void succesConnect(String token);
+    }
+    //endregion
+
+    //region HallCallBack
+    private HallCallBack hallCallBack;
+
+    public void setHallCallBack(HallCallBack hallCallBack) {
+        this.hallCallBack = hallCallBack;
+    }
+
+    public HallCallBack getHallCallBack() {
+        return hallCallBack;
+    }
+
+    public interface HallCallBack{
+        void serverState(ServerState serverState);
     }
     //endregion
 }

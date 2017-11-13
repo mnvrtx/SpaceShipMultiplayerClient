@@ -45,7 +45,7 @@ public class ConsoleState {
         Serialization.convert(flags, l);
     }
 
-    public <E extends Enum<E>> void setFlag(boolean flag, E enumObject) {
+    public <E extends ConsoleFlagState> void setFlag(boolean flag, E enumObject) {
         flags.set(enumObject.ordinal(), flag);
         Serialization.convert(flags);
     }
@@ -56,7 +56,7 @@ public class ConsoleState {
         this.y = y;
     }
 
-    public <E extends ConsoleState.ConsoleFlagState>boolean getFlag(E enumObject){
+    public <E extends ConsoleFlagState>boolean getFlag(E enumObject){
         return flags.get(enumObject.ordinal());
     }
 
@@ -72,7 +72,7 @@ public class ConsoleState {
         return y;
     }
 
-    public <E extends Enum<E>> float getAdditParam(E enumObject) {
+    public <E extends ConsoleFlagState> float getAdditParam(E enumObject) {
         return additParams[enumObject.ordinal()];
     }
 

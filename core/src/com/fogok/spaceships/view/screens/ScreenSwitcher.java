@@ -3,6 +3,7 @@ package com.fogok.spaceships.view.screens;
 import com.badlogic.gdx.Screen;
 import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.view.screens.game_session.GameProcess;
+import com.fogok.spaceships.view.screens.hall.Hall;
 import com.fogok.spaceships.view.screens.login.LoginScreen;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
@@ -19,7 +20,7 @@ public abstract class ScreenSwitcher {
     private Screen currentScreen;
 
     public enum Screens{
-        LOGIN, GAMESESSION
+        LOGIN, GAMESESSION, HALL
     }
 
     public void setCurrentScreen(Screens screenEnum) {
@@ -29,7 +30,10 @@ public abstract class ScreenSwitcher {
                 currentScreen = new LoginScreen(nativeGdxHelper, netRootController);
                 break;
             case GAMESESSION:
-                currentScreen = new GameProcess(nativeGdxHelper);
+                currentScreen = new GameProcess(nativeGdxHelper, netRootController);
+                break;
+            case HALL:
+                currentScreen = new Hall(nativeGdxHelper, netRootController);
                 break;
             default:
                 return;
@@ -43,6 +47,11 @@ public abstract class ScreenSwitcher {
 //        return allScreens;
 //    }
 
+
+    public NativeGdxHelper getNativeGdxHelper() {
+        return nativeGdxHelper;
+    }
+
     public void dispose() {
         if (currentScreen != null)
             currentScreen.dispose();
@@ -50,7 +59,6 @@ public abstract class ScreenSwitcher {
 
     public void disposeAll(){
         dispose();
-        if (nativeGdxHelper != null)
-            nativeGdxHelper.dispose();
+        nativeGdxHelper.dispose();
     }
 }

@@ -7,6 +7,7 @@ import com.esotericsoftware.kryo.io.Output;
 import com.fogok.dataobjects.GameObject;
 import com.fogok.dataobjects.GameObjectsType;
 import com.fogok.dataobjects.PlayerData;
+import com.fogok.dataobjects.ServerState;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
 
 import java.util.BitSet;
@@ -22,6 +23,7 @@ public class Serialization {
     private Kryo kryo;
     private EveryBodyPool everyBodyPool;
     private PlayerData playerData;
+    private ServerState serverState;
 
     public void setParams(EveryBodyPool everyBodyPool) {
         this.everyBodyPool = everyBodyPool;
@@ -31,9 +33,36 @@ public class Serialization {
         this.playerData = playerData;
     }
 
+    public void setServerState(ServerState serverState) {
+        this.serverState = serverState;
+    }
+
     public Serialization() {
 
         kryo = new Kryo();
+
+        kryo.register(ServerState.class, new Serializer<ServerState>() {
+            @Override
+            public void write(Kryo kryo, Output output, ServerState serverState) {
+
+                output.writeInt(serverState.getPlayersOnline(), true);
+                output.writeInt(serverState.getPlayerGlobalData().getDataFloats().length, true);
+                output.writeFloats(serverState.getPlayerGlobalData().getDataFloats());
+                output.writeLong(convert(serverState.getPlayerGlobalData().getLongFlags()), true);
+
+            }
+
+            @Override
+            public ServerState read(Kryo kryo, Input input, Class<ServerState> type) {
+
+                serverState.setPlayersOnline(input.readInt(true));
+                int lenghtDataFloats = input.readInt(true);
+                serverState.getPlayerGlobalData().setDataFloats(input.readFloats(lenghtDataFloats));
+                convert(serverState.getPlayerGlobalData().getLongFlags(), input.readLong(true));
+
+                return null;
+            }
+        });
 
         kryo.register(PlayerData.class, new Serializer<PlayerData>(){
 
@@ -41,11 +70,14 @@ public class Serialization {
             public void write(Kryo kryo, Output output, PlayerData playerData) {
 
                 output.writeInt(playerData.getAUID(), true);
-                output.writeFloat(playerData.getConsoleState().getX(), 0.02f, false);
-                output.writeFloat(playerData.getConsoleState().getY(), 0.02f, false);
-                output.writeInt(playerData.getConsoleState().getAdditParams().length, true);
-                output.writeFloats(playerData.getConsoleState().getAdditParams());
-                output.writeLong(convert(playerData.getConsoleState().getLongFlags()), true);
+                output.writeBoolean(playerData.isHasServeredPlayerData());
+                if (playerData.isHasServeredPlayerData()) {
+                    output.writeFloat(playerData.getConsoleState().getX(), 0.02f, false);
+                    output.writeFloat(playerData.getConsoleState().getY(), 0.02f, false);
+                    output.writeInt(playerData.getConsoleState().getAdditParams().length, true);
+                    output.writeFloats(playerData.getConsoleState().getAdditParams());
+                    output.writeLong(convert(playerData.getConsoleState().getLongFlags()), true);
+                }
 
             }
 
@@ -53,11 +85,13 @@ public class Serialization {
             public PlayerData read(Kryo kryo, Input input, Class<PlayerData> aClass) {
 
                 playerData.setAUID(input.readInt(true));
-                playerData.getConsoleState().setX(input.readFloat(0.02f, false));
-                playerData.getConsoleState().setY(input.readFloat(0.02f, false));
-                int additParamsLength = input.readInt(true);
-                playerData.getConsoleState().setAdditParams(input.readFloats(additParamsLength));
-                convert(playerData.getConsoleState().getLongFlags(), input.readLong());
+                if (input.readBoolean()) {
+                    playerData.getConsoleState().setX(input.readFloat(0.02f, false));
+                    playerData.getConsoleState().setY(input.readFloat(0.02f, false));
+                    int additParamsLength = input.readInt(true);
+                    playerData.getConsoleState().setAdditParams(input.readFloats(additParamsLength));
+                    convert(playerData.getConsoleState().getLongFlags(), input.readLong());
+                }
 
                 return null;
             }
@@ -135,7 +169,7 @@ public class Serialization {
 //                gameObject.setX(input.readFloat(0.02f, true));
 //                gameObject.setY(input.readFloat(0.02f, true));
 //                int lenghtAdditParams = input.readInt(true);
-//                gameObject.setAdditParams(input.readFloats(lenghtAdditParams));
+//                gameObject.setDataFloats(input.readFloats(lenghtAdditParams));
 //                gameObject.setLongFlags(input.readLong());
 //                return gameObject;
 //            }

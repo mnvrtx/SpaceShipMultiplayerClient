@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.fogok.dataobjects.PlayerData;
+import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.view.utils.DebugGUI;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
@@ -14,7 +15,7 @@ public class GameProcess implements Screen {
     private GameSession gameSession;
     private PlayerData playerData;
 
-    public GameProcess(NativeGdxHelper nativeGdxHelper) {
+    public GameProcess(NativeGdxHelper nativeGdxHelper, NetRootController netRootController) {
         this.nativeGdxHelper = nativeGdxHelper;
         playerData = new PlayerData();
 
@@ -42,7 +43,7 @@ public class GameProcess implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        nativeGdxHelper.resize(width, height);
+
     }
 
     @Override

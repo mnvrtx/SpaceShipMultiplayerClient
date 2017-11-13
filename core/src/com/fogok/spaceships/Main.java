@@ -28,13 +28,18 @@ public class Main extends Game {
                 Main.this.setScreen(screen);
             }
         };
-        screenSwitcher.setCurrentScreen(ScreenSwitcher.Screens.LOGIN);
+        screenSwitcher.setCurrentScreen(ScreenSwitcher.Screens.HALL);
     }
 
     @Override
     public void render() {
         super.render();
         mdT = Math.min(Gdx.graphics.getDeltaTime() / 0.016f, 1.5f);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        screenSwitcher.getNativeGdxHelper().resize(width, height);
     }
 
     public static ScreenSwitcher getScreenSwitcher() {

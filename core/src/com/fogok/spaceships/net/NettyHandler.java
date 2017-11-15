@@ -1,12 +1,7 @@
 package com.fogok.spaceships.net;
 
-import com.badlogic.gdx.Gdx;
-
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -23,66 +18,82 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
         this.netRootController = netRootController;
     }
 
+
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
-        final Channel channel = ctx.channel();
-        final int sleepTimeMilliSeconds = (int) (TIMEITERSSLEEP * 1000);
+        netRootController.sendLoginAndPassword(ctx);
+
+
+//        final int sleepTimeMilliSeconds = (int) (TIMEITERSSLEEP * 1000);
+
+//        netRootController.getNetHallController().getConnectionCallBack().succesConnect("");
 
 //        channel.writeAndFlush(Unpooled.copiedBuffer("l TESTUSER".getBytes(Charset.forName(encoding))));
-        blocker = true;
+//        blocker = true;
 
-        channel.eventLoop().scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!blocker) {
-//                            System.out.print("Sending data to server...");
-//                            String dataS = networkData.getJSON();
-//                            ByteBuf byteBuf = Unpooled.copiedBuffer(dataS.getBytes(Charset.forName(encoding)));
-//                            channel.write(byteBuf);
-//                            ctx.flush();
-//                            System.out.println("Complete:" + dataS);
-                            blocker = true;
-                        }
-                    }
-                });
-
-
-
-            }
-        }, sleepTimeMilliSeconds, sleepTimeMilliSeconds, TimeUnit.MILLISECONDS);
+//        channel.eventLoop().scheduleAtFixedRate(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                Gdx.app.postRunnable(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (!blocker) {
+//
+//
+//
+////                            System.out.print("Sending data to server...");
+////                            String dataS = networkData.getJSON();
+////                            ByteBuf byteBuf = Unpooled.copiedBuffer(dataS.getBytes(Charset.forName(encoding)));
+////                            channel.write(byteBuf);
+////                            ctx.flush();
+//                            System.out.println("Complete:" );
+//
+//                            blocker = true;
+//                        }
+//                    }
+//                });
+//
+//
+//
+//            }
+//        }, sleepTimeMilliSeconds, sleepTimeMilliSeconds, TimeUnit.MILLISECONDS);
     }
 
 
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        netRootController.readServerChannel(msg);
 
-        final ByteBuf buf = (ByteBuf)msg;
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                try {
 
-                    byte[] req = new byte[buf.readableBytes()];
-                    buf.readBytes(req);
+//        final ByteBuf buf = (ByteBuf)msg;
+//        Gdx.app.postRunnable(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
 //
-//                    final String json = new String(req, encoding);
-//                    networkData.refreshOtherDatas(json);
-//                    System.out.println("Server response:" + json);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    buf.release();
-                }
+//                    byte[] req = new byte[buf.readableBytes()];
+//                    buf.readBytes(req);
+////
+////                    final String json = new String(req, encoding);
+////                    networkData.refreshOtherDatas(json);
+////                    System.out.println("Server response:" + json);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    buf.release();
+//                }
+//
+//                blocker = false;
+//            }
+//        });
+    }
 
-                blocker = false;
-            }
-        });
-
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {    //происходит при отключении от сервера
+        if (netRootController.getNetHallController().getConnectionCallBack() != null)
+            netRootController.getNetHallController().getConnectionCallBack().exceptionConnect();
     }
 
     @Override

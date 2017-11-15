@@ -17,7 +17,6 @@ public class NetHallController {
     public void openConnection(String login, String password){
         this.login = login;
         this.password = password;
-        System.out.println("login " + login + " " + "password " + password);
         ServerLogicWrapper.openServerSocket(netRootController);
     }
 

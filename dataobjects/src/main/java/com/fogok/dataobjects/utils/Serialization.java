@@ -41,9 +41,37 @@ public class Serialization {
 
         kryo = new Kryo();
 
+        kryo.register(ServerToClientDataStates.class, new Serializer<ServerToClientDataStates>(){
+
+            @Override
+            public void write(Kryo kryo, Output output, ServerToClientDataStates object) {
+                output.writeInt(object.ordinal(), true);
+            }
+
+            @Override
+            public ServerToClientDataStates read(Kryo kryo, Input input, Class<ServerToClientDataStates> type) {
+                return ServerToClientDataStates.values()[input.readInt(true)];
+            }
+        });
+
+        kryo.register(ClientToServerDataStates.class, new Serializer<ClientToServerDataStates>(){
+
+            @Override
+            public void write(Kryo kryo, Output output, ClientToServerDataStates object) {
+                output.writeInt(object.ordinal(), true);
+            }
+
+            @Override
+            public ClientToServerDataStates read(Kryo kryo, Input input, Class<ClientToServerDataStates> type) {
+                return ClientToServerDataStates.values()[input.readInt(true)];
+            }
+        });
+
         kryo.register(ServerState.class, new Serializer<ServerState>() {
             @Override
             public void write(Kryo kryo, Output output, ServerState serverState) {
+
+                kryo.writeObject(output, ServerToClientDataStates.SERVER_STATE);
 
                 output.writeInt(serverState.getPlayersOnline(), true);
                 output.writeInt(serverState.getPlayerGlobalData().getDataFloats().length, true);
@@ -69,29 +97,26 @@ public class Serialization {
             @Override
             public void write(Kryo kryo, Output output, PlayerData playerData) {
 
-                output.writeInt(playerData.getAUID(), true);
-                output.writeBoolean(playerData.isHasServeredPlayerData());
-                if (playerData.isHasServeredPlayerData()) {
-                    output.writeFloat(playerData.getConsoleState().getX(), 0.02f, false);
-                    output.writeFloat(playerData.getConsoleState().getY(), 0.02f, false);
-                    output.writeInt(playerData.getConsoleState().getAdditParams().length, true);
-                    output.writeFloats(playerData.getConsoleState().getAdditParams());
-                    output.writeLong(convert(playerData.getConsoleState().getLongFlags()), true);
-                }
+                kryo.writeObject(output, ClientToServerDataStates.PLAYER_DATA_WITH_CONSOLE_STATE);
+
+                output.writeLong(playerData.getConsoleState().getPlayerId(), true);
+                output.writeFloat(playerData.getConsoleState().getX(), 0.02f, false);
+                output.writeFloat(playerData.getConsoleState().getY(), 0.02f, false);
+                output.writeInt(playerData.getConsoleState().getAdditParams().length, true);
+                output.writeFloats(playerData.getConsoleState().getAdditParams());
+                output.writeLong(playerData.getConsoleState().getLongFlags());
 
             }
 
             @Override
             public PlayerData read(Kryo kryo, Input input, Class<PlayerData> aClass) {
 
-                playerData.setAUID(input.readInt(true));
-                if (input.readBoolean()) {
-                    playerData.getConsoleState().setX(input.readFloat(0.02f, false));
-                    playerData.getConsoleState().setY(input.readFloat(0.02f, false));
-                    int additParamsLength = input.readInt(true);
-                    playerData.getConsoleState().setAdditParams(input.readFloats(additParamsLength));
-                    convert(playerData.getConsoleState().getLongFlags(), input.readLong());
-                }
+                playerData.getConsoleState().setPlayerId(input.readLong(true));
+                playerData.getConsoleState().setX(input.readFloat(0.02f, true));
+                playerData.getConsoleState().setY(input.readFloat(0.02f, true));
+                int lenghtAdditParams = input.readInt(true);
+                playerData.getConsoleState().setAdditParams(input.readFloats(lenghtAdditParams));
+                playerData.getConsoleState().setLongFlags(input.readLong());
 
                 return null;
             }
@@ -102,6 +127,8 @@ public class Serialization {
 
             @Override
             public void write(Kryo kryo, Output output, EveryBodyPool everyBodyPool) {  ///
+
+                kryo.writeObject(output, ServerToClientDataStates.EVERY_BODY_POOL);
 
                 Array<Array<GameObject>> typedObjects = everyBodyPool.getAllObjects();
 

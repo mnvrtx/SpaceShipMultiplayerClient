@@ -19,7 +19,7 @@ public class PlayerGlobalData {
     private float[] dataFloats = new float[0];
 
     public PlayerGlobalData() {
-
+        initDataFloats(PlayerGlobalDataFloats.values().length);
     }
 
     public void initDataFloats(int size) {

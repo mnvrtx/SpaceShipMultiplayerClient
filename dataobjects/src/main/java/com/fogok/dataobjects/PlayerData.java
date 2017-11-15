@@ -1,33 +1,21 @@
 package com.fogok.dataobjects;
 
+import com.fogok.dataobjects.gameobjects.ConsoleState;
+
 public class PlayerData {
 
-    private int AUID;
     private ConsoleState consoleState;
-    private boolean hasServeredPlayerData;
 
-    public PlayerData() {
-
+    public PlayerData(ConsoleState consoleState) {
+        setConsoleState(consoleState);
     }
 
     public void setConsoleState(ConsoleState consoleState) {
         this.consoleState = consoleState;
-        hasServeredPlayerData = true;
-    }
-
-    public boolean isHasServeredPlayerData() {
-        return hasServeredPlayerData;
     }
 
     public ConsoleState getConsoleState() {
         return consoleState;
     }
 
-    public void setAUID(int AUID) {
-        this.AUID = AUID;
-    }
-
-    public int getAUID() {
-        return AUID;
-    }
 }

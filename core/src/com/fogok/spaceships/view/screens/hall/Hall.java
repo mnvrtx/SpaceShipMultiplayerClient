@@ -35,7 +35,7 @@ public class Hall implements Screen {
         textButtonStyle.down = new TextureRegionDrawable(Assets.getRegion(5));
         textButtonStyle.font = nativeGdxHelper.getUiBitmapFont();
 
-        final String infoString = "[#00FF00]Player Information\nWelcome  [#FF8000]%s[]\n[#FF8000]WINLOSE %%: %s[]\n[#0000FF]SERVER ONLINE: %s";
+        final String infoString = "[#00FF00]Player Information\nWelcome  [#FF8000]%s[]\n[#FF8000]WINLOSE %%: %s[]\n[#00FFFF]SERVER ONLINE: %s";
         final Label infolabel = new Label("", labelStyle);
         infolabel.setText(String.format(infoString, netRootController.getNetHallController().getLogin(), 0f, 0));
         Label matchmakingInfo = new Label(String.format("Ready"), labelStyle);

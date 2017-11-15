@@ -5,7 +5,7 @@ import com.fogok.dataobjects.GameObjectsType;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
 import com.fogok.dataobjects.utils.libgdxexternals.JsonValue;
 
-public class ServerObjectsHandler {
+public class ServerObjectsHandler {// TODO: выпилить
 
     private EveryBodyPool everyBodyPool;
     private GameObjectsType objectType;

@@ -42,7 +42,7 @@ public class ExceptionHandler extends ChannelDuplexHandler {
             @Override
             public void operationComplete(ChannelFuture future) {
                 if (!future.isSuccess()) {
-
+                    System.out.println("qwkqwpwqdkwqd;klwqd");
                 }
             }
         }));

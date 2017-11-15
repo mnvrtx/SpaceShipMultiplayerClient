@@ -71,6 +71,7 @@ public class LoginScreen implements Screen{
             @Override
             public void succesConnect(String token) {
                 Main.getScreenSwitcher().setCurrentScreen(ScreenSwitcher.Screens.HALL);
+                System.out.println(token);
             }
         });
 

@@ -1,6 +1,6 @@
 package com.fogok.spaceships.control;
 
-import com.fogok.dataobjects.ConsoleState;
+import com.fogok.dataobjects.gameobjects.ConsoleState;
 import com.fogok.dataobjects.utils.EveryBodyPool;
 import com.fogok.spaceships.control.other.BackgroundController;
 import com.fogok.spaceships.control.ui.CameraController;

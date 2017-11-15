@@ -1,7 +1,7 @@
 package com.fogok.spaceships.control.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.fogok.dataobjects.ConsoleState;
+import com.fogok.dataobjects.gameobjects.ConsoleState;
 import com.fogok.spaceships.Main;
 import com.fogok.spaceships.control.Controller;
 

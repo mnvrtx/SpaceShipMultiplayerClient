@@ -13,6 +13,7 @@ public class DesktopLauncher {
 
         //Ctrl + Shift + Alt + J    //multicursor
         //Ctrl + Shift + F8     //show breakpoints
+        //Shift + Alt + i     //inspect all (maybe)
 
         new LwjglApplication(new Main(), config);
     }

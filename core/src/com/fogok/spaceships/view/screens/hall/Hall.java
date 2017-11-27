@@ -37,7 +37,7 @@ public class Hall implements Screen {
 
         final String infoString = "[#00FF00]Player Information\nWelcome  [#FF8000]%s[]\n[#FF8000]WINLOSE %%: %s[]\n[#00FFFF]SERVER ONLINE: %s";
         final Label infolabel = new Label("", labelStyle);
-        infolabel.setText(String.format(infoString, netRootController.getNetHallController().getLogin(), 0f, 0));
+        infolabel.setText(String.format(infoString, netRootController.getNetHallController().getLogin(), 0f, 1));
         Label matchmakingInfo = new Label(String.format("Ready"), labelStyle);
 
         netRootController.getNetHallController().setHallCallBack(new NetHallController.HallCallBack() {

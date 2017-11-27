@@ -42,7 +42,7 @@ public class LoginScreen implements Screen{
         Label passwordText = new Label("PASSWORD", labelStyle);
 
         labelStyle.fontColor = null;
-        final NormalLabel statusBar = new NormalLabel("", labelStyle);
+        final NormalLabel statusBar = new NormalLabel("Loading", labelStyle);
 
         textFieldStyle.font = nativeGdxHelper.getUiBitmapFont();
         textFieldStyle.fontColor = new Color(Color.WHITE);

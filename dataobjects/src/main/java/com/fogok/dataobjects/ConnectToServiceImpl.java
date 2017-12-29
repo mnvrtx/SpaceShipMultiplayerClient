@@ -1,7 +1,9 @@
-package com.fogok.spaceships.net;
+package com.fogok.dataobjects;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -10,12 +12,21 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-public class ServerLogicWrapper {
+import static com.esotericsoftware.minlog.Log.*;
 
-    public static boolean isThreadOnly;
-    public static void openServerSocket(final NetRootController netRootController){
+public class ConnectToServiceImpl {
+
+    //region Singleton realization
+    private static ConnectToServiceImpl instance;
+    public static ConnectToServiceImpl getInstance() {
+        return instance == null ? instance = new ConnectToServiceImpl() : instance;
+    }
+    //endregion
+
+    public boolean isThreadOnly;
+    public <T extends ChannelInboundHandlerAdapter, E extends ChannelDuplexHandler> void connect(final T coreHandler, final E exceptionHandler, final String ip, final int port) {
         if (!isThreadOnly) {
-            System.out.println("startSocketThread");
+            debug("Start socket thread");
             isThreadOnly = true;
             new Thread(new Runnable() {
                 @Override
@@ -32,22 +43,21 @@ public class ServerLogicWrapper {
                                     @Override
                                     protected void initChannel(SocketChannel ch) throws Exception {
                                         ch.config().setRecvByteBufAllocator(new FixedRecvByteBufAllocator(262144)); //set  buf size here
-                                        ch.pipeline().addLast(new NettyHandler(netRootController));
-                                        ch.pipeline().addLast(new ExceptionHandler(netRootController));
+                                        ch.pipeline().addLast(coreHandler);
+                                        ch.pipeline().addLast(exceptionHandler);
                                     }
                                 });
 
 
-                        ChannelFuture future = boot.connect("127.0.0.1", 15501).sync();
-
+                        ChannelFuture future = boot.connect(ip, port).sync();
+                        info(String.format("Connect to service '%s' success", coreHandler.getClass().getName()));
                         future.channel().closeFuture().sync();
 
                     } catch (InterruptedException e) {
-                        netRootController.getNetHallController().getConnectionCallBack().exceptionConnect();
                         e.printStackTrace();
                     } finally {
                         workingGroup.shutdownGracefully();
-                        System.out.println("stopSocketThread");
+                        error(String.format("Stop connection to '%s' service", coreHandler.getClass().getName()));
                         isThreadOnly = false;
                     }
 
@@ -55,8 +65,5 @@ public class ServerLogicWrapper {
             }).start();
         }
     }
-
-
-
 
 }

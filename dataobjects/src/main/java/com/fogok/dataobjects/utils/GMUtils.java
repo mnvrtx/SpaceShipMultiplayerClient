@@ -1,5 +1,8 @@
 package com.fogok.dataobjects.utils;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class GMUtils {
@@ -67,6 +70,12 @@ public class GMUtils {
 
     public static float getRoundedVal(float nonRoundedVal){
         return (int)(nonRoundedVal * 1000) / 1000f;
+    }
+
+    public static Object[] reverse(Object[] arr) {
+        List<Object> list = Arrays.asList(arr);
+        Collections.reverse(list);
+        return list.toArray();
     }
 
 //    public static void main(String[] args) throws InterruptedException {

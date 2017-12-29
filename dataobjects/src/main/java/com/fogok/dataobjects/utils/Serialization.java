@@ -8,6 +8,7 @@ import com.fogok.dataobjects.GameObject;
 import com.fogok.dataobjects.GameObjectsType;
 import com.fogok.dataobjects.PlayerData;
 import com.fogok.dataobjects.ServerState;
+import com.fogok.dataobjects.datastates.ClientToServerDataStates;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
 
 import java.util.BitSet;
@@ -41,29 +42,29 @@ public class Serialization {
 
         kryo = new Kryo();
 
-        kryo.register(ServerToClientDataStates.class, new Serializer<ServerToClientDataStates>(){
+        kryo.register(com.fogok.dataobjects.datastates.ServerToClientDataStates.class, new Serializer<com.fogok.dataobjects.datastates.ServerToClientDataStates>(){
 
             @Override
-            public void write(Kryo kryo, Output output, ServerToClientDataStates object) {
+            public void write(Kryo kryo, Output output, com.fogok.dataobjects.datastates.ServerToClientDataStates object) {
                 output.writeInt(object.ordinal(), true);
             }
 
             @Override
-            public ServerToClientDataStates read(Kryo kryo, Input input, Class<ServerToClientDataStates> type) {
-                return ServerToClientDataStates.values()[input.readInt(true)];
+            public com.fogok.dataobjects.datastates.ServerToClientDataStates read(Kryo kryo, Input input, Class<com.fogok.dataobjects.datastates.ServerToClientDataStates> type) {
+                return com.fogok.dataobjects.datastates.ServerToClientDataStates.values()[input.readInt(true)];
             }
         });
 
-        kryo.register(ClientToServerDataStates.class, new Serializer<ClientToServerDataStates>(){
+        kryo.register(com.fogok.dataobjects.datastates.ClientToServerDataStates.class, new Serializer<com.fogok.dataobjects.datastates.ClientToServerDataStates>(){
 
             @Override
-            public void write(Kryo kryo, Output output, ClientToServerDataStates object) {
+            public void write(Kryo kryo, Output output, com.fogok.dataobjects.datastates.ClientToServerDataStates object) {
                 output.writeInt(object.ordinal(), true);
             }
 
             @Override
-            public ClientToServerDataStates read(Kryo kryo, Input input, Class<ClientToServerDataStates> type) {
-                return ClientToServerDataStates.values()[input.readInt(true)];
+            public com.fogok.dataobjects.datastates.ClientToServerDataStates read(Kryo kryo, Input input, Class<com.fogok.dataobjects.datastates.ClientToServerDataStates> type) {
+                return com.fogok.dataobjects.datastates.ClientToServerDataStates.values()[input.readInt(true)];
             }
         });
 
@@ -71,7 +72,7 @@ public class Serialization {
             @Override
             public void write(Kryo kryo, Output output, ServerState serverState) {
 
-                kryo.writeObject(output, ServerToClientDataStates.SERVER_STATE);
+                kryo.writeObject(output, com.fogok.dataobjects.datastates.ServerToClientDataStates.SERVER_STATE);
 
                 output.writeInt(serverState.getPlayersOnline(), true);
                 output.writeInt(serverState.getPlayerGlobalData().getDataFloats().length, true);
@@ -128,7 +129,7 @@ public class Serialization {
             @Override
             public void write(Kryo kryo, Output output, EveryBodyPool everyBodyPool) {  ///
 
-                kryo.writeObject(output, ServerToClientDataStates.EVERY_BODY_POOL);
+                kryo.writeObject(output, com.fogok.dataobjects.datastates.ServerToClientDataStates.EVERY_BODY_POOL);
 
                 Array<Array<GameObject>> typedObjects = everyBodyPool.getAllObjects();
 
@@ -213,10 +214,13 @@ public class Serialization {
                 everyBodyPool.free(GameObjectsType.values()[type]);
     }
 
+
+
+
+
     public Kryo getKryo() {
         return kryo;
     }
-
 
     public static void convert(BitSet bitSet, long value) {
         bitSet.clear();

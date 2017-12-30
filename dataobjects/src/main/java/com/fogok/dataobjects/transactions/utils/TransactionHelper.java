@@ -24,7 +24,7 @@ public class TransactionHelper {
     private Output output = new Output(new ByteArrayOutputStream());
     private Input input = new Input();
 
-    private BaseTransaction transactionToFindAppropMethod = new BaseTransaction(ConnectionToServiceType.ClientToService, 0){};
+    private BaseTransaction transactionToFindAppropMethod = new BaseTransaction(ConnectionToServiceType.ClientToService, 0);
 
     private int lostPackets;
 
@@ -61,13 +61,17 @@ public class TransactionHelper {
         return baseTransaction;
     }
 
+    public BaseTransaction findAppropriateObject(byte[] bytes){
+        return findAppropriateObject(bytes, apprObjClientServerResolver);
+    }
+
     public BaseTransaction findAppropriateObject(byte[] bytes, AppropriatelyObjectsResolver appropriatelyObjectsResolver){
         if (!fillObjectThroughTransaction(bytes, transactionToFindAppropMethod))
             return null;
         return appropriatelyObjectsResolver.resolve(transactionToFindAppropMethod);
     }
 
-    private <T extends BaseTransaction> boolean fillObjectThroughTransaction(byte[] bytes, T baseTransaction) {
+    public  <T extends BaseTransaction> boolean fillObjectThroughTransaction(byte[] bytes, T baseTransaction) {
         try {
             input.setBuffer(bytes);
             baseTransaction.read(Serialization.getInstance().getKryo(), input);
@@ -78,7 +82,7 @@ public class TransactionHelper {
         return false;
     }
 
-    private byte[] readByteBufAndDispose(ByteBuf byteBuf) {
+    public byte[] readByteBufAndDispose(ByteBuf byteBuf) {
         byte[] response = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(response);
         byteBuf.release();

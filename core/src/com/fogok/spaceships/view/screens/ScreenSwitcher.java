@@ -1,7 +1,7 @@
 package com.fogok.spaceships.view.screens;
 
 import com.badlogic.gdx.Screen;
-import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.net.controllers.NetRootController;
 import com.fogok.spaceships.view.screens.game_session.GameProcess;
 import com.fogok.spaceships.view.screens.hall.Hall;
 import com.fogok.spaceships.view.screens.login.LoginScreen;
@@ -43,22 +43,17 @@ public abstract class ScreenSwitcher {
 
     public abstract void flush(Screen screen);
 
-//    public Map<Screens, Screen> getAllScreens() {
-//        return allScreens;
-//    }
-
-
     public NativeGdxHelper getNativeGdxHelper() {
         return nativeGdxHelper;
-    }
-
-    public void dispose() {
-        if (currentScreen != null)
-            currentScreen.dispose();
     }
 
     public void disposeAll(){
         dispose();
         nativeGdxHelper.dispose();
+    }
+
+    public void dispose() {
+        if (currentScreen != null)
+            currentScreen.dispose();
     }
 }

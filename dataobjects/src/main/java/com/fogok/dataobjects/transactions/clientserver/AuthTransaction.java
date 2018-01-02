@@ -10,42 +10,42 @@ import com.fogok.dataobjects.transactions.BaseTransaction;
 public class AuthTransaction extends BaseTransaction {
 
     private String login;
-    private String password;
+    private String passwordEncrypted;
 
     public AuthTransaction(BaseTransaction baseTransaction) {
         super(baseTransaction);
     }
 
-    public AuthTransaction(String login, String password) {
+    public AuthTransaction(String login, String passwordEncrypted) {
         super(ConnectionToServiceType.ClientToService, ClientToServerDataStates.CONNECT_TO_SERVER.ordinal());
         this.login = login;
-        this.password = password;
+        this.passwordEncrypted = passwordEncrypted;
     }
 
     public String getLogin() {
         return login;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordEncrypted() {
+        return passwordEncrypted;
     }
 
     @Override
     public String toString() {
-        return String.format("Login: '%s', Password: '%s'", getLogin(), getPassword());
+        return String.format("Login: '%s', PasswordEncrypted: '%s'", getLogin(), getPasswordEncrypted());
     }
 
     @Override
     public void write(Kryo kryo, Output output) {
         super.write(kryo, output);
         output.writeString(login);
-        output.writeString(password);
+        output.writeString(passwordEncrypted);
     }
 
     @Override
     public void read(Kryo kryo, Input input) {
         super.read(kryo, input);
         login = input.readString();
-        password = input.readString();
+        passwordEncrypted = input.readString();
     }
 }

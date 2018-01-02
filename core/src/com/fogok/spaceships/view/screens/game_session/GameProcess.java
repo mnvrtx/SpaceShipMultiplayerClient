@@ -5,7 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.fogok.dataobjects.PlayerData;
 import com.fogok.dataobjects.gameobjects.ConsoleState;
-import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.net.controllers.NetRootController;
 import com.fogok.spaceships.view.utils.DebugGUI;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 

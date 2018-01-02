@@ -42,6 +42,8 @@ public class Serialization {
 
         kryo = new Kryo();
 
+        //TODO: перенести сериализацию в сами классы!
+
         kryo.register(com.fogok.dataobjects.datastates.ServerToClientDataStates.class, new Serializer<com.fogok.dataobjects.datastates.ServerToClientDataStates>(){
 
             @Override
@@ -213,10 +215,6 @@ public class Serialization {
             else
                 everyBodyPool.free(GameObjectsType.values()[type]);
     }
-
-
-
-
 
     public Kryo getKryo() {
         return kryo;

@@ -1,5 +1,7 @@
 package com.fogok.dataobjects;
 
+import com.fogok.dataobjects.transactions.ErrorConnectionToServiceCallback;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
@@ -24,14 +26,19 @@ public class ConnectToServiceImpl {
     //endregion
 
     public boolean isThreadOnly;
-    public <T extends ChannelInboundHandlerAdapter, E extends ChannelDuplexHandler> void connect(final T coreHandler, final E exceptionHandler, final String ip, final int port) {
+    public <L extends ChannelInboundHandlerAdapter,
+            O extends ChannelDuplexHandler,
+            X extends ErrorConnectionToServiceCallback> void connect(final L coreHandler,
+                                                                     final O exceptionHandler,
+                                                                     final X errorCallback,
+                                                                     final String ip,
+                                                                     final int port) {
         if (!isThreadOnly) {
             debug("Start socket thread");
             isThreadOnly = true;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-
                     EventLoopGroup workingGroup = new NioEventLoopGroup();
 
                     try {
@@ -50,14 +57,15 @@ public class ConnectToServiceImpl {
 
 
                         ChannelFuture future = boot.connect(ip, port).sync();
-                        info(String.format("Connect to service '%s' success", coreHandler.getClass().getName()));
+                        info(String.format("Connect to service '%s' success", coreHandler.getClass().getSimpleName()));
                         future.channel().closeFuture().sync();
 
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        e.printStackTrace(); //сделать коннект к сервису через- этот класс
+                        errorCallback.error(e);
                     } finally {
                         workingGroup.shutdownGracefully();
-                        error(String.format("Stop connection to '%s' service", coreHandler.getClass().getName()));
+                        info(String.format("Stop connection to '%s' service", coreHandler.getClass().getSimpleName()));
                         isThreadOnly = false;
                     }
 

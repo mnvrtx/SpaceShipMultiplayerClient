@@ -3,7 +3,7 @@ package com.fogok.spaceships;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.net.controllers.NetRootController;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.screens.ScreenSwitcher;
 

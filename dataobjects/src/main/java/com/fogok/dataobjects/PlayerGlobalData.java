@@ -7,6 +7,8 @@ import java.util.BitSet;
 
 public class PlayerGlobalData {
 
+    //TODO: выпилить
+
     public enum PlayerGlobalDataFlags{
 
     }

@@ -1,4 +1,4 @@
-package com.fogok.spaceships.net;
+package com.fogok.spaceships.net.exception;
 
 import java.net.SocketAddress;
 
@@ -8,17 +8,19 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 
-public class ExceptionHandler extends ChannelDuplexHandler {
+import static com.esotericsoftware.minlog.Log.error;
 
-    private NetRootController netRootController;
+public class DefaultExceptionHandler extends ChannelDuplexHandler {
 
-    public ExceptionHandler(NetRootController netRootController){
-        this.netRootController = netRootController;
+    private DefaultExceptionCallBack defaultExceptionCallBack;
+
+    public DefaultExceptionHandler(DefaultExceptionCallBack defaultExceptionCallBack){
+        this.defaultExceptionCallBack = defaultExceptionCallBack;
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        // Uncaught exceptions from inbound handlers will propagate up to this handler
+        throwException(cause);
     }
 
     @Override
@@ -27,13 +29,15 @@ public class ExceptionHandler extends ChannelDuplexHandler {
             @Override
             public void operationComplete(ChannelFuture future) {
                 if (!future.isSuccess()) {
-                    NetHallController.ConnectionCallBack connectionCallBack = netRootController.getNetHallController().getConnectionCallBack();
-                    if (connectionCallBack != null) {
-                        connectionCallBack.exceptionConnect();
-                    }
+                    throwException(future.cause());
                 }
             }
         }));
+    }
+
+    private void throwException(Throwable cause) {
+        defaultExceptionCallBack.exceptionConnect(cause);
+        error(String.format("Exception in connect to service: %s", cause));
     }
 
     @Override
@@ -42,7 +46,7 @@ public class ExceptionHandler extends ChannelDuplexHandler {
             @Override
             public void operationComplete(ChannelFuture future) {
                 if (!future.isSuccess()) {
-                    System.out.println("qwkqwpwqdkwqd;klwqd");
+                    error(String.format("Unhandled exception in write to channel: %s", future.cause()));
                 }
             }
         }));

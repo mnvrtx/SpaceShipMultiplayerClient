@@ -21,7 +21,6 @@ public class Assets {
         background = new Texture(Gdx.files.internal("testBack.jpg"));
     }
 
-
     public static Texture getBackground() {
         return background;
     }

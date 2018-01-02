@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 public class NormalLabel extends Label {
     private String text;
+    //TODO: delete this class!
 
     public NormalLabel(final CharSequence text, final LabelStyle style) {
         super(text, style);

@@ -15,8 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.fogok.dataobjects.PlayerGlobalData;
 import com.fogok.dataobjects.ServerState;
-import com.fogok.spaceships.net.NetHallController;
-import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.net.controllers.NetHallController;
+import com.fogok.spaceships.net.controllers.NetRootController;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
@@ -37,13 +37,13 @@ public class Hall implements Screen {
 
         final String infoString = "[#00FF00]Player Information\nWelcome  [#FF8000]%s[]\n[#FF8000]WINLOSE %%: %s[]\n[#00FFFF]SERVER ONLINE: %s";
         final Label infolabel = new Label("", labelStyle);
-        infolabel.setText(String.format(infoString, netRootController.getNetHallController().getLogin(), 0f, 1));
+        infolabel.setText(String.format(infoString, netRootController.getNickName(), 0f, 1));
         Label matchmakingInfo = new Label(String.format("Ready"), labelStyle);
 
         netRootController.getNetHallController().setHallCallBack(new NetHallController.HallCallBack() {
             @Override
             public void serverState(ServerState serverState) {
-                infolabel.setText(String.format(infoString, netRootController.getNetHallController().getLogin(), serverState.getPlayerGlobalData().getDataFloat(PlayerGlobalData.PlayerGlobalDataFloats.WINLOSEPERCENT), serverState.getPlayersOnline()));
+                infolabel.setText(String.format(infoString, netRootController.getNickName(), serverState.getPlayerGlobalData().getDataFloat(PlayerGlobalData.PlayerGlobalDataFloats.WINLOSEPERCENT), serverState.getPlayersOnline()));
             }
         });
 

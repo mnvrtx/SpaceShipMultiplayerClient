@@ -4,9 +4,10 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fogok.dataobjects.datastates.ClientToServerDataStates;
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
+import com.fogok.dataobjects.datastates.ServerToClientDataStates;
 import com.fogok.dataobjects.transactions.BaseTransaction;
 import com.fogok.dataobjects.transactions.clientserver.AuthTransaction;
-import com.fogok.dataobjects.utils.GMUtils;
+import com.fogok.dataobjects.transactions.serverclient.TokenTransaction;
 import com.fogok.dataobjects.utils.Serialization;
 
 import java.io.ByteArrayOutputStream;
@@ -28,16 +29,12 @@ public class TransactionHelper {
 
     private int lostPackets;
 
-    public TransactionHelper() {
-
-    }
-
     public ChannelFuture executeTransaction(Channel channel, BaseTransaction transaction) {
         output.clear();
         transaction.write(Serialization.getInstance().getKryo(), output);
         ChannelFuture channelFuture = channel.writeAndFlush(Unpooled.copiedBuffer(output.getBuffer()));
         info(String.format("execute %s %s from %s to %s",
-                GMUtils.reverse(transaction.getClass().toString().split("\\."))[0], transaction.toString(),
+                transaction.getClass().getSimpleName(), transaction.toString(),
                 channel.localAddress(), channel.remoteAddress()));
         return channelFuture;
     }
@@ -53,25 +50,25 @@ public class TransactionHelper {
 
     public BaseTransaction findAppropriateObjectAndCreate(Object msg, AppropriatelyObjectsResolver appropriatelyObjectsResolver) {
         final byte[] bytes = readByteBufAndDispose((ByteBuf) msg);
-        BaseTransaction baseTransaction = findAppropriateObject(bytes, appropriatelyObjectsResolver);
+        BaseTransaction baseTransaction = findAppropriateTransaction(bytes, appropriatelyObjectsResolver);
         if (baseTransaction == null)
             return null;
-        if (!fillObjectThroughTransaction(bytes, baseTransaction))
+        if (!fillTransaction(bytes, baseTransaction))
             return null;
         return baseTransaction;
     }
 
-    public BaseTransaction findAppropriateObject(byte[] bytes){
-        return findAppropriateObject(bytes, apprObjClientServerResolver);
+    public BaseTransaction findAppropriateTransaction(byte[] bytes){
+        return findAppropriateTransaction(bytes, apprObjClientServerResolver);
     }
 
-    public BaseTransaction findAppropriateObject(byte[] bytes, AppropriatelyObjectsResolver appropriatelyObjectsResolver){
-        if (!fillObjectThroughTransaction(bytes, transactionToFindAppropMethod))
+    public BaseTransaction findAppropriateTransaction(byte[] bytes, AppropriatelyObjectsResolver appropriatelyObjectsResolver){
+        if (!fillTransaction(bytes, transactionToFindAppropMethod))
             return null;
         return appropriatelyObjectsResolver.resolve(transactionToFindAppropMethod);
     }
 
-    public  <T extends BaseTransaction> boolean fillObjectThroughTransaction(byte[] bytes, T baseTransaction) {
+    public  <T extends BaseTransaction> boolean fillTransaction(byte[] bytes, T baseTransaction) {
         try {
             input.setBuffer(bytes);
             baseTransaction.read(Serialization.getInstance().getKryo(), input);
@@ -104,6 +101,12 @@ public class TransactionHelper {
                     switch (ClientToServerDataStates.values()[baseTransaction.getClientOrServiceToServerDataState()]){
                         case CONNECT_TO_SERVER:
                             return new AuthTransaction(baseTransaction);
+                    }
+                    break;
+                case ServiceToClient:
+                    switch (ServerToClientDataStates.values()[baseTransaction.getClientOrServiceToServerDataState()]) {
+                        case TOKEN:
+                            return new TokenTransaction(baseTransaction);
                     }
                     break;
             }

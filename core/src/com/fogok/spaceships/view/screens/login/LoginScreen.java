@@ -14,10 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.fogok.spaceships.Main;
-import com.fogok.spaceships.net.NetHallController;
-import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.net.controllers.NetAuthController;
+import com.fogok.spaceships.net.controllers.NetRootController;
 import com.fogok.spaceships.utils.gamedepended.Assets;
-import com.fogok.spaceships.view.screens.ScreenSwitcher;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 import com.fogok.spaceships.view.utils.NormalLabel;
 
@@ -61,17 +60,16 @@ public class LoginScreen implements Screen{
         final TextButton loginButton = new TextButton("LOGIN", textButtonStyle);
 
 
-        netRootController.getNetHallController().setConnectionCallBack(new NetHallController.ConnectionCallBack() {
+        netRootController.getNetAuthController().setAuthCallBack(new NetAuthController.AuthCallBack() {
             @Override
-            public void exceptionConnect() {
-                statusBar.updateText("Internet connection or server cluster is disabled :(");
-                statusBar.setColor(Color.FIREBRICK);
+            public void succesConnect(String nickName) {
+                //show welcomeNickName
             }
 
             @Override
-            public void succesConnect(String token) {
-                Main.getScreenSwitcher().setCurrentScreen(ScreenSwitcher.Screens.HALL);
-                System.out.println(token);
+            public void exceptionConnect(Throwable cause) {
+                statusBar.updateText("Internet connection or server cluster is disabled :(");
+                statusBar.setColor(Color.FIREBRICK);
             }
         });
 
@@ -83,7 +81,7 @@ public class LoginScreen implements Screen{
                 if (emailCorrect && passwordCorrect) {
                     statusBar.setColor(Color.GREEN);
                     statusBar.updateText("Loading");
-                    netRootController.getNetHallController().openConnection(login.getText(), password.getText());
+                    netRootController.getNetAuthController().openConnection(login.getText(), password.getText());
 
                 } else if (!emailCorrect) {
                     statusBar.setColor(Color.FIREBRICK);
@@ -153,6 +151,6 @@ public class LoginScreen implements Screen{
     @Override
     public void dispose() {
         stage.clear();
-        netRootController.getNetHallController().setConnectionCallBack(null);
+        netRootController.getNetAuthController().setAuthCallBack(null);
     }
 }

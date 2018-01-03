@@ -3,12 +3,10 @@ package com.fogok.spaceships.net.controllers;
 import com.badlogic.gdx.Gdx;
 import com.fogok.dataobjects.ConnectToServiceImpl;
 import com.fogok.dataobjects.datastates.ClientState;
-import com.fogok.dataobjects.transactions.utils.BaseTransactionExecutor;
-import com.fogok.dataobjects.transactions.utils.TransactionHelper;
+import com.fogok.dataobjects.transactions.utils.BaseTransactionReader;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 
 public class NetRootController {
 
@@ -17,26 +15,26 @@ public class NetRootController {
     private String token;
     private String nickName;
 
-    private ChannelHandlerContext currentChannelInformation;
-
     private NetAuthController netAuthController;
     private NetHallController netHallController;
     private NetSessionController netSessionController;
-
-    private TransactionHelper transactionHelper = new TransactionHelper();
+    private NetRelayBalancerController netRelayBalancerController;
 
     public NetRootController() {
         ConnectToServiceImpl.getInstance().isThreadOnly = false;
+        setClientState(ClientState.READY_TO_LOGIN);
+
         netAuthController = new NetAuthController(this);
+        netRelayBalancerController = new NetRelayBalancerController(this);
         netHallController = new NetHallController(this);
         netSessionController = new NetSessionController();
     }
 
     //region PostLogicExecutor
-    public void readServerChannel(Channel channel, Object msg, BaseTransactionExecutor baseTransactionExecutor){
+    public void readServerChannel(Channel channel, Object msg, BaseTransactionReader baseTransactionReader){
         serverReader.channel = channel;
         serverReader.msg = msg;
-        serverReader.baseTransactionExecutor = baseTransactionExecutor;
+        serverReader.baseTransactionReader = baseTransactionReader;
         Gdx.app.postRunnable(serverReader);
     }
 
@@ -46,11 +44,11 @@ public class NetRootController {
 
         private Object msg;
         private Channel channel;
-        private BaseTransactionExecutor baseTransactionExecutor;
+        private BaseTransactionReader baseTransactionReader;
 
         @Override
         public void run() {
-            baseTransactionExecutor.execute(channel, (ByteBuf) msg);
+            baseTransactionReader.readByteBufFromChannel(channel, (ByteBuf) msg);
         }
     }
     //endregion
@@ -62,6 +60,10 @@ public class NetRootController {
 
     public NetAuthController getNetAuthController() {
         return netAuthController;
+    }
+
+    public NetRelayBalancerController getNetRelayBalancerController() {
+        return netRelayBalancerController;
     }
 
     public NetHallController getNetHallController() {
@@ -90,5 +92,10 @@ public class NetRootController {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public void setClientState(ClientState clientState) {
+        this.clientState = clientState;
+    }
+
     //endregion
 }

@@ -1,11 +1,11 @@
-package com.fogok.dataobjects.transactions.clientserver;
+package com.fogok.dataobjects.transactions.authservice;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fogok.dataobjects.datastates.ClientToServerDataStates;
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
-import com.fogok.dataobjects.transactions.BaseTransaction;
+import com.fogok.dataobjects.transactions.common.BaseTransaction;
 
 public class AuthTransaction extends BaseTransaction {
 
@@ -17,7 +17,7 @@ public class AuthTransaction extends BaseTransaction {
     }
 
     public AuthTransaction(String login, String passwordEncrypted) {
-        super(ConnectionToServiceType.ClientToService, ClientToServerDataStates.CONNECT_TO_SERVER.ordinal());
+        super(ConnectionToServiceType.CLIENT_TO_SERVICE, ClientToServerDataStates.CONNECT_TO_SERVER.ordinal());
         this.login = login;
         this.passwordEncrypted = passwordEncrypted;
     }

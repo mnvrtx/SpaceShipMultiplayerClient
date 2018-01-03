@@ -13,7 +13,7 @@ public class NetAuthController extends DefaultController{
 
     private static final String authIp = "127.0.0.1:15501";
 
-    public NetAuthController(NetRootController netRootController) {
+    NetAuthController(NetRootController netRootController) {
         this.netRootController = netRootController;
         ip = authIp;
     }
@@ -22,15 +22,17 @@ public class NetAuthController extends DefaultController{
         openConnection(new AuthHandler(netRootController, login, passwordEncrypted), authCallBack, netRootController);
     }
 
-    public void successConnect(String token, String nickName, String relayBalancerIp){
+    public void receiveToken(String token, String nickName, String relayBalancerIp){
         info(String.format("Auth complete - token: %s", token));
 
         netRootController.setNickName(nickName);
         netRootController.setToken(token);
 
-        authCallBack.succesConnect(nickName);
+        netRootController.getNetRelayBalancerController().setIp(relayBalancerIp);
+    }
 
-//        Main.getScreenSwitcher().setCurrentScreen(ScreenSwitcher.Screens.HALL);
+    public void connectToRelayBalancer(){
+        netRootController.getNetRelayBalancerController().openConnection(netRootController.getToken(), authCallBack);
     }
 
     //region AuthCallBack

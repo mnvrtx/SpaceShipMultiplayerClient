@@ -5,6 +5,7 @@ import com.fogok.dataobjects.transactions.ErrorConnectionToServiceCallback;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -28,11 +29,13 @@ public class ConnectToServiceImpl {
     public boolean isThreadOnly;
     public <L extends ChannelInboundHandlerAdapter,
             O extends ChannelDuplexHandler,
-            X extends ErrorConnectionToServiceCallback> void connect(final L coreHandler,
-                                                                     final O exceptionHandler,
-                                                                     final X errorCallback,
-                                                                     final String ip,
-                                                                     final int port) {
+            X extends ErrorConnectionToServiceCallback,
+            T extends ChannelFutureListener> void connect(final L coreHandler,
+                                                          final O exceptionHandler,
+                                                          final X errorCallback,
+                                                          final T succesCallback,
+                                                          final String ip,
+                                                          final int port) {
         if (!isThreadOnly) {
             debug("Start socket thread");
             isThreadOnly = true;
@@ -58,10 +61,11 @@ public class ConnectToServiceImpl {
 
                         ChannelFuture future = boot.connect(ip, port).sync();
                         info(String.format("Connect to service '%s' success", coreHandler.getClass().getSimpleName()));
+                        succesCallback.operationComplete(future);
                         future.channel().closeFuture().sync();
 
-                    } catch (InterruptedException e) {
-                        e.printStackTrace(); //сделать коннект к сервису через- этот класс
+                    } catch (Exception e) {
+                        e.printStackTrace();
                         errorCallback.error(e);
                     } finally {
                         workingGroup.shutdownGracefully();

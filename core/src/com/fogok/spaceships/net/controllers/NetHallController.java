@@ -8,7 +8,7 @@ public class NetHallController {
     private NetRootController netRootController;
     //endregion
 
-    public NetHallController(NetRootController netRootController) {
+    NetHallController(NetRootController netRootController) {
         this.netRootController = netRootController;
     }
 

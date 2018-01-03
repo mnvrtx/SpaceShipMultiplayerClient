@@ -1,4 +1,4 @@
-package com.fogok.dataobjects.transactions;
+package com.fogok.dataobjects.transactions.common;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoSerializable;

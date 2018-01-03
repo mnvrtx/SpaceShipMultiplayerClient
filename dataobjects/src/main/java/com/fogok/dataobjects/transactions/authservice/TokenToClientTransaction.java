@@ -1,24 +1,24 @@
-package com.fogok.dataobjects.transactions.serverclient;
+package com.fogok.dataobjects.transactions.authservice;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
 import com.fogok.dataobjects.datastates.ServerToClientDataStates;
-import com.fogok.dataobjects.transactions.BaseTransaction;
+import com.fogok.dataobjects.transactions.common.BaseTransaction;
 
-public class TokenTransaction extends BaseTransaction {
+public class TokenToClientTransaction extends BaseTransaction {
 
     private String relayBalancerIp;
     private String token;
     private String nickName;
 
-    public TokenTransaction(BaseTransaction baseTransaction) {
+    public TokenToClientTransaction(BaseTransaction baseTransaction) {
         super(baseTransaction);
     }
 
-    public TokenTransaction(String token, String nickName, String relayBalancerIp) {
-        super(ConnectionToServiceType.ServiceToClient, ServerToClientDataStates.TOKEN.ordinal());
+    public TokenToClientTransaction(String token, String nickName, String relayBalancerIp) {
+        super(ConnectionToServiceType.SERVICE_TO_CLIENT, ServerToClientDataStates.TOKEN.ordinal());
         this.token = token;
         this.nickName = nickName;
         this.relayBalancerIp = relayBalancerIp;

@@ -2,10 +2,10 @@ package com.fogok.spaceships.net.auth;
 
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
 import com.fogok.dataobjects.datastates.ServerToClientDataStates;
-import com.fogok.dataobjects.transactions.BaseTransaction;
-import com.fogok.dataobjects.transactions.clientserver.AuthTransaction;
-import com.fogok.dataobjects.transactions.utils.SimpleTransactionExecutor;
-import com.fogok.spaceships.net.auth.actions.TokenAction;
+import com.fogok.dataobjects.transactions.common.BaseTransaction;
+import com.fogok.dataobjects.transactions.authservice.AuthTransaction;
+import com.fogok.dataobjects.transactions.utils.SimpleTransactionReader;
+import com.fogok.spaceships.net.auth.readers.TokenReader;
 import com.fogok.spaceships.net.controllers.NetRootController;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -13,7 +13,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public class AuthHandler extends ChannelInboundHandlerAdapter {
 
-    private SimpleTransactionExecutor simpleTransactionExecutor = new SimpleTransactionExecutor();
+    private SimpleTransactionReader simpleTransactionReader = new SimpleTransactionReader();
     private String login, passwordEncrypted;
     private NetRootController netRootController;
 
@@ -21,8 +21,8 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
         this.netRootController = netRootController;
         this.login = login;
         this.passwordEncrypted = passwordEncrypted;
-        simpleTransactionExecutor.getTransactionsAndActionsResolver()
-                .addToResolve(new TokenAction(netRootController), new BaseTransaction(ConnectionToServiceType.ServiceToClient, ServerToClientDataStates.TOKEN.ordinal()));
+        simpleTransactionReader.getTransactionsAndReadersResolver()
+                .addToResolve(new TokenReader(netRootController.getNetAuthController()), new BaseTransaction(ConnectionToServiceType.SERVICE_TO_CLIENT, ServerToClientDataStates.TOKEN.ordinal()));
     }
 
     /**
@@ -30,7 +30,7 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        simpleTransactionExecutor.getTransactionHelper().executeTransaction(ctx.channel(), new AuthTransaction(login, passwordEncrypted));
+        simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(), new AuthTransaction(login, passwordEncrypted));
     }
 
     /**
@@ -38,6 +38,6 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        netRootController.readServerChannel(ctx.channel(), msg, simpleTransactionExecutor);
+        netRootController.readServerChannel(ctx.channel(), msg, simpleTransactionReader);
     }
 }

@@ -5,9 +5,12 @@ import com.esotericsoftware.kryo.io.Output;
 import com.fogok.dataobjects.datastates.ClientToServerDataStates;
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
 import com.fogok.dataobjects.datastates.ServerToClientDataStates;
-import com.fogok.dataobjects.transactions.BaseTransaction;
-import com.fogok.dataobjects.transactions.clientserver.AuthTransaction;
-import com.fogok.dataobjects.transactions.serverclient.TokenTransaction;
+import com.fogok.dataobjects.transactions.common.BaseTransaction;
+import com.fogok.dataobjects.transactions.authservice.AuthTransaction;
+import com.fogok.dataobjects.transactions.authservice.TokenToClientTransaction;
+import com.fogok.dataobjects.transactions.common.ConnectionInformationTransaction;
+import com.fogok.dataobjects.transactions.common.TokenToServiceTransaction;
+import com.fogok.dataobjects.transactions.relaybalancerservice.SSInformationTransaction;
 import com.fogok.dataobjects.utils.Serialization;
 
 import java.io.ByteArrayOutputStream;
@@ -20,22 +23,22 @@ import io.netty.channel.ChannelFuture;
 import static com.esotericsoftware.minlog.Log.info;
 
 
-public class TransactionHelper {
+public class TransactionExecutor {
 
     private Output output = new Output(new ByteArrayOutputStream());
     private Input input = new Input();
 
-    private BaseTransaction transactionToFindAppropMethod = new BaseTransaction(ConnectionToServiceType.ClientToService, 0);
+    private BaseTransaction transactionToFindAppropMethod = new BaseTransaction(ConnectionToServiceType.CLIENT_TO_SERVICE, 0);
 
     private int lostPackets;
 
-    public ChannelFuture executeTransaction(Channel channel, BaseTransaction transaction) {
+    public ChannelFuture execute(Channel channel, BaseTransaction transaction) {
         output.clear();
         transaction.write(Serialization.getInstance().getKryo(), output);
         ChannelFuture channelFuture = channel.writeAndFlush(Unpooled.copiedBuffer(output.getBuffer()));
-        info(String.format("execute %s %s from %s to %s",
+        info(String.format("send %s %s to %s",
                 transaction.getClass().getSimpleName(), transaction.toString(),
-                channel.localAddress(), channel.remoteAddress()));
+                channel.remoteAddress()));
         return channelFuture;
     }
 
@@ -58,8 +61,17 @@ public class TransactionHelper {
         return baseTransaction;
     }
 
+    private AppropriatelyObjectsResolver alternativeTrResolver;
+
+    public void setAlternativeTrResolver(AppropriatelyObjectsResolver alternativeTrResolver) {
+        this.alternativeTrResolver = alternativeTrResolver;
+    }
+
     public BaseTransaction findAppropriateTransaction(byte[] bytes){
-        return findAppropriateTransaction(bytes, apprObjClientServerResolver);
+        BaseTransaction baseTransaction = findAppropriateTransaction(bytes, apprObjClientServerResolver);
+        if (baseTransaction == null && alternativeTrResolver != null)
+            return findAppropriateTransaction(bytes, alternativeTrResolver);
+        return baseTransaction;
     }
 
     public BaseTransaction findAppropriateTransaction(byte[] bytes, AppropriatelyObjectsResolver appropriatelyObjectsResolver){
@@ -97,16 +109,22 @@ public class TransactionHelper {
         @Override
         public BaseTransaction resolve(BaseTransaction baseTransaction) {
             switch (baseTransaction.getConnectionToServiceType()) {
-                case ClientToService:
+                case CLIENT_TO_SERVICE:
                     switch (ClientToServerDataStates.values()[baseTransaction.getClientOrServiceToServerDataState()]){
                         case CONNECT_TO_SERVER:
                             return new AuthTransaction(baseTransaction);
+                        case TOKEN_WITH_ADDITIONAL_INFORMATION:
+                            return new TokenToServiceTransaction(baseTransaction);
                     }
                     break;
-                case ServiceToClient:
+                case SERVICE_TO_CLIENT:
                     switch (ServerToClientDataStates.values()[baseTransaction.getClientOrServiceToServerDataState()]) {
                         case TOKEN:
-                            return new TokenTransaction(baseTransaction);
+                            return new TokenToClientTransaction(baseTransaction);
+                        case SS_INFORMATION:
+                            return new SSInformationTransaction(baseTransaction);
+                        case CONNECTION_TO_SERVICE_INFORMATION:
+                            return new ConnectionInformationTransaction(baseTransaction);
                     }
                     break;
             }

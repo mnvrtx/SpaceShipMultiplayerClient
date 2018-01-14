@@ -1,6 +1,5 @@
 package com.fogok.spaceships.net.controllers;
 
-import com.fogok.dataobjects.ConnectToServiceImpl;
 import com.fogok.spaceships.net.relaybalancer.RelayBalancerHandler;
 
 import static com.esotericsoftware.minlog.Log.info;
@@ -22,7 +21,6 @@ public class NetRelayBalancerController extends DefaultController{
     }
 
     void openConnection(String token, NetAuthController.AuthCallBack authCallBack){
-        ConnectToServiceImpl.getInstance().isThreadOnly = false;
         openConnection(new RelayBalancerHandler(netRootController, token, authCallBack), authCallBack, netRootController);
     }
 

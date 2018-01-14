@@ -1,10 +1,19 @@
 apply plugin: 'java'
 
 dependencies {
-    compile files('libs/kryo-4.0.0.jar')
-    compile files('libs/minlog-1.2.jar')
-    compile files('libs/objenesis-1.2.jar')
-    compile files('libs/netty-all-4.0.36.Final.jar')
+    // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
+    compile 'com.esotericsoftware:kryo:4.0.0'
+    // https://mvnrepository.com/artifact/com.esotericsoftware.minlog/minlog
+//    compile 'com.esotericsoftware.minlog:minlog:1.2'
+
+    // https://mvnrepository.com/artifact/org.objenesis/objenesis
+//    compile 'org.objenesis:objenesis:1.2'
+
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    compile ('io.netty:netty-all:4.0.36.Final') {
+        exclude group: 'org.objenesis', module: 'objenesis'
+    }
+
 }
 
 sourceCompatibility = 1.6

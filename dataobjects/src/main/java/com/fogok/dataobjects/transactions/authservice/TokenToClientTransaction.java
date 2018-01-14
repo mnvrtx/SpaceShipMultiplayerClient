@@ -6,11 +6,11 @@ import com.esotericsoftware.kryo.io.Output;
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
 import com.fogok.dataobjects.datastates.ServerToClientDataStates;
 import com.fogok.dataobjects.transactions.common.BaseTransaction;
+import com.fogok.dataobjects.transactions.common.TokenizedTransaction;
 
-public class TokenToClientTransaction extends BaseTransaction {
+public class TokenToClientTransaction extends TokenizedTransaction {
 
     private String relayBalancerIp;
-    private String token;
     private String nickName;
 
     public TokenToClientTransaction(BaseTransaction baseTransaction) {
@@ -18,8 +18,7 @@ public class TokenToClientTransaction extends BaseTransaction {
     }
 
     public TokenToClientTransaction(String token, String nickName, String relayBalancerIp) {
-        super(ConnectionToServiceType.SERVICE_TO_CLIENT, ServerToClientDataStates.TOKEN.ordinal());
-        this.token = token;
+        super(token, ConnectionToServiceType.SERVICE_TO_CLIENT, ServerToClientDataStates.TOKEN.ordinal());
         this.nickName = nickName;
         this.relayBalancerIp = relayBalancerIp;
     }
@@ -28,31 +27,25 @@ public class TokenToClientTransaction extends BaseTransaction {
         return nickName;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public String getRelayBalancerIp() {
         return relayBalancerIp;
     }
 
     @Override
+    public String toString() {
+        return super.toString() + String.format(", Nickname: '%s', RelayBalancerIp: '%s'", getNickName(), getRelayBalancerIp());
+    }
+
+    @Override
     public void write(Kryo kryo, Output output) {
         super.write(kryo, output);
-        output.writeString(token);
         output.writeString(nickName);
         output.writeString(relayBalancerIp);
     }
 
     @Override
-    public String toString() {
-        return String.format("Token: %s, Nickname: %s", token, nickName);
-    }
-
-    @Override
     public void read(Kryo kryo, Input input) {
         super.read(kryo, input);
-        token = input.readString();
         nickName = input.readString();
         relayBalancerIp = input.readString();
     }

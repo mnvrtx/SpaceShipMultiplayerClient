@@ -41,7 +41,11 @@ project (":dataobjects"){
     apply plugin: "java"
 
     dependencies{
-        compile fileTree(dir: 'libs', include: ['*.jar'])
+//        compile fileTree(dir: 'libs', include: ['*.jar'])
+//        compile files('libs/kryo-4.0.0.jar')
+//        compile files('libs/minlog-1.2.jar')
+//        compile files('libs/objenesis-1.2.jar')
+//        compile files('libs/netty-all-4.0.36.Final.jar')
     }
 }
 
@@ -63,7 +67,10 @@ project(":android") {
     configurations { natives }
 
     dependencies {
-        compile project(":core")
+//        compile fileTree(dir: '../dataobjects/libs', include: ['*.jar'])
+
+//        compile project (":dataobjects")
+        compile project (":core")
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
@@ -85,6 +92,8 @@ project(":core") {
 
 
     dependencies {
+
+        compile project(':dataobjects')
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     }

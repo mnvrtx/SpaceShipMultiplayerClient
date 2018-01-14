@@ -17,7 +17,7 @@ public class NetAuthController extends DefaultController{
         this.netRootController = netRootController;
         ip = authIp;
     }
-    
+
     public void openConnection(String login, String passwordEncrypted){
         openConnection(new AuthHandler(netRootController, login, passwordEncrypted), authCallBack, netRootController);
     }

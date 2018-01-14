@@ -7,23 +7,17 @@ import com.fogok.dataobjects.datastates.ClientToServerDataStates;
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
 import com.fogok.dataobjects.datastates.RequestTypeInTokenToServiceTrnsn;
 
-public class TokenToServiceTransaction extends BaseTransaction {
+public class TokenToServiceTransaction extends TokenizedTransaction {
 
     private RequestTypeInTokenToServiceTrnsn requestTypeInTokenToServiceTrnsn;
-    private String token;
 
     public TokenToServiceTransaction(BaseTransaction baseTransaction) {
         super(baseTransaction);
     }
 
     public TokenToServiceTransaction(String token, RequestTypeInTokenToServiceTrnsn requestTypeInTokenToServiceTrnsn) {
-        super(ConnectionToServiceType.CLIENT_TO_SERVICE, ClientToServerDataStates.TOKEN_WITH_ADDITIONAL_INFORMATION.ordinal());
+        super(token, ConnectionToServiceType.CLIENT_TO_SERVICE, ClientToServerDataStates.TOKEN_WITH_ADDITIONAL_INFORMATION.ordinal());
         this.requestTypeInTokenToServiceTrnsn = requestTypeInTokenToServiceTrnsn;
-        this.token = token;
-    }
-
-    public String getToken() {
-        return token;
     }
 
     public RequestTypeInTokenToServiceTrnsn getRequestTypeInTokenToServiceTrnsn() {
@@ -32,20 +26,18 @@ public class TokenToServiceTransaction extends BaseTransaction {
 
     @Override
     public String toString() {
-        return String.format("Token: '%s', RequestType: '%s'", getToken(), getRequestTypeInTokenToServiceTrnsn().name());
+        return String.format(super.toString() + ", RequestType: '%s'", getRequestTypeInTokenToServiceTrnsn().name());
     }
 
     @Override
     public void write(Kryo kryo, Output output) {
         super.write(kryo, output);
         output.writeInt(requestTypeInTokenToServiceTrnsn.ordinal(), true);
-        output.writeString(token);
     }
 
     @Override
     public void read(Kryo kryo, Input input) {
         super.read(kryo, input);
         requestTypeInTokenToServiceTrnsn = RequestTypeInTokenToServiceTrnsn.values()[input.readInt(true)];
-        token = input.readString();
     }
 }

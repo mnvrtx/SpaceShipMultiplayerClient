@@ -26,7 +26,7 @@ public class ConnectToServiceImpl {
     }
     //endregion
 
-    public boolean isThreadOnly;
+    private int threadsCount;
     public <L extends ChannelInboundHandlerAdapter,
             O extends ChannelDuplexHandler,
             X extends ErrorConnectionToServiceCallback,
@@ -36,46 +36,44 @@ public class ConnectToServiceImpl {
                                                           final T succesCallback,
                                                           final String ip,
                                                           final int port) {
-        if (!isThreadOnly) {
-            debug("Start socket thread");
-            isThreadOnly = true;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    EventLoopGroup workingGroup = new NioEventLoopGroup();
+        threadsCount++;
+        debug("Start socket thread");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                EventLoopGroup workingGroup = new NioEventLoopGroup();
 
-                    try {
-                        Bootstrap boot = new Bootstrap();
-                        boot.group(workingGroup)
-                                .channel(NioSocketChannel.class)
-                                .option(ChannelOption.TCP_NODELAY, true)
-                                .handler(new ChannelInitializer<SocketChannel>() {
-                                    @Override
-                                    protected void initChannel(SocketChannel ch) throws Exception {
-                                        ch.config().setRecvByteBufAllocator(new FixedRecvByteBufAllocator(262144)); //set  buf size here
-                                        ch.pipeline().addLast(coreHandler);
-                                        ch.pipeline().addLast(exceptionHandler);
-                                    }
-                                });
+                try {
+                    Bootstrap boot = new Bootstrap();
+                    boot.group(workingGroup)
+                            .channel(NioSocketChannel.class)
+                            .option(ChannelOption.TCP_NODELAY, true)
+                            .handler(new ChannelInitializer<SocketChannel>() {
+                                @Override
+                                protected void initChannel(SocketChannel ch) throws Exception {
+                                    ch.config().setRecvByteBufAllocator(new FixedRecvByteBufAllocator(262144)); //set  buf size here
+                                    ch.pipeline().addLast(coreHandler);
+                                    ch.pipeline().addLast(exceptionHandler);
+                                }
+                            });
 
 
-                        ChannelFuture future = boot.connect(ip, port).sync();
-                        info(String.format("Connect to service '%s' success", coreHandler.getClass().getSimpleName()));
-                        succesCallback.operationComplete(future);
-                        future.channel().closeFuture().sync();
+                    ChannelFuture future = boot.connect(ip, port).sync();
+                    info(String.format("Connect to service '%s' success", coreHandler.getClass().getSimpleName()));
+                    succesCallback.operationComplete(future);
+                    future.channel().closeFuture().sync();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        errorCallback.error(e);
-                    } finally {
-                        workingGroup.shutdownGracefully();
-                        info(String.format("Stop connection to '%s' service", coreHandler.getClass().getSimpleName()));
-                        isThreadOnly = false;
-                    }
-
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    errorCallback.error(e);
+                } finally {
+                    workingGroup.shutdownGracefully();
+                    info(String.format("Stop connection to '%s' service", coreHandler.getClass().getSimpleName()));
+                    threadsCount--;
                 }
-            }).start();
-        }
+
+            }
+        }).start();
     }
 
 }

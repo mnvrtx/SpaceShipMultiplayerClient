@@ -19,7 +19,7 @@ public class SSInformationReader implements BaseReaderFromTransaction<SSInformat
     @Override
     public ChannelFuture read(Channel channel, SSInformationTransaction transaction, TransactionExecutor transactionExecutor) {
         netRelayBalancerController.receiveSSInfo(transaction.getSocialServerIp());
-        return channel.close();
+        return channel.disconnect();
     }
 
     @Override

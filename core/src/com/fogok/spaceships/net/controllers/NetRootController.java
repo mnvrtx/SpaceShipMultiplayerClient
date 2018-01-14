@@ -1,7 +1,6 @@
 package com.fogok.spaceships.net.controllers;
 
 import com.badlogic.gdx.Gdx;
-import com.fogok.dataobjects.ConnectToServiceImpl;
 import com.fogok.dataobjects.datastates.ClientState;
 import com.fogok.dataobjects.transactions.utils.BaseTransactionReader;
 
@@ -21,7 +20,6 @@ public class NetRootController {
     private NetRelayBalancerController netRelayBalancerController;
 
     public NetRootController() {
-        ConnectToServiceImpl.getInstance().isThreadOnly = false;
         setClientState(ClientState.READY_TO_LOGIN);
 
         netAuthController = new NetAuthController(this);

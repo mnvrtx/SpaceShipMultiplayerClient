@@ -7,32 +7,25 @@ import static com.esotericsoftware.minlog.Log.info;
 
 public class NetAuthController extends DefaultController{
 
-    //region Native
-    private NetRootController netRootController;
-    //endregion
-
     private static final String authIp = "127.0.0.1:15501";
 
     NetAuthController(NetRootController netRootController) {
-        this.netRootController = netRootController;
-        ip = authIp;
+        super(netRootController);
     }
 
     public void openConnection(String login, String passwordEncrypted){
-        openConnection(new AuthHandler(netRootController, login, passwordEncrypted), authCallBack, netRootController);
+        openConnection(new AuthHandler(netRootController, login, passwordEncrypted), authCallBack, netRootController, authIp);
     }
 
-    public void receiveToken(String token, String nickName, String relayBalancerIp){
+    public void receiveToken(String token, String nickName){
         info(String.format("Auth complete - token: %s", token));
 
         netRootController.setNickName(nickName);
         netRootController.setToken(token);
-
-        netRootController.getNetRelayBalancerController().setIp(relayBalancerIp);
     }
 
-    public void connectToRelayBalancer(){
-        netRootController.getNetRelayBalancerController().openConnection(netRootController.getToken(), authCallBack);
+    public void connectToRelayBalancer(String relayBalIp){
+        netRootController.getNetRelayBalancerController().openConnection(authCallBack, relayBalIp);
     }
 
     //region AuthCallBack

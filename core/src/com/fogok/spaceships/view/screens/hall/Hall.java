@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.fogok.dataobjects.PlayerGlobalData;
 import com.fogok.dataobjects.ServerState;
-import com.fogok.spaceships.net.controllers.NetHallController;
+import com.fogok.spaceships.net.controllers.NetSocServController;
 import com.fogok.spaceships.net.controllers.NetRootController;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
@@ -40,7 +40,12 @@ public class Hall implements Screen {
         infolabel.setText(String.format(infoString, netRootController.getNickName(), 0f, 1));
         Label matchmakingInfo = new Label(String.format("Ready"), labelStyle);
 
-        netRootController.getNetHallController().setHallCallBack(new NetHallController.HallCallBack() {
+        netRootController.getNetSocServController().setSocServCallBack(new NetSocServController.SocServCallBack() {
+            @Override
+            public void exceptionConnect(Throwable cause) {
+
+            }
+
             @Override
             public void serverState(ServerState serverState) {
                 infolabel.setText(String.format(infoString, netRootController.getNickName(), serverState.getPlayerGlobalData().getDataFloat(PlayerGlobalData.PlayerGlobalDataFloats.WINLOSEPERCENT), serverState.getPlayersOnline()));
@@ -107,7 +112,7 @@ public class Hall implements Screen {
 
     @Override
     public void dispose() {
-        netRootController.getNetHallController().setHallCallBack(null);
+        netRootController.getNetSocServController().setSocServCallBack(null);
         stage.clear();
     }
 }

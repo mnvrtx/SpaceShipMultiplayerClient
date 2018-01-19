@@ -3,22 +3,22 @@ package com.fogok.spaceships.net.relaybalancer.readers;
 import com.fogok.dataobjects.transactions.BaseReaderFromTransaction;
 import com.fogok.dataobjects.transactions.relaybalancerservice.SSInformationTransaction;
 import com.fogok.dataobjects.transactions.utils.TransactionExecutor;
-import com.fogok.spaceships.net.controllers.NetRelayBalancerController;
+import com.fogok.spaceships.net.controllers.NetRootController;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 
 public class SSInformationReader implements BaseReaderFromTransaction<SSInformationTransaction> {
 
-    private NetRelayBalancerController netRelayBalancerController;
+    private NetRootController netRootController;
 
-    public SSInformationReader(NetRelayBalancerController netRelayBalancerController) {
-        this.netRelayBalancerController = netRelayBalancerController;
+    public SSInformationReader(NetRootController netRootController) {
+        this.netRootController = netRootController;
     }
 
     @Override
     public ChannelFuture read(Channel channel, SSInformationTransaction transaction, TransactionExecutor transactionExecutor) {
-        netRelayBalancerController.receiveSSInfo(transaction.getSocialServerIp());
+        netRootController.getNetRelayBalancerController().recieveSocServIp(transaction.getSocialServerIp());
         return channel.disconnect();
     }
 
@@ -29,6 +29,6 @@ public class SSInformationReader implements BaseReaderFromTransaction<SSInformat
 
     @Override
     public void actionAfterRead(ChannelFuture channelFuture) {
-        netRelayBalancerController.connectToSS();
+        netRootController.getNetSocServController().connectToSS();
     }
 }

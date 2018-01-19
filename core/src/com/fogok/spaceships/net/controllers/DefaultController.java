@@ -11,9 +11,20 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public abstract class DefaultController {
 
-    String ip;
+    protected NetRootController netRootController;
 
-    <T extends ChannelInboundHandlerAdapter> void openConnection(T handler, DefaultExceptionCallBack defaultExceptionCallBack, NetRootController netRootController){
+    public DefaultController(NetRootController netRootController) {
+        this.netRootController = netRootController;
+    }
+
+    private String ip;
+
+    public String getIp() {
+        return ip;
+    }
+
+    <T extends ChannelInboundHandlerAdapter> void openConnection(T handler, DefaultExceptionCallBack defaultExceptionCallBack, NetRootController netRootController, String ip){
+        this.ip = ip;
         ConnectToServiceImpl.getInstance().connect(handler, new DefaultExceptionHandler(defaultExceptionCallBack),
                 new DefaultOtherExceptionHandler(netRootController), new ChannelFutureListener() {
                     @Override

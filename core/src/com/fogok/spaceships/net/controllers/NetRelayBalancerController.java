@@ -4,31 +4,21 @@ import com.fogok.spaceships.net.relaybalancer.RelayBalancerHandler;
 
 public class NetRelayBalancerController extends DefaultController{
 
-    //region Native
-    private NetRootController netRootController;
-    //endregion
-
-    private String ssIp;
+    private String socServIp;
 
     NetRelayBalancerController(NetRootController netRootController) {
-        this.netRootController = netRootController;
+        super(netRootController);
     }
 
-    void setIp(String ip) {
-        this.ip = ip;
+    void openConnection(NetAuthController.AuthCallBack authCallBack, String ip){
+        openConnection(new RelayBalancerHandler(netRootController, authCallBack), authCallBack, netRootController, ip);
     }
 
-    void openConnection(String token, NetAuthController.AuthCallBack authCallBack){
-        openConnection(new RelayBalancerHandler(netRootController, token, authCallBack), authCallBack, netRootController);
+    public void recieveSocServIp(String socServIp) {
+        this.socServIp = socServIp;
     }
 
-    public void receiveSSInfo(String ssIp) {
-        this.ssIp = ssIp;
+    public String getSocServIp() {
+        return socServIp;
     }
-
-    public void connectToSS(){
-        openConnection(new RelayBalancerHandler(netRootController, netRootController.getToken(), authCallBack), authCallBack, netRootController);
-    }
-
-
 }

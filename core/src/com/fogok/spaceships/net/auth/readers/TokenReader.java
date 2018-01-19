@@ -11,6 +11,7 @@ import io.netty.channel.ChannelFuture;
 public class TokenReader implements BaseReaderFromTransaction<TokenToClientTransaction> {
 
     private NetAuthController netAuthController;
+    private String relayBalIp;
 
     public TokenReader(NetAuthController netAuthController) {
         this.netAuthController = netAuthController;
@@ -21,7 +22,8 @@ public class TokenReader implements BaseReaderFromTransaction<TokenToClientTrans
      */
     @Override
     public ChannelFuture read(Channel channel, TokenToClientTransaction transaction, TransactionExecutor transactionExecutor) {
-        netAuthController.receiveToken(transaction.getToken(), transaction.getNickName(), transaction.getRelayBalancerIp());
+        relayBalIp = transaction.getRelayBalancerIp();
+        netAuthController.receiveToken(transaction.getToken(), transaction.getNickName());
         return channel.disconnect();
     }
 
@@ -32,6 +34,6 @@ public class TokenReader implements BaseReaderFromTransaction<TokenToClientTrans
 
     @Override
     public void actionAfterRead(ChannelFuture channelFuture) {
-        netAuthController.connectToRelayBalancer();
+        netAuthController.connectToRelayBalancer(relayBalIp);
     }
 }

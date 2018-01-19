@@ -11,6 +11,7 @@ import com.fogok.dataobjects.transactions.authservice.TokenToClientTransaction;
 import com.fogok.dataobjects.transactions.common.ConnectionInformationTransaction;
 import com.fogok.dataobjects.transactions.common.TokenToServiceTransaction;
 import com.fogok.dataobjects.transactions.relaybalancerservice.SSInformationTransaction;
+import com.fogok.dataobjects.transactions.socserv.KeepAliveTransaction;
 import com.fogok.dataobjects.utils.Serialization;
 
 import java.io.ByteArrayOutputStream;
@@ -115,6 +116,8 @@ public class TransactionExecutor {
                             return new AuthTransaction(baseTransaction);
                         case TOKEN_WITH_ADDITIONAL_INFORMATION:
                             return new TokenToServiceTransaction(baseTransaction);
+                        case KEEP_ALIVE_TO_SOC_SERV:
+                            return new KeepAliveTransaction(baseTransaction);
                     }
                     break;
                 case SERVICE_TO_CLIENT:

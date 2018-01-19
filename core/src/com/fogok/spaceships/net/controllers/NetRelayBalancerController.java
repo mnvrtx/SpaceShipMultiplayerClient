@@ -2,8 +2,6 @@ package com.fogok.spaceships.net.controllers;
 
 import com.fogok.spaceships.net.relaybalancer.RelayBalancerHandler;
 
-import static com.esotericsoftware.minlog.Log.info;
-
 public class NetRelayBalancerController extends DefaultController{
 
     //region Native
@@ -29,7 +27,7 @@ public class NetRelayBalancerController extends DefaultController{
     }
 
     public void connectToSS(){
-        info(String.format("tryToConnectSS: %s", ssIp));
+        openConnection(new RelayBalancerHandler(netRootController, netRootController.getToken(), authCallBack), authCallBack, netRootController);
     }
 
 

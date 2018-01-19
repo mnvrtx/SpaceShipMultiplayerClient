@@ -34,7 +34,7 @@ public class ConInformReader implements BaseReaderFromTransaction<ConnectionInfo
                 channel.close();
                 break;
             case ConnectionInformationTransaction.RESPONSE_CODE_SERVICE_SHUTDOWN:
-                cause = "Auth service is SHUTDOWN";
+                cause = "Service is SHUTDOWN";
                 error(cause);
                 defaultExceptionCallBack.exceptionConnect(new Exception(cause));
                 break;

@@ -10,12 +10,13 @@ public class NetRelayBalancerController extends DefaultController{
         super(netRootController);
     }
 
-    void openConnection(NetAuthController.AuthCallBack authCallBack, String ip){
-        openConnection(new RelayBalancerHandler(netRootController, authCallBack), authCallBack, netRootController, ip);
+    void openConnection(String ip){
+        openConnection(new RelayBalancerHandler(netRootController), netRootController.getAuthCallBack(), netRootController, ip);
     }
 
     public void recieveSocServIp(String socServIp) {
         this.socServIp = socServIp;
+        netRootController.getAuthCallBack().successConnectToRelayBalancer();
     }
 
     public String getSocServIp() {

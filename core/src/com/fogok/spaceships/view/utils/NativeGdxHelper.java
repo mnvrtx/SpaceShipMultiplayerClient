@@ -1,16 +1,25 @@
 package com.fogok.spaceships.view.utils;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.fogok.spaceships.Main;
 
+import org.jrenner.smartfont.SmartFontGenerator;
+
 public class NativeGdxHelper {
+
+    private static String FONT_CHARS = "";
+    static {
+        StringBuilder sb = new StringBuilder();
+        for ( int i = 0x20; i < 0x7B; i++ ) sb.append((char)i); // цифры и весь английский
+        for ( int i = 0x401; i < 0x452; i++ ) sb.append((char)i); // русские
+        FONT_CHARS = sb.toString();
+    }
 
     private final static float sizeWidthGame = 20f;
     private OrthographicCamera uiCamera;
@@ -22,24 +31,29 @@ public class NativeGdxHelper {
     public NativeGdxHelper() {
         uiSpriteBatch = new SpriteBatch();
         stage = new Stage(new ScreenViewport());
-        stage.setDebugAll(true);
-        bitmapFont = new BitmapFont();  setUPFont();
-        uiBitmapFont = new BitmapFont(); setUPUIFont();
+//        stage.setDebugAll(true);
+        coreSetupFonts();
+        postSetupFonts();
         Gdx.input.setInputProcessor(stage);
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
-    private void setUPUIFont(){
+    private void coreSetupFonts(){
+        SmartFontGenerator fontGen = new SmartFontGenerator();
+        FileHandle exoFile = Gdx.files.internal("font.ttf");
+        uiBitmapFont = fontGen.createFont(exoFile, "exo-medium", 14, FONT_CHARS);
         uiBitmapFont.getData().markupEnabled = true;
-        uiBitmapFont.getRegion(0).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        uiBitmapFont.setUseIntegerPositions(false);
+//        BitmapFont fontLarge = fontGen.createFont(exoFile, "exo-large", 64);
     }
 
-    private void setUPFont(){
-        bitmapFont.setColor(Color.WHITE);
-        bitmapFont.getData().setScale(0.03f);
-        bitmapFont.setUseIntegerPositions(false);
-        bitmapFont.getData().markupEnabled = true;
-        bitmapFont.getRegion(0).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+    private void postSetupFonts(){
+//        uiBitmapFont.getData().markupEnabled = true;
+//        bitmapFont.setColor(Color.WHITE);
+//        bitmapFont.getData().setScale(0.03f);
+//        bitmapFont.setUseIntegerPositions(false);
+//        bitmapFont.getData().markupEnabled = true;
+//        bitmapFont.getRegion(0).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
 
     public void resize(int width, int height) {

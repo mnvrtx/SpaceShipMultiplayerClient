@@ -1,7 +1,6 @@
 package com.fogok.spaceships.net.controllers;
 
 import com.fogok.spaceships.net.auth.AuthHandler;
-import com.fogok.spaceships.net.exception.DefaultExceptionCallBack;
 
 import static com.esotericsoftware.minlog.Log.info;
 
@@ -14,7 +13,8 @@ public class NetAuthController extends DefaultController{
     }
 
     public void openConnection(String login, String passwordEncrypted){
-        openConnection(new AuthHandler(netRootController, login, passwordEncrypted), authCallBack, netRootController, authIp);
+        openConnection(new AuthHandler(netRootController, login, passwordEncrypted),
+                netRootController.getAuthCallBack(), netRootController, authIp);
     }
 
     public void receiveToken(String token, String nickName){
@@ -25,18 +25,7 @@ public class NetAuthController extends DefaultController{
     }
 
     public void connectToRelayBalancer(String relayBalIp){
-        netRootController.getNetRelayBalancerController().openConnection(authCallBack, relayBalIp);
+        netRootController.getAuthCallBack().successConnectToAuth();
+        netRootController.getNetRelayBalancerController().openConnection(relayBalIp);
     }
-
-    //region AuthCallBack
-    private AuthCallBack authCallBack;
-
-    public void setAuthCallBack(AuthCallBack authCallBack) {
-        this.authCallBack = authCallBack;
-    }
-
-    public interface AuthCallBack extends DefaultExceptionCallBack {
-        void succesConnect(String nickName);
-    }
-    //endregion
 }

@@ -11,7 +11,8 @@ public class NetSocServController extends DefaultController{
     }
 
     public void connectToSS(){
-        openConnection(new SocServHandler(netRootController, socServCallBack), socServCallBack, netRootController, netRootController.getNetRelayBalancerController().getSocServIp());
+        openConnection(new SocServHandler(netRootController), netRootController.getAuthCallBack(),
+                netRootController, netRootController.getNetRelayBalancerController().getSocServIp());
     }
 
     //region SocServCallBack

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.fogok.dataobjects.datastates.ClientState;
 import com.fogok.dataobjects.transactions.utils.BaseTransactionReader;
 import com.fogok.dataobjects.utils.Pool;
+import com.fogok.spaceships.net.UICallBacks;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -20,6 +21,8 @@ public class NetRootController {
     private NetSessionController netSessionController;
     private NetRelayBalancerController netRelayBalancerController;
 
+    private UICallBacks uiCallBacks = new UICallBacks();
+
     public NetRootController() {
         setClientState(ClientState.READY_TO_LOGIN);
 
@@ -28,6 +31,7 @@ public class NetRootController {
         netSocServController = new NetSocServController(this);
         netSessionController = new NetSessionController();
     }
+
 
     //region PostLogicExecutor
     public void readServerChannel(Channel channel, Object msg, BaseTransactionReader baseTransactionReader){
@@ -68,6 +72,15 @@ public class NetRootController {
     //region Getters
     public ClientState getClientState() {
         return clientState;
+    }
+
+
+    public UICallBacks getUiCallBacks() {
+        return uiCallBacks;
+    }
+
+    public UICallBacks.AuthCallBack getAuthCallBack() {
+        return uiCallBacks.getAuthCallBack();
     }
 
     public NetAuthController getNetAuthController() {

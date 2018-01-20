@@ -29,8 +29,12 @@ public abstract class DefaultController {
                 new DefaultOtherExceptionHandler(netRootController), new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
-
+                        connectionComplete(future);
                     }
                 }, ip.split(":")[0], Integer.parseInt(ip.split(":")[1]));
+    }
+
+    void connectionComplete(ChannelFuture future){
+
     }
 }

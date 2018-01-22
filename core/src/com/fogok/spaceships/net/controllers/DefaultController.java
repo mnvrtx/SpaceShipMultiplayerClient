@@ -8,6 +8,7 @@ import com.fogok.spaceships.net.exception.DefaultOtherExceptionHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.nio.NioEventLoopGroup;
 
 public abstract class DefaultController {
 
@@ -25,7 +26,7 @@ public abstract class DefaultController {
 
     <T extends ChannelInboundHandlerAdapter> void openConnection(T handler, DefaultExceptionCallBack defaultExceptionCallBack, NetRootController netRootController, String ip){
         this.ip = ip;
-        ConnectToServiceImpl.getInstance().connect(handler, new DefaultExceptionHandler(defaultExceptionCallBack),
+        ConnectToServiceImpl.getInstance().connect(handler, new NioEventLoopGroup(1), new DefaultExceptionHandler(defaultExceptionCallBack),
                 new DefaultOtherExceptionHandler(netRootController), new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
@@ -37,4 +38,11 @@ public abstract class DefaultController {
     void connectionComplete(ChannelFuture future){
 
     }
+
+//    private NioEventLoopGroup nioEventLoopGroup;
+//    private NioEventLoopGroup getNioEventLoopGroup(){
+//        if (nioEventLoopGroup == null)
+//            nioEventLoopGroup = ;
+//        return nioEventLoopGroup;
+//    }
 }

@@ -92,7 +92,7 @@ public class LoginScreen implements Screen{
 
             @Override
             public void successConnectToSocServ() {
-                Main.getScreenSwitcher().setCurrentScreen(ScreenSwitcher.Screens.HALL);
+                Main.getScreenSwitcher().setCurrentScreen(ScreenSwitcher.Screens.SOCSERV);
             }
 
             @Override
@@ -123,7 +123,7 @@ public class LoginScreen implements Screen{
                     statusBar.updateText("Неправильный e-mail. Перепроверьте правильность");
                 } else {
                     statusBar.setColor(Color.FIREBRICK);
-                    statusBar.updateText("Длина пароля должна стостоять >= 6 символов");
+                    statusBar.updateText("Длина пароля должна состоять >= 6 символов");
                 }
 
             }

@@ -1,4 +1,4 @@
-package com.fogok.spaceships.view.screens.hall;
+package com.fogok.spaceships.view.screens.socserv;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -20,12 +20,12 @@ import com.fogok.spaceships.net.controllers.NetRootController;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
-public class Hall implements Screen {
+public class SocServ implements Screen {
 
     private Stage stage;
     private NetRootController netRootController;
 
-    public Hall(NativeGdxHelper nativeGdxHelper, final NetRootController netRootController) {   //TODO: разобраться с final, где они должны стоять, в правилах скринов
+    public SocServ(NativeGdxHelper nativeGdxHelper, final NetRootController netRootController) {   //TODO: разобраться с final, где они должны стоять, в правилах скринов
         stage = nativeGdxHelper.getStage();
         this.netRootController = netRootController;
 

@@ -13,11 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.fogok.dataobjects.PlayerGlobalData;
 import com.fogok.dataobjects.ServerState;
 import com.fogok.spaceships.Main;
 import com.fogok.spaceships.net.NetRootController;
-import com.fogok.spaceships.net.controllers.NetSocServController;
+import com.fogok.spaceships.net.UICallBacks;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.screens.ScreenSwitcher;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
@@ -45,15 +44,15 @@ public class SocServ implements Screen {
         infolabel.setText(String.format(infoString, netRootController.getNickName(), 0f, 1));
         Label matchmakingInfo = new Label(String.format("Готов"), labelStyle);
 
-        netRootController.getNetSocServController().setSocServCallBack(new NetSocServController.SocServCallBack() {
+        netRootController.getUiCallBacks().setSocServCallBack(new UICallBacks.SocServCallBack() {
             @Override
-            public void exceptionConnect(Throwable cause) {
-
+            public void recieveServerState(ServerState serverState) {
+                infolabel.setText(String.format(infoString, netRootController.getNickName(), "50%", serverState.getPlayersOnline()));
             }
 
             @Override
-            public void serverState(ServerState serverState) {
-                infolabel.setText(String.format(infoString, netRootController.getNickName(), serverState.getPlayerGlobalData().getDataFloat(PlayerGlobalData.PlayerGlobalDataFloats.WINLOSEPERCENT), serverState.getPlayersOnline()));
+            public void exceptionConnect(Throwable cause) {
+
             }
         });
 
@@ -130,7 +129,7 @@ public class SocServ implements Screen {
 
     @Override
     public void dispose() {
-        netRootController.getNetSocServController().setSocServCallBack(null);
+        netRootController.getUiCallBacks().setSocServCallBack(null);
         stage.clear();
     }
 }

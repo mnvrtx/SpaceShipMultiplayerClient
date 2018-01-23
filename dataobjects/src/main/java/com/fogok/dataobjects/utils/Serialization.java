@@ -42,7 +42,7 @@ public class Serialization {
 
         kryo = new Kryo();
 
-        //TODO: перенести сериализацию в сами классы!
+        //TODO: перенести сериализацию в сами классы! тут реальное говно с копипастом, нужно переделать по хорошему
 
         kryo.register(com.fogok.dataobjects.datastates.ServerToClientDataStates.class, new Serializer<com.fogok.dataobjects.datastates.ServerToClientDataStates>(){
 
@@ -74,12 +74,14 @@ public class Serialization {
             @Override
             public void write(Kryo kryo, Output output, ServerState serverState) {
 
-                kryo.writeObject(output, com.fogok.dataobjects.datastates.ServerToClientDataStates.SERVER_STATE);
-
                 output.writeInt(serverState.getPlayersOnline(), true);
-                output.writeInt(serverState.getPlayerGlobalData().getDataFloats().length, true);
-                output.writeFloats(serverState.getPlayerGlobalData().getDataFloats());
-                output.writeLong(convert(serverState.getPlayerGlobalData().getLongFlags()), true);
+
+                output.writeLong(serverState.getPlayerGlobalData().getPlayerId(), true);
+                output.writeFloat(serverState.getPlayerGlobalData().getX(), 0.02f, false);
+                output.writeFloat(serverState.getPlayerGlobalData().getY(), 0.02f, false);
+                output.writeInt(serverState.getPlayerGlobalData().getAdditParams().length, true);
+                output.writeFloats(serverState.getPlayerGlobalData().getAdditParams());
+                output.writeLong(serverState.getPlayerGlobalData().getLongFlags());
 
             }
 
@@ -87,9 +89,13 @@ public class Serialization {
             public ServerState read(Kryo kryo, Input input, Class<ServerState> type) {
 
                 serverState.setPlayersOnline(input.readInt(true));
-                int lenghtDataFloats = input.readInt(true);
-                serverState.getPlayerGlobalData().setDataFloats(input.readFloats(lenghtDataFloats));
-                convert(serverState.getPlayerGlobalData().getLongFlags(), input.readLong(true));
+
+                serverState.getPlayerGlobalData().setPlayerId(input.readLong(true));
+                serverState.getPlayerGlobalData().setX(input.readFloat(0.02f, true));
+                serverState.getPlayerGlobalData().setY(input.readFloat(0.02f, true));
+                int lenghtAdditParams = input.readInt(true);
+                serverState.getPlayerGlobalData().setAdditParams(input.readFloats(lenghtAdditParams));
+                serverState.getPlayerGlobalData().setLongFlags(input.readLong());
 
                 return null;
             }

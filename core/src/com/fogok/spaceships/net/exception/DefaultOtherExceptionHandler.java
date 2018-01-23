@@ -2,7 +2,7 @@ package com.fogok.spaceships.net.exception;
 
 import com.esotericsoftware.minlog.Log;
 import com.fogok.dataobjects.transactions.ErrorConnectionToServiceCallback;
-import com.fogok.spaceships.net.controllers.NetRootController;
+import com.fogok.spaceships.net.NetRootController;
 
 
 public class DefaultOtherExceptionHandler implements ErrorConnectionToServiceCallback{

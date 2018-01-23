@@ -1,12 +1,13 @@
 package com.fogok.spaceships.net.controllers;
 
 import com.fogok.dataobjects.ServerState;
+import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.net.exception.DefaultExceptionCallBack;
-import com.fogok.spaceships.net.socserv.SocServHandler;
+import com.fogok.spaceships.net.handlers.SocServHandler;
 
 public class NetSocServController extends DefaultController{
 
-    NetSocServController(NetRootController netRootController) {
+    public NetSocServController(NetRootController netRootController) {
         super(netRootController);
     }
 

@@ -1,4 +1,4 @@
-package com.fogok.spaceships.net.socserv;
+package com.fogok.spaceships.net.handlers;
 
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
 import com.fogok.dataobjects.datastates.RequestTypeInTokenToServiceTrnsn;
@@ -6,10 +6,9 @@ import com.fogok.dataobjects.datastates.ServerToClientDataStates;
 import com.fogok.dataobjects.transactions.common.BaseTransaction;
 import com.fogok.dataobjects.transactions.common.ConnectionInformationTransaction;
 import com.fogok.dataobjects.transactions.common.TokenToServiceTransaction;
-import com.fogok.spaceships.net.commonhandlers.BaseChannelHandler;
-import com.fogok.spaceships.net.commonreaders.ConInformCallBack;
-import com.fogok.spaceships.net.commonreaders.ConInformReader;
-import com.fogok.spaceships.net.controllers.NetRootController;
+import com.fogok.spaceships.net.readers.ConInformCallBack;
+import com.fogok.spaceships.net.readers.ConInformReader;
+import com.fogok.spaceships.net.NetRootController;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

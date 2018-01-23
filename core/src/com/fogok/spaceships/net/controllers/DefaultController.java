@@ -1,6 +1,7 @@
 package com.fogok.spaceships.net.controllers;
 
 import com.fogok.dataobjects.ConnectToServiceImpl;
+import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.net.exception.DefaultExceptionCallBack;
 import com.fogok.spaceships.net.exception.DefaultExceptionHandler;
 import com.fogok.spaceships.net.exception.DefaultOtherExceptionHandler;

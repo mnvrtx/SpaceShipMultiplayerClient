@@ -1,4 +1,4 @@
-package com.fogok.spaceships.net.commonreaders;
+package com.fogok.spaceships.net.readers;
 
 import io.netty.channel.Channel;
 

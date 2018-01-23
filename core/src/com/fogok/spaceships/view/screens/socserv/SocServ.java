@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.Align;
 import com.fogok.dataobjects.PlayerGlobalData;
 import com.fogok.dataobjects.ServerState;
 import com.fogok.spaceships.net.controllers.NetSocServController;
-import com.fogok.spaceships.net.controllers.NetRootController;
+import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 

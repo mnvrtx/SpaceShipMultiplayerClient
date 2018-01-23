@@ -1,7 +1,7 @@
-package com.fogok.spaceships.net.commonhandlers;
+package com.fogok.spaceships.net.handlers;
 
 import com.fogok.dataobjects.transactions.utils.SimpleTransactionReader;
-import com.fogok.spaceships.net.controllers.NetRootController;
+import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.net.exception.DefaultExceptionCallBack;
 
 import java.util.concurrent.TimeUnit;

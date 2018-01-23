@@ -1,6 +1,7 @@
 package com.fogok.spaceships.net.controllers;
 
-import com.fogok.spaceships.net.auth.AuthHandler;
+import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.net.handlers.AuthHandler;
 
 import static com.esotericsoftware.minlog.Log.info;
 
@@ -8,7 +9,7 @@ public class NetAuthController extends DefaultController{
 
     private static final String authIp = "127.0.0.1:15501";
 
-    NetAuthController(NetRootController netRootController) {
+    public NetAuthController(NetRootController netRootController) {
         super(netRootController);
     }
 

@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.fogok.spaceships.Main;
 import com.fogok.spaceships.net.UICallBacks;
-import com.fogok.spaceships.net.controllers.NetRootController;
+import com.fogok.spaceships.net.NetRootController;
 import com.fogok.dataobjects.utils.Base64;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.screens.ScreenSwitcher;

@@ -1,10 +1,13 @@
-package com.fogok.spaceships.net.controllers;
+package com.fogok.spaceships.net;
 
 import com.badlogic.gdx.Gdx;
 import com.fogok.dataobjects.datastates.ClientState;
 import com.fogok.dataobjects.transactions.utils.BaseTransactionReader;
 import com.fogok.dataobjects.utils.Pool;
-import com.fogok.spaceships.net.UICallBacks;
+import com.fogok.spaceships.net.controllers.NetAuthController;
+import com.fogok.spaceships.net.controllers.NetRelayBalancerController;
+import com.fogok.spaceships.net.controllers.NetSessionController;
+import com.fogok.spaceships.net.controllers.NetSocServController;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;

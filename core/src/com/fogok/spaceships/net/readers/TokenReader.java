@@ -1,4 +1,4 @@
-package com.fogok.spaceships.net.auth.readers;
+package com.fogok.spaceships.net.readers;
 
 import com.fogok.dataobjects.transactions.BaseReaderFromTransaction;
 import com.fogok.dataobjects.transactions.authservice.TokenToClientTransaction;

@@ -1,12 +1,13 @@
 package com.fogok.spaceships.net.controllers;
 
-import com.fogok.spaceships.net.relaybalancer.RelayBalancerHandler;
+import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.net.handlers.RelayBalancerHandler;
 
 public class NetRelayBalancerController extends DefaultController{
 
     private String socServIp;
 
-    NetRelayBalancerController(NetRootController netRootController) {
+    public NetRelayBalancerController(NetRootController netRootController) {
         super(netRootController);
     }
 

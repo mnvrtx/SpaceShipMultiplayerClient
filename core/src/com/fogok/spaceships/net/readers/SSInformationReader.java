@@ -1,10 +1,10 @@
-package com.fogok.spaceships.net.relaybalancer.readers;
+package com.fogok.spaceships.net.readers;
 
 import com.fogok.dataobjects.transactions.BaseReaderFromTransaction;
 import com.fogok.dataobjects.transactions.relaybalancerservice.SSInformationTransaction;
 import com.fogok.dataobjects.transactions.utils.TransactionExecutor;
-import com.fogok.spaceships.net.commonhandlers.BaseChannelHandler;
-import com.fogok.spaceships.net.controllers.NetRootController;
+import com.fogok.spaceships.net.handlers.BaseChannelHandler;
+import com.fogok.spaceships.net.NetRootController;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;

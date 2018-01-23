@@ -9,9 +9,9 @@ public class NettyHandler extends ChannelInboundHandlerAdapter {
 //
 //    public static float TIMEITERSSLEEP = 0.016f;  //in seconds
 //
-//    private com.fogok.spaceships.net.controllers.NetRootController netRootController;
+//    private com.fogok.spaceships.net.NetRootController netRootController;
 //
-//    public NettyHandler(com.fogok.spaceships.net.controllers.NetRootController netRootController) throws IOException {
+//    public NettyHandler(com.fogok.spaceships.net.NetRootController netRootController) throws IOException {
 //        this.netRootController = netRootController;
 //    }
 //

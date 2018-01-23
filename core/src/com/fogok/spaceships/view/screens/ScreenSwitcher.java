@@ -1,7 +1,7 @@
 package com.fogok.spaceships.view.screens;
 
 import com.badlogic.gdx.Screen;
-import com.fogok.spaceships.net.controllers.NetRootController;
+import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.view.screens.game_session.GameProcess;
 import com.fogok.spaceships.view.screens.socserv.SocServ;
 import com.fogok.spaceships.view.screens.login.LoginScreen;

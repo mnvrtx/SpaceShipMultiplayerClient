@@ -33,10 +33,7 @@ public class LoginScreen implements Screen{
     private NetRootController netRootController;
 
     private enum ConnectionToServiceStates {
-                WELCOME("ВВЕДИТЕ СВОЙ E-MAIL И ПАРОЛЬ." +
-                        "\nЕСЛИ ВВЕДЁТЕ В ПЕРВЫЙ РАЗ," +
-                        "\nБУДЕТЕ АВТОМАТИЧЕСКИ ЗАРЕГЕСТРИРОВАНЫ" +
-                        "\nВ СИСТЕМЕ"),
+                WELCOME("ВВЕДИТЕ СВОЙ E-MAIL И ПАРОЛЬ."),
                 CONNECT_TO_AUTH("ПОДКЛЮЧЕНИЕ К СЕРВИСУ АВТОРИЗАЦИИ"),
                 CONNECT_TO_RELAY("ПОЛУЧЕНИЕ ИНФОРМАЦИИ О СЕРВИСАХ"),
                 CONNECT_TO_SOC_SERV("ПОДКЛЮЧЕНИЕ К СЕРВИСУ ЛОББИ"),
@@ -118,9 +115,9 @@ public class LoginScreen implements Screen{
                 if (emailCorrect && passwordCorrect) {
                     statusBar.setColor(Color.BLUE);
                     statusBar.updateText(ConnectionToServiceStates.CONNECT_TO_AUTH.toString());
+                    loginButton.setDisabled(true);
                     netRootController.getNetAuthController().openConnection(login.getText(),
                             Base64.encode(password.getText().getBytes()));
-                    loginButton.setDisabled(true);
                 } else if (!emailCorrect) {
                     statusBar.setColor(Color.FIREBRICK);
                     statusBar.updateText("Неправильный e-mail. Перепроверьте правильность");

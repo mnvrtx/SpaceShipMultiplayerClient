@@ -43,7 +43,7 @@ public class NativeGdxHelper {
         FileHandle exoFile = Gdx.files.internal("font.ttf");
         uiBitmapFont = fontGen.createFont(exoFile, "exo-medium", 14, FONT_CHARS);
         uiBitmapFont.getData().markupEnabled = true;
-        uiBitmapFont.setUseIntegerPositions(false);
+//        uiBitmapFont.setUseIntegerPositions(false);
 //        BitmapFont fontLarge = fontGen.createFont(exoFile, "exo-large", 64);
     }
 

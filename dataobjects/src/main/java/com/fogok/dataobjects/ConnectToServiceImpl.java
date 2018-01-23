@@ -14,7 +14,6 @@ import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.info;
 
 public class ConnectToServiceImpl {
@@ -34,43 +33,53 @@ public class ConnectToServiceImpl {
                         final String ip,
                         final int port) {
 
-        debug("Start netty thread");
-
-        try {
-            final Bootstrap boot = new Bootstrap();
-            boot.group(workingGroup)
-                    .channel(NioSocketChannel.class)
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.config().setRecvByteBufAllocator(
-                                    new FixedRecvByteBufAllocator(262144)); //set  buf size here
-                            ch.pipeline().addLast(coreHandler);
-                            ch.pipeline().addLast(exceptionHandler);
-                        }
-                    });
 
 
-            ChannelFuture future = boot.connect(ip, port).sync();
-            info(String.format("Connect to service '%s' success",
-                    coreHandler.getClass().getSimpleName()));
-            succesCallback.operationComplete(future);
-            future.channel().closeFuture().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                info("Start netty thread");
+                try {
+                    final Bootstrap boot = new Bootstrap();
+                    boot.group(workingGroup)
+                            .channel(NioSocketChannel.class)
+                            .option(ChannelOption.TCP_NODELAY, true)
+                            .handler(new ChannelInitializer<SocketChannel>() {
+                                @Override
+                                protected void initChannel(SocketChannel ch) throws Exception {
+                                    ch.config().setRecvByteBufAllocator(
+                                            new FixedRecvByteBufAllocator(262144)); //set  buf size here
+                                    ch.pipeline().addLast(coreHandler);
+                                    ch.pipeline().addLast(exceptionHandler);
+                                }
+                            });
+
+
+                    ChannelFuture future = boot.connect(ip, port).sync();
+                    info(String.format("Connect to service '%s' success",
+                            coreHandler.getClass().getSimpleName()));
+                    succesCallback.operationComplete(future);
+                    future.channel().closeFuture().sync();
+//                    addListener(new ChannelFutureListener() {
+//                        @Override
+//                        public void operationComplete(ChannelFuture future) throws Exception {
+//                            workingGroup.shutdownGracefully();
+//                            info(String.format("Stop connection to service '%s'",
+//                                    coreHandler.getClass().getSimpleName()));
+//                        }
+//                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    errorCallback.error(e);
+                } finally {
                     workingGroup.shutdownGracefully();
                     info(String.format("Stop connection to service '%s'",
                             coreHandler.getClass().getSimpleName()));
                 }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            errorCallback.error(e);
-            workingGroup.shutdownGracefully();
-            info(String.format("Stop connection to service '%s'",
-                    coreHandler.getClass().getSimpleName()));
-        }
+                info("Stop netty thread");
+            }
+
+        }).start();
 
     }
 

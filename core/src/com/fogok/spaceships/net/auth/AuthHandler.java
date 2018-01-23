@@ -22,6 +22,7 @@ public class AuthHandler extends BaseChannelHandler implements ConInformCallBack
         super(netRootController);
         this.login = login;
         this.passwordEncrypted = passwordEncrypted;
+        this.ex = netRootController.getAuthCallBack();
         simpleTransactionReader.getTransactionsAndReadersResolver()
                 .addToResolve(
                         new TokenReader(netRootController.getNetAuthController()),
@@ -37,6 +38,13 @@ public class AuthHandler extends BaseChannelHandler implements ConInformCallBack
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(), new AuthTransaction(login, passwordEncrypted));
+        startTimeOut(ctx);
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        super.channelRead(ctx, msg);
+        channelCompleteAction();
     }
 
     @Override

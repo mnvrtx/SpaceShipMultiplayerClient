@@ -6,18 +6,21 @@ import com.fogok.dataobjects.datastates.ServerToClientDataStates;
 import com.fogok.dataobjects.transactions.common.BaseTransaction;
 import com.fogok.dataobjects.transactions.common.TokenToServiceTransaction;
 import com.fogok.spaceships.net.commonhandlers.BaseChannelHandler;
+import com.fogok.spaceships.net.commonreaders.ConInformCallBack;
 import com.fogok.spaceships.net.commonreaders.ConInformReader;
 import com.fogok.spaceships.net.controllers.NetRootController;
 import com.fogok.spaceships.net.relaybalancer.readers.SSInformationReader;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
-public class RelayBalancerHandler extends BaseChannelHandler {
+public class RelayBalancerHandler extends BaseChannelHandler implements ConInformCallBack{
 
     public RelayBalancerHandler(NetRootController netRootController){
         super(netRootController);
+        this.ex = netRootController.getAuthCallBack();
         simpleTransactionReader.getTransactionsAndReadersResolver()
-                .addToResolve(new SSInformationReader(netRootController), new BaseTransaction(ConnectionToServiceType.SERVICE_TO_CLIENT, ServerToClientDataStates.SS_INFORMATION.ordinal()))
+                .addToResolve(new SSInformationReader(netRootController, this), new BaseTransaction(ConnectionToServiceType.SERVICE_TO_CLIENT, ServerToClientDataStates.SS_INFORMATION.ordinal()))
                 .addToResolve(new ConInformReader(netRootController.getAuthCallBack()), new BaseTransaction(ConnectionToServiceType.SERVICE_TO_CLIENT, ServerToClientDataStates.CONNECTION_TO_SERVICE_INFORMATION.ordinal()));
     }
 
@@ -28,5 +31,11 @@ public class RelayBalancerHandler extends BaseChannelHandler {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(), new TokenToServiceTransaction(netRootController.getToken(), RequestTypeInTokenToServiceTrnsn.SS_INFORMATION));
+    }
+
+
+    @Override
+    public void receiveResponse(Channel channel, int responseCode) {
+        channelCompleteAction();
     }
 }

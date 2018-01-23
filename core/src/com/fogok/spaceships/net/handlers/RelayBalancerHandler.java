@@ -34,7 +34,7 @@ public class RelayBalancerHandler extends BaseChannelHandler implements ConInfor
 
 
     @Override
-    public void receiveResponse(Channel channel, int responseCode) {
+    public void receiveConInformResponse(Channel channel, int responseCode) {
         channelCompleteAction();
     }
 }

@@ -30,7 +30,7 @@ public class ConInformReader implements BaseReaderFromTransaction<ConnectionInfo
     public ChannelFuture read(Channel channel, ConnectionInformationTransaction transaction, TransactionExecutor transactionExecutor) {
         String cause;
         if (conInformCallBack != null)
-            conInformCallBack.receiveResponse(channel, transaction.getResponseCode());
+            conInformCallBack.receiveConInformResponse(channel, transaction.getResponseCode());
         else
             switch (transaction.getResponseCode()) {
                 case ConnectionInformationTransaction.RESPONSE_CODE_OK:

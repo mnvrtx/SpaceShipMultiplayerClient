@@ -15,6 +15,8 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class SocServHandler extends BaseChannelHandler implements ConInformCallBack {
 
+    private ChannelHandlerContext ctx;
+
     public SocServHandler(NetRootController netRootController) {
         super(netRootController);
         simpleTransactionReader.getTransactionsAndReadersResolver()
@@ -25,13 +27,23 @@ public class SocServHandler extends BaseChannelHandler implements ConInformCallB
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        this.ctx = ctx;
         simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(),
                 new TokenToServiceTransaction(netRootController.getToken(), RequestTypeInTokenToServiceTrnsn.CHECK_VALID));
     }
 
     @Override
-    public void receiveResponse(Channel channel, int responseCode) {
+    public void receiveConInformResponse(Channel channel, int responseCode) {
         if (responseCode == ConnectionInformationTransaction.RESPONSE_CODE_OK)
             netRootController.getAuthCallBack().successConnectToSocServ();
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+
+    }
+
+    public ChannelHandlerContext getCtx() {
+        return ctx;
     }
 }

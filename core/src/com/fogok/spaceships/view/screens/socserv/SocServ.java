@@ -6,18 +6,20 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
 import com.fogok.dataobjects.PlayerGlobalData;
 import com.fogok.dataobjects.ServerState;
-import com.fogok.spaceships.net.controllers.NetSocServController;
+import com.fogok.spaceships.Main;
 import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.net.controllers.NetSocServController;
 import com.fogok.spaceships.utils.gamedepended.Assets;
+import com.fogok.spaceships.view.screens.ScreenSwitcher;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
 public class SocServ implements Screen {
@@ -35,10 +37,13 @@ public class SocServ implements Screen {
         textButtonStyle.down = new TextureRegionDrawable(Assets.getRegion(5));
         textButtonStyle.font = nativeGdxHelper.getUiBitmapFont();
 
-        final String infoString = "[#00FF00]Player Information\nWelcome  [#FF8000]%s[]\n[#FF8000]WINLOSE %%: %s[]\n[#00FFFF]SERVER ONLINE: %s";
+        final String infoString =
+                "[#00FF00]%s[]\n" +
+                "[#FF8000]Винрейт %%: %s[]\n" +
+                "[#00FFFF]Игроков в сети: %s";
         final Label infolabel = new Label("", labelStyle);
         infolabel.setText(String.format(infoString, netRootController.getNickName(), 0f, 1));
-        Label matchmakingInfo = new Label(String.format("Ready"), labelStyle);
+        Label matchmakingInfo = new Label(String.format("Готов"), labelStyle);
 
         netRootController.getNetSocServController().setSocServCallBack(new NetSocServController.SocServCallBack() {
             @Override
@@ -52,7 +57,7 @@ public class SocServ implements Screen {
             }
         });
 
-        TextButton searchGame = new TextButton("Search game!", textButtonStyle);
+        TextButton searchGame = new TextButton("Найти игру!", textButtonStyle);
 
         searchGame.addListener(new ChangeListener() {
             @Override
@@ -61,8 +66,21 @@ public class SocServ implements Screen {
             }
         });
 
+        TextButton leftGameButton = new TextButton("Перезайти (для теста)", textButtonStyle);
+        leftGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                netRootController.getNetSocServController().disconnect();
+                Main.getScreenSwitcher().setCurrentScreen(ScreenSwitcher.Screens.LOGIN);
+            }
+        });
+
         Table table = new Table();
-        table.add(infolabel).align(Align.topLeft);
+        table.setDebug(true);
+        HorizontalGroup horizontalGroup = new HorizontalGroup();
+        horizontalGroup.addActor(infolabel);
+        horizontalGroup.addActor(leftGameButton);
+        table.add(horizontalGroup).expand(true, false);
         table.row();
 
         VerticalGroup verticalGroup = new VerticalGroup();

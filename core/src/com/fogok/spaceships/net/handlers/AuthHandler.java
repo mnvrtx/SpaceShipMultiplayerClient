@@ -47,7 +47,7 @@ public class AuthHandler extends BaseChannelHandler implements ConInformCallBack
     }
 
     @Override
-    public void receiveResponse(Channel channel, int responseCode) {
+    public void receiveConInformResponse(Channel channel, int responseCode) {
         if (responseCode == ConnectionInformationTransaction.RESPONSE_CODE_ERROR) {
             netRootController.getAuthCallBack().exceptionConnect(
                     new Exception("Неправильный логин или пароль"));

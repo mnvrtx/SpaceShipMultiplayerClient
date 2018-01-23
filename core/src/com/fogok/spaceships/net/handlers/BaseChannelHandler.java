@@ -52,7 +52,8 @@ public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
                     ctx.channel().disconnect().addListener(new ChannelFutureListener() {
                         @Override
                         public void operationComplete(ChannelFuture future) throws Exception {
-                            ex.exceptionConnect(new Throwable("CRITICAL SERVER ERROR\nRESPONSE TIMEOUT EXCEPTION"));
+                            if (ex != null)
+                                ex.exceptionConnect(new Throwable("CRITICAL SERVER ERROR\nRESPONSE TIMEOUT EXCEPTION"));
                         }
                     });
                 }
@@ -75,7 +76,8 @@ public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         if (!isChannelCompleteAction) {
-            ex.exceptionConnect(new Throwable("CRITICAL SERVER ERROR\nSERVER DETACHED YOU"));
+            if (ex != null)
+                ex.exceptionConnect(new Throwable("CRITICAL SERVER ERROR\nSERVER DETACHED YOU"));
             isChannelCompleteAction = true;
         }
     }

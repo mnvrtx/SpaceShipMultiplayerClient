@@ -25,25 +25,15 @@ public abstract class DefaultController {
         return ip;
     }
 
-    <T extends ChannelInboundHandlerAdapter> void openConnection(T handler, DefaultExceptionCallBack defaultExceptionCallBack, NetRootController netRootController, String ip){
+
+    void openConnection(ChannelInboundHandlerAdapter handler, DefaultExceptionCallBack defaultExceptionCallBack, NetRootController netRootController, String ip){
         this.ip = ip;
         ConnectToServiceImpl.getInstance().connect(handler, new NioEventLoopGroup(1), new DefaultExceptionHandler(defaultExceptionCallBack),
                 new DefaultOtherExceptionHandler(netRootController), new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
-                        connectionComplete(future);
+
                     }
                 }, ip.split(":")[0], Integer.parseInt(ip.split(":")[1]));
     }
-
-    void connectionComplete(ChannelFuture future){
-
-    }
-
-//    private NioEventLoopGroup nioEventLoopGroup;
-//    private NioEventLoopGroup getNioEventLoopGroup(){
-//        if (nioEventLoopGroup == null)
-//            nioEventLoopGroup = ;
-//        return nioEventLoopGroup;
-//    }
 }

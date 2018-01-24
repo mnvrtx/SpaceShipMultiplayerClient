@@ -11,15 +11,17 @@ public class AuthTransaction extends BaseTransaction {
 
     private String login;
     private String passwordEncrypted;
+    private boolean isRegistration;
 
     public AuthTransaction(BaseTransaction baseTransaction) {
         super(baseTransaction);
     }
 
-    public AuthTransaction(String login, String passwordEncrypted) {
+    public AuthTransaction(String login, String passwordEncrypted, boolean isRegistration) {
         super(ConnectionToServiceType.CLIENT_TO_SERVICE, ClientToServerDataStates.CONNECT_TO_SERVER.ordinal());
         this.login = login;
         this.passwordEncrypted = passwordEncrypted;
+        this.isRegistration = isRegistration;
     }
 
     public String getLogin() {
@@ -28,6 +30,10 @@ public class AuthTransaction extends BaseTransaction {
 
     public String getPasswordEncrypted() {
         return passwordEncrypted;
+    }
+
+    public boolean isRegistration() {
+        return isRegistration;
     }
 
     @Override
@@ -40,6 +46,7 @@ public class AuthTransaction extends BaseTransaction {
         super.write(kryo, output);
         output.writeString(login);
         output.writeString(passwordEncrypted);
+        output.writeBoolean(isRegistration);
     }
 
     @Override
@@ -47,5 +54,6 @@ public class AuthTransaction extends BaseTransaction {
         super.read(kryo, input);
         login = input.readString();
         passwordEncrypted = input.readString();
+        isRegistration = input.readBoolean();
     }
 }

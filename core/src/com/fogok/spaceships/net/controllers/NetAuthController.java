@@ -13,8 +13,8 @@ public class NetAuthController extends DefaultController{
         super(netRootController);
     }
 
-    public void openConnection(String login, String passwordEncrypted){
-        openConnection(new AuthHandler(netRootController, login, passwordEncrypted),
+    public void openConnection(String login, String passwordEncrypted, boolean isRegistration){
+        openConnection(new AuthHandler(netRootController, login, passwordEncrypted, isRegistration),
                 netRootController.getAuthCallBack(), netRootController, authIp);
     }
 

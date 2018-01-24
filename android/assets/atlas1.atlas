@@ -46,3 +46,17 @@ repeat: none
   orig: 281, 69
   offset: 0, 0
   index: -1
+6
+  rotate: false
+  xy: 276, 154
+  size: 30, 31
+  orig: 30, 31
+  offset: 0, 0
+  index: -1
+7
+  rotate: false
+  xy: 528, 264
+  size: 30, 31
+  orig: 30, 31
+  offset: 0, 0
+  index: -1

@@ -9,6 +9,7 @@ import com.fogok.spaceships.net.readers.TokenReader;
 import com.fogok.spaceships.net.readers.ConInformCallBack;
 import com.fogok.spaceships.net.readers.ConInformReader;
 import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.view.screens.login.LoginScreen;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,11 +17,13 @@ import io.netty.channel.ChannelHandlerContext;
 public class AuthHandler extends BaseChannelHandler implements ConInformCallBack{
 
     private String login, passwordEncrypted;
+    private boolean isRegistration;
 
-    public AuthHandler(NetRootController netRootController, String login, String passwordEncrypted){
+    public AuthHandler(NetRootController netRootController, String login, String passwordEncrypted, boolean isRegistration){
         super(netRootController);
         this.login = login;
         this.passwordEncrypted = passwordEncrypted;
+        this.isRegistration = isRegistration;
         this.ex = netRootController.getAuthCallBack();
         simpleTransactionReader.getTransactionsAndReadersResolver()
                 .addToResolve(
@@ -36,7 +39,7 @@ public class AuthHandler extends BaseChannelHandler implements ConInformCallBack
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(), new AuthTransaction(login, passwordEncrypted));
+        simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(), new AuthTransaction(login, passwordEncrypted, isRegistration));
         startTimeOut(ctx);
     }
 
@@ -50,7 +53,7 @@ public class AuthHandler extends BaseChannelHandler implements ConInformCallBack
     public void receiveConInformResponse(Channel channel, int responseCode) {
         if (responseCode == ConnectionInformationTransaction.RESPONSE_CODE_ERROR) {
             netRootController.getAuthCallBack().exceptionConnect(
-                    new Exception("Неправильный логин или пароль"));
+                    LoginScreen.isRegistrationAction ? new Exception("Аккаунт с таким email зарегистрирован") : new Exception("Неправильный логин или пароль"));
             channel.close();
         }
     }

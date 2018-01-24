@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -13,10 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.fogok.dataobjects.utils.EncodeUtils;
 import com.fogok.spaceships.Main;
-import com.fogok.spaceships.net.UICallBacks;
 import com.fogok.spaceships.net.NetRootController;
-import com.fogok.dataobjects.utils.Base64;
+import com.fogok.spaceships.net.UICallBacks;
 import com.fogok.spaceships.utils.gamedepended.Assets;
 import com.fogok.spaceships.view.screens.ScreenSwitcher;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
@@ -31,6 +32,8 @@ public class LoginScreen implements Screen{
 
     private Stage stage;
     private NetRootController netRootController;
+
+    public static boolean isRegistrationAction;
 
     private enum ConnectionToServiceStates {
                 WELCOME("ВВЕДИТЕ СВОЙ E-MAIL И ПАРОЛЬ."),
@@ -54,8 +57,8 @@ public class LoginScreen implements Screen{
 
 
 
-        Label loginText = new Label("E-MAIL", labelStyle);
-        Label passwordText = new Label("ПАРОЛЬ", labelStyle);
+        Label loginText = new Label("E-MAIL:    ", labelStyle);
+        Label passwordText = new Label("ПАРОЛЬ:    ", labelStyle);
 
         labelStyle.fontColor = null;
         final NormalLabel statusBar = new NormalLabel(ConnectionToServiceStates.WELCOME.toString(), labelStyle);
@@ -75,6 +78,13 @@ public class LoginScreen implements Screen{
         textButtonStyle.down = new TextureRegionDrawable(Assets.getRegion(5));
         textButtonStyle.font = nativeGdxHelper.getUiBitmapFont();
         final TextButton loginButton = new TextButton("ПОДКЛЮЧИТЬСЯ", textButtonStyle);
+        final CheckBox checkBox = new CheckBox(" РЕГИСТРАЦИЯ", new CheckBox.CheckBoxStyle(new TextureRegionDrawable(Assets.getRegion(6)), new TextureRegionDrawable(Assets.getRegion(7)), textButtonStyle.font, Color.WHITE));
+        checkBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                isRegistrationAction = checkBox.isChecked();
+            }
+        });
 
 
         netRootController.getUiCallBacks().setAuthCallBack(new UICallBacks.AuthCallBack() {
@@ -117,7 +127,7 @@ public class LoginScreen implements Screen{
                     statusBar.updateText(ConnectionToServiceStates.CONNECT_TO_AUTH.toString());
                     loginButton.setDisabled(true);
                     netRootController.getNetAuthController().openConnection(login.getText(),
-                            Base64.encode(password.getText().getBytes()));
+                            EncodeUtils.getSHA256(password.getText()), checkBox.isChecked());
                 } else if (!emailCorrect) {
                     statusBar.setColor(Color.FIREBRICK);
                     statusBar.updateText("Неправильный e-mail. Перепроверьте правильность");
@@ -143,6 +153,8 @@ public class LoginScreen implements Screen{
         table.add(loginButton).colspan(2);
         table.row();
         table.add(statusBar).colspan(2);
+        table.row();
+        table.add(checkBox).width(width).height(height * 2).colspan(2);
 
         table.setPosition(Main.WIDTH / 2f, Main.HEIGHT / 2f, Align.center);
         stage.addActor(table);

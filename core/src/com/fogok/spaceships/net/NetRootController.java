@@ -6,7 +6,7 @@ import com.fogok.dataobjects.transactions.utils.BaseTransactionReader;
 import com.fogok.dataobjects.utils.Pool;
 import com.fogok.spaceships.net.controllers.NetAuthController;
 import com.fogok.spaceships.net.controllers.NetRelayBalancerController;
-import com.fogok.spaceships.net.controllers.NetSessionController;
+import com.fogok.spaceships.net.controllers.NetPvpController;
 import com.fogok.spaceships.net.controllers.NetSocServController;
 
 import io.netty.buffer.ByteBuf;
@@ -21,7 +21,7 @@ public class NetRootController {
 
     private NetAuthController netAuthController;
     private NetSocServController netSocServController;
-    private NetSessionController netSessionController;
+    private NetPvpController netPvpController;
     private NetRelayBalancerController netRelayBalancerController;
 
     private UICallBacks uiCallBacks = new UICallBacks();
@@ -32,7 +32,7 @@ public class NetRootController {
         netAuthController = new NetAuthController(this);
         netRelayBalancerController = new NetRelayBalancerController(this);
         netSocServController = new NetSocServController(this);
-        netSessionController = new NetSessionController();
+        netPvpController = new NetPvpController(this);
     }
 
 
@@ -98,8 +98,8 @@ public class NetRootController {
         return netSocServController;
     }
 
-    public NetSessionController getNetSessionController() {
-        return netSessionController;
+    public NetPvpController getNetPvpController() {
+        return netPvpController;
     }
 
     public String getNickName() {

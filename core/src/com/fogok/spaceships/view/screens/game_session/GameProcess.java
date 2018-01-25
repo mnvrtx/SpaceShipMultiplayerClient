@@ -17,6 +17,7 @@ public class GameProcess implements Screen {
     private PlayerData playerData;
 
     public GameProcess(NativeGdxHelper nativeGdxHelper, NetRootController netRootController) {
+        netRootController.getNetPvpController().connectToPvp();
         this.nativeGdxHelper = nativeGdxHelper;
         playerData = new PlayerData(new ConsoleState());
 

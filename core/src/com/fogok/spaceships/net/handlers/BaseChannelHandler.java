@@ -18,10 +18,16 @@ public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
     protected SimpleTransactionReader simpleTransactionReader = new SimpleTransactionReader();
     protected NetRootController netRootController;
     private volatile boolean isChannelCompleteAction;
+    private volatile boolean isConnectActive;
     protected DefaultExceptionCallBack ex;
 
     public BaseChannelHandler(NetRootController netRootController) {
         this.netRootController = netRootController;
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        isConnectActive = true;
     }
 
     /**
@@ -77,7 +83,8 @@ public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         if (!isChannelCompleteAction) {
             if (ex != null)
-                ex.exceptionConnect(new Throwable("CRITICAL SERVER ERROR\nSERVER DETACHED YOU"));
+                ex.exceptionConnect(isConnectActive ? new Throwable("CRITICAL SERVER ERROR\nSERVER DETACHED YOU") :
+                        new Throwable("SERVER IS NOT RUNNING"));
             isChannelCompleteAction = true;
         }
     }

@@ -23,6 +23,7 @@ public abstract class DefaultController {
 
     public String getIp() {
         return ip;
+
     }
 
 

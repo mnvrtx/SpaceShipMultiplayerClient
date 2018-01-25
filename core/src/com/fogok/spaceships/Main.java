@@ -26,7 +26,7 @@ public class Main extends Game {
                 Main.this.setScreen(screen);
             }
         };
-        screenSwitcher.setCurrentScreen(ScreenSwitcher.Screens.LOGIN);
+        screenSwitcher.setCurrentScreen(ScreenSwitcher.Screens.GAMESESSION);
     }
 
     @Override

@@ -35,6 +35,7 @@ public class SocServHandler extends BaseChannelHandler implements ConInformCallB
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
         this.ctx = ctx;
         simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(),
                 new TokenToServiceTransaction(netRootController.getToken(), RequestTypeInTokenToServiceTrnsn.CHECK_VALID));

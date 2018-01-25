@@ -39,6 +39,7 @@ public class AuthHandler extends BaseChannelHandler implements ConInformCallBack
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
         simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(), new AuthTransaction(login, passwordEncrypted, isRegistration));
         startTimeOut(ctx);
     }

@@ -29,6 +29,7 @@ public class RelayBalancerHandler extends BaseChannelHandler implements ConInfor
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
         simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(), new TokenToServiceTransaction(netRootController.getToken(), RequestTypeInTokenToServiceTrnsn.SS_INFORMATION));
     }
 

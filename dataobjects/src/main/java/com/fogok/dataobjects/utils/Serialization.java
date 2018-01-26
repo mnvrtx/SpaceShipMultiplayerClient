@@ -8,7 +8,6 @@ import com.fogok.dataobjects.GameObject;
 import com.fogok.dataobjects.GameObjectsType;
 import com.fogok.dataobjects.PlayerData;
 import com.fogok.dataobjects.ServerState;
-import com.fogok.dataobjects.datastates.ClientToServerDataStates;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
 
 import java.util.BitSet;
@@ -22,6 +21,11 @@ public class Serialization {
     }
 
     private Kryo kryo;
+
+    private Input input = new Input();
+    public Input getInput() {
+        return input;
+    }
 
     private EveryBodyPool everyBodyPool;
     public void setEveryBodyPool(EveryBodyPool everyBodyPool) {
@@ -115,13 +119,13 @@ public class Serialization {
             @Override
             public void write(Kryo kryo, Output output, PlayerData playerData) {
 
-                kryo.writeObject(output, ClientToServerDataStates.PLAYER_DATA_WITH_CONSOLE_STATE);
-
                 output.writeLong(playerData.getConsoleState().getPlayerId(), true);
                 output.writeFloat(playerData.getConsoleState().getX(), 0.02f, false);
                 output.writeFloat(playerData.getConsoleState().getY(), 0.02f, false);
                 output.writeInt(playerData.getConsoleState().getAdditParams().length, true);
                 output.writeFloats(playerData.getConsoleState().getAdditParams());
+                output.writeInt(playerData.getConsoleState().getStringInformation().length, true);
+                output.writeChars(playerData.getConsoleState().getStringInformation());
                 output.writeLong(playerData.getConsoleState().getLongFlags());
 
             }
@@ -134,6 +138,8 @@ public class Serialization {
                 playerData.getConsoleState().setY(input.readFloat(0.02f, true));
                 int lenghtAdditParams = input.readInt(true);
                 playerData.getConsoleState().setAdditParams(input.readFloats(lenghtAdditParams));
+                int lenghtStringInformParams = input.readInt(true);
+                playerData.getConsoleState().setStringInformation(input.readChars(lenghtStringInformParams));
                 playerData.getConsoleState().setLongFlags(input.readLong());
 
                 return null;
@@ -145,8 +151,6 @@ public class Serialization {
 
             @Override
             public void write(Kryo kryo, Output output, EveryBodyPool everyBodyPool) {  ///
-
-                kryo.writeObject(output, com.fogok.dataobjects.datastates.ServerToClientDataStates.EVERY_BODY_POOL);
 
                 Array<Array<GameObject>> typedObjects = everyBodyPool.getAllObjects();
 
@@ -165,6 +169,8 @@ public class Serialization {
                             output.writeFloat(gameObject.getY(), 0.02f, false);
                             output.writeInt(gameObject.getAdditParams().length, true);
                             output.writeFloats(gameObject.getAdditParams());
+                            output.writeInt(gameObject.getStringInformation().length, true);
+                            output.writeChars(gameObject.getStringInformation());
                             output.writeLong(gameObject.getLongFlags());
                         }
 
@@ -190,6 +196,8 @@ public class Serialization {
                         gameObject.setY(input.readFloat(0.02f, true));
                         int lenghtAdditParams = input.readInt(true);
                         gameObject.setAdditParams(input.readFloats(lenghtAdditParams));
+                        int lenghtStringInformParams = input.readInt(true);
+                        gameObject.setStringInformation(input.readChars(lenghtStringInformParams));
                         gameObject.setLongFlags(input.readLong());
                     }
                 }

@@ -13,7 +13,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
 
-    private static final long CONNECTION_TIMEOUT_MILLISECONDS = 6000;
+    public static final long CONNECTION_TIMEOUT_MILLISECONDS = 6000;
 
     protected SimpleTransactionReader simpleTransactionReader = new SimpleTransactionReader();
     protected NetRootController netRootController;
@@ -36,7 +36,7 @@ public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        netRootController.readServerChannel(ctx.channel(), msg, simpleTransactionReader);
+        netRootController.readServerChannel(ctx.channel(), msg, simpleTransactionReader, false);
     }
 
     /**

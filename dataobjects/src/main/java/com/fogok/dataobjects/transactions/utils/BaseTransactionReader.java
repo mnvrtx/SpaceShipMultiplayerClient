@@ -25,7 +25,7 @@ public abstract class BaseTransactionReader {
     private BaseTransaction transactionForComparing = new BaseTransaction(ConnectionToServiceType.CLIENT_TO_SERVICE, 0);
 
 
-    public void readByteBufFromChannel(Channel channel, DatagramPacket datagramPacket) {
+    public void readDataGrammFromChannel(Channel channel, DatagramPacket datagramPacket) {
         readByteBufFromChannel(channel, datagramPacket.getData());
     }
 

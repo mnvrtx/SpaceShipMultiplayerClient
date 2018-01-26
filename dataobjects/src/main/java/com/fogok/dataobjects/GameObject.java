@@ -18,6 +18,7 @@ public abstract class GameObject implements Pool.Poolable {
     private float x;
     private float y;
     private float[] additParams = new float[0];
+    private char[] stringInformation = new char[0];
 
 
     private boolean isInsideField;  //означает, находится ли объект в пуле или же он сейчас непосредственно находится на карте, true - значит, что он внутри пула
@@ -27,6 +28,10 @@ public abstract class GameObject implements Pool.Poolable {
 
     //region Setters
 
+
+    public void setStringInformation(char[] stringInformation) {
+        this.stringInformation = stringInformation;
+    }
 
     public void setPlayerId(long playerId) {
         this.playerId = playerId;
@@ -102,7 +107,9 @@ public abstract class GameObject implements Pool.Poolable {
         return widthDivHeight;
     }
 
-
+    public char[] getStringInformation() {
+        return stringInformation;
+    }
 
     public boolean getFlag(int i) {
         return flags.get(i);

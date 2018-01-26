@@ -3,11 +3,15 @@ package com.fogok.spaceships.net;
 import com.badlogic.gdx.Gdx;
 import com.fogok.dataobjects.datastates.ClientState;
 import com.fogok.dataobjects.transactions.utils.BaseTransactionReader;
+import com.fogok.dataobjects.utils.EveryBodyPool;
 import com.fogok.dataobjects.utils.Pool;
+import com.fogok.dataobjects.utils.Serialization;
 import com.fogok.spaceships.net.controllers.NetAuthController;
-import com.fogok.spaceships.net.controllers.NetRelayBalancerController;
 import com.fogok.spaceships.net.controllers.NetPvpController;
+import com.fogok.spaceships.net.controllers.NetRelayBalancerController;
 import com.fogok.spaceships.net.controllers.NetSocServController;
+
+import java.net.DatagramPacket;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -60,14 +64,19 @@ public class NetRootController {
 
         @Override
         public void run() {
-            baseTransactionReader.readByteBufFromChannel(channel, (ByteBuf) msg);
+            if (baseTransactionReader != null) {
+                baseTransactionReader.readByteBufFromChannel(channel, (ByteBuf) msg);
+            } else {
+                Serialization.getInstance().getInput().setBuffer(((DatagramPacket)msg).getData());
+                Serialization.getInstance().getKryo().readObject(Serialization.getInstance().getInput(), EveryBodyPool.class);
+            }
         }
 
         @Override
         public void reset() {
-            msg = null;
-            channel = null;
-            baseTransactionReader = null;
+//            msg = null;
+//            channel = null;
+//            baseTransactionReader = null;
         }
     }
     //endregion

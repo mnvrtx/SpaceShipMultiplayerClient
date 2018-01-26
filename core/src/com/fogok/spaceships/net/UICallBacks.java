@@ -35,4 +35,8 @@ public class UICallBacks {
         void recieveServerState(ServerState serverState);
     }
 
+    private interface PvpCallBack{
+
+    }
+
 }

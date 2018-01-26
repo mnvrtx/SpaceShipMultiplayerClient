@@ -19,16 +19,7 @@ public abstract class DefaultController {
         this.netRootController = netRootController;
     }
 
-    private String ip;
-
-    public String getIp() {
-        return ip;
-
-    }
-
-
     void openConnection(ChannelInboundHandlerAdapter handler, DefaultExceptionCallBack defaultExceptionCallBack, NetRootController netRootController, String ip){
-        this.ip = ip;
         ConnectToServiceImpl.getInstance().connect(handler, new NioEventLoopGroup(1), new DefaultExceptionHandler(defaultExceptionCallBack),
                 new DefaultOtherExceptionHandler(netRootController), new ChannelFutureListener() {
                     @Override

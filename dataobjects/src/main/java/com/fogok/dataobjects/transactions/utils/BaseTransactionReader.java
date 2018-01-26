@@ -1,9 +1,10 @@
 package com.fogok.dataobjects.transactions.utils;
 
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
-import com.fogok.dataobjects.transactions.common.BaseTransaction;
 import com.fogok.dataobjects.transactions.BaseReaderFromTransaction;
+import com.fogok.dataobjects.transactions.common.BaseTransaction;
 
+import java.net.DatagramPacket;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,15 +17,23 @@ import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.error;
 
 public abstract class BaseTransactionReader {
-
+    //TODO: ОБЯЗАТЕЛЬНО сделтаь так, чтобы транзакции не создавали новых инстансов
     private static String logName = "TransactionReader";
 
     private TransactionExecutor transactionExecutor = new TransactionExecutor();
     private TransactionsAndReadersResolver transactionsAndReadersResolver = new TransactionsAndReadersResolver();
     private BaseTransaction transactionForComparing = new BaseTransaction(ConnectionToServiceType.CLIENT_TO_SERVICE, 0);
 
+
+    public void readByteBufFromChannel(Channel channel, DatagramPacket datagramPacket) {
+        readByteBufFromChannel(channel, datagramPacket.getData());
+    }
+
     public void readByteBufFromChannel(Channel channel, ByteBuf byteBuf){
-        byte[] bytes = transactionExecutor.readByteBufAndDispose(byteBuf);
+        readByteBufFromChannel(channel, transactionExecutor.readByteBufAndDispose(byteBuf));
+    }
+
+    public void readByteBufFromChannel(Channel channel, byte[] bytes){
         transactionExecutor.fillTransaction(bytes, transactionForComparing);
         final BaseReaderFromTransaction reader = transactionsAndReadersResolver.getResolved().get(transactionForComparing);
         if (reader == null){

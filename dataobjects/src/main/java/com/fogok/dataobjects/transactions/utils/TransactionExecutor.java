@@ -10,6 +10,8 @@ import com.fogok.dataobjects.transactions.authservice.AuthTransaction;
 import com.fogok.dataobjects.transactions.authservice.TokenToClientTransaction;
 import com.fogok.dataobjects.transactions.common.ConnectionInformationTransaction;
 import com.fogok.dataobjects.transactions.common.TokenToServiceTransaction;
+import com.fogok.dataobjects.transactions.pvp.EveryBodyPoolTransaction;
+import com.fogok.dataobjects.transactions.pvp.PlayerDataTransaction;
 import com.fogok.dataobjects.transactions.relaybalancerservice.SSInformationTransaction;
 import com.fogok.dataobjects.transactions.socserv.KeepAliveTransaction;
 import com.fogok.dataobjects.utils.Serialization;
@@ -118,6 +120,8 @@ public class TransactionExecutor {
                             return new TokenToServiceTransaction(baseTransaction);
                         case KEEP_ALIVE_TO_SOC_SERV:
                             return new KeepAliveTransaction(baseTransaction);
+                        case PLAYER_DATA_WITH_CONSOLE_STATE:
+                            return new PlayerDataTransaction(baseTransaction);
                     }
                     break;
                 case SERVICE_TO_CLIENT:
@@ -128,6 +132,8 @@ public class TransactionExecutor {
                             return new SSInformationTransaction(baseTransaction);
                         case CONNECTION_TO_SERVICE_INFORMATION:
                             return new ConnectionInformationTransaction(baseTransaction);
+                        case EVERY_BODY_POOL:
+                            return new EveryBodyPoolTransaction(baseTransaction);
                     }
                     break;
             }

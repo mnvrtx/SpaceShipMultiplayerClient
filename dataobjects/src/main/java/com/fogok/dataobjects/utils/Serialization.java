@@ -22,20 +22,29 @@ public class Serialization {
     }
 
     private Kryo kryo;
-    private EveryBodyPool everyBodyPool;
-    private PlayerData playerData;
-    private ServerState serverState;
 
-    public void setParams(EveryBodyPool everyBodyPool) {
+    private EveryBodyPool everyBodyPool;
+    public void setEveryBodyPool(EveryBodyPool everyBodyPool) {
         this.everyBodyPool = everyBodyPool;
     }
+    public EveryBodyPool getEveryBodyPool() {
+        return everyBodyPool;
+    }
 
+    private PlayerData playerData;
     public void setPlayerData(PlayerData playerData) {
         this.playerData = playerData;
     }
+    public PlayerData getPlayerData() {
+        return playerData;
+    }
 
+    private ServerState serverState;
     public void setServerState(ServerState serverState) {
         this.serverState = serverState;
+    }
+    public ServerState getServerState() {
+        return serverState;
     }
 
     public Serialization() {

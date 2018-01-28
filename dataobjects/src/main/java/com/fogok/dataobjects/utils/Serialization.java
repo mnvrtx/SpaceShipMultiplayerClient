@@ -30,6 +30,11 @@ public class Serialization {
 
     private Output output = new Output(new ByteArrayOutputStream());
 
+    public Output getCleanedOutput(){
+        output.clear();
+        return getOutput();
+    }
+
     public Output getOutput() {
         return output;
     }

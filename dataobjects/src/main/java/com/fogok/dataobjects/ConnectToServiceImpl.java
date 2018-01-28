@@ -14,6 +14,8 @@ import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 import static com.esotericsoftware.minlog.Log.info;
 
@@ -42,6 +44,7 @@ public class ConnectToServiceImpl {
                 info("Start netty thread with " + (tcp ? "tcp" : "udp"));
                 try {
                     final Bootstrap boot = new Bootstrap();
+                    ChannelFuture future;
                     if (tcp) {
                         boot.group(workingGroup)
                                 .channel(NioSocketChannel.class)
@@ -54,6 +57,9 @@ public class ConnectToServiceImpl {
                                         ch.pipeline().addLast(exceptionHandler);
                                     }
                                 });
+                        future = boot.connect(ip, port).sync();
+                        info(String.format("Connect to service '%s' success",
+                                coreHandler.getClass().getSimpleName()));
                     } else {
                         boot.group(workingGroup)
                                 .channel(NioDatagramChannel.class)
@@ -64,16 +70,16 @@ public class ConnectToServiceImpl {
                                         protected void initChannel(NioDatagramChannel ch) throws Exception {
                                             ch.config().setRecvByteBufAllocator(new FixedRecvByteBufAllocator(262144)); //set  buf size here
                                             ch.pipeline().addLast(coreHandler);
+                                            ch.pipeline().addLast(new LoggingHandler(LogLevel.TRACE));
                                             ch.pipeline().addLast(exceptionHandler);
                                         }
                                     });
+//                        future = boot.bind(0).sync();
+                        future = boot.connect(ip, port).sync();
+                        info(String.format("Connect to service '%s' success",
+                                coreHandler.getClass().getSimpleName()));
                     }
 
-
-
-                    ChannelFuture future = boot.connect(ip, port).sync();
-                    info(String.format("Connect to service '%s' success",
-                            coreHandler.getClass().getSimpleName()));
                     succesCallback.operationComplete(future);
                     future.channel().closeFuture().sync();
 //                    addListener(new ChannelFutureListener() {

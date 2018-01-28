@@ -4,7 +4,6 @@ import com.fogok.dataobjects.datastates.ConnectionToServiceType;
 import com.fogok.dataobjects.transactions.BaseReaderFromTransaction;
 import com.fogok.dataobjects.transactions.common.BaseTransaction;
 
-import java.net.DatagramPacket;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,17 +16,11 @@ import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.error;
 
 public abstract class BaseTransactionReader {
-    //TODO: ОБЯЗАТЕЛЬНО сделтаь так, чтобы транзакции не создавали новых инстансов
     private static String logName = "TransactionReader";
 
     private TransactionExecutor transactionExecutor = new TransactionExecutor();
     private TransactionsAndReadersResolver transactionsAndReadersResolver = new TransactionsAndReadersResolver();
     private BaseTransaction transactionForComparing = new BaseTransaction(ConnectionToServiceType.CLIENT_TO_SERVICE, 0);
-
-
-    public void readDataGrammFromChannel(Channel channel, DatagramPacket datagramPacket) {
-        readByteBufFromChannel(channel, datagramPacket.getData());
-    }
 
     public void readByteBufFromChannel(Channel channel, ByteBuf byteBuf){
         readByteBufFromChannel(channel, transactionExecutor.readByteBufAndDispose(byteBuf));

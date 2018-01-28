@@ -1,5 +1,6 @@
 package com.fogok.dataobjects;
 
+import com.fogok.dataobjects.utils.EveryBodyPool;
 import com.fogok.dataobjects.utils.GMUtils;
 import com.fogok.dataobjects.utils.Pool;
 import com.fogok.dataobjects.utils.Serialization;
@@ -139,6 +140,60 @@ public abstract class GameObject implements Pool.Poolable {
         return y;
     }
     //endregion
+
+
+    private static StringBuilder stringBuilder = new StringBuilder();
+
+    @Override
+    public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean modern) {
+        stringBuilder.setLength(0);
+        stringBuilder.append(EveryBodyPool.JSONElements[0]);
+        long gameObjectLongFlags = getLongFlags();
+        for (int i = 0; i < EveryBodyPool.JSONStrings.length; i++) {          //проходимся по параметрам объекта
+            if (!(i == GameObject.ADIITPRMS && getAdditParams().length == 0) && !(i == GameObject.BOOLEANS && gameObjectLongFlags == 0)){     //не добавляем лишнего, если данных нет
+                addEndJSONString(i == 0);
+                addStartJSONString(i);
+                switch (i) {
+                    case GameObject.X:
+                        stringBuilder.append(getX());
+                        break;
+                    case GameObject.Y:
+                        stringBuilder.append(getY());
+                        break;
+                    case GameObject.ADIITPRMS:
+                        stringBuilder.append(EveryBodyPool.JSONElements[6]);
+                        float[] addPrms = getAdditParams();
+                        for (int j = 0; j < addPrms.length; j++) {
+                            stringBuilder.append(addPrms[j]);
+                            addEndJSONString(j == addPrms.length - 1);
+                        }
+                        stringBuilder.append(EveryBodyPool.JSONElements[7]);
+                        break;
+                    case GameObject.BOOLEANS:
+                        stringBuilder.append(gameObjectLongFlags);
+                        break;
+                }
+            }
+        }
+        stringBuilder.append(EveryBodyPool.JSONElements[1]);
+        return modern ? EveryBodyPool.format(stringBuilder.toString()) : stringBuilder.toString();
+    }
+
+    private void addStartJSONString(int i){
+        stringBuilder.append(EveryBodyPool.JSONElements[3]);
+        stringBuilder.append(EveryBodyPool.JSONStrings[i]);
+        stringBuilder.append(EveryBodyPool.JSONElements[3]);
+        stringBuilder.append(EveryBodyPool.JSONElements[2]);
+    }
+
+    private void addEndJSONString(boolean last){
+        if (!last)
+            stringBuilder.append(EveryBodyPool.JSONElements[4]);
+    }
 
 
     //test

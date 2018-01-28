@@ -10,6 +10,7 @@ import com.fogok.dataobjects.PlayerData;
 import com.fogok.dataobjects.ServerState;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
 
+import java.io.ByteArrayOutputStream;
 import java.util.BitSet;
 
 public class Serialization {
@@ -27,8 +28,14 @@ public class Serialization {
         return input;
     }
 
+    private Output output = new Output(new ByteArrayOutputStream());
+
+    public Output getOutput() {
+        return output;
+    }
+
     private EveryBodyPool everyBodyPool;
-    public void setEveryBodyPool(EveryBodyPool everyBodyPool) {
+    public void setEveryBodyPoolToSync(EveryBodyPool everyBodyPool) {
         this.everyBodyPool = everyBodyPool;
     }
     public EveryBodyPool getEveryBodyPool() {
@@ -83,36 +90,36 @@ public class Serialization {
             }
         });
 
-        kryo.register(ServerState.class, new Serializer<ServerState>() {
-            @Override
-            public void write(Kryo kryo, Output output, ServerState serverState) {
-
-                output.writeInt(serverState.getPlayersOnline(), true);
-
-                output.writeLong(serverState.getPlayerGlobalData().getPlayerId(), true);
-                output.writeFloat(serverState.getPlayerGlobalData().getX(), 0.02f, false);
-                output.writeFloat(serverState.getPlayerGlobalData().getY(), 0.02f, false);
-                output.writeInt(serverState.getPlayerGlobalData().getAdditParams().length, true);
-                output.writeFloats(serverState.getPlayerGlobalData().getAdditParams());
-                output.writeLong(serverState.getPlayerGlobalData().getLongFlags());
-
-            }
-
-            @Override
-            public ServerState read(Kryo kryo, Input input, Class<ServerState> type) {
-
-                serverState.setPlayersOnline(input.readInt(true));
-
-                serverState.getPlayerGlobalData().setPlayerId(input.readLong(true));
-                serverState.getPlayerGlobalData().setX(input.readFloat(0.02f, true));
-                serverState.getPlayerGlobalData().setY(input.readFloat(0.02f, true));
-                int lenghtAdditParams = input.readInt(true);
-                serverState.getPlayerGlobalData().setAdditParams(input.readFloats(lenghtAdditParams));
-                serverState.getPlayerGlobalData().setLongFlags(input.readLong());
-
-                return null;
-            }
-        });
+//        kryo.register(ServerState.class, new Serializer<ServerState>() {
+//            @Override
+//            public void write(Kryo kryo, Output output, ServerState serverState) {
+//
+//                output.writeInt(serverState.getPlayersOnline(), true);
+//
+//                output.writeLong(serverState.getPlayerGlobalData().getPlayerId(), true);
+//                output.writeFloat(serverState.getPlayerGlobalData().getX(), 0.02f, false);
+//                output.writeFloat(serverState.getPlayerGlobalData().getY(), 0.02f, false);
+//                output.writeInt(serverState.getPlayerGlobalData().getAdditParams().length, true);
+//                output.writeFloats(serverState.getPlayerGlobalData().getAdditParams());
+//                output.writeLong(serverState.getPlayerGlobalData().getLongFlags());
+//
+//            }
+//
+//            @Override
+//            public ServerState read(Kryo kryo, Input input, Class<ServerState> type) {
+//
+//                serverState.setPlayersOnline(input.readInt(true));
+//
+//                serverState.getPlayerGlobalData().setPlayerId(input.readLong(true));
+//                serverState.getPlayerGlobalData().setX(input.readFloat(0.02f, true));
+//                serverState.getPlayerGlobalData().setY(input.readFloat(0.02f, true));
+//                int lenghtAdditParams = input.readInt(true);
+//                serverState.getPlayerGlobalData().setAdditParams(input.readFloats(lenghtAdditParams));
+//                serverState.getPlayerGlobalData().setLongFlags(input.readLong());
+//
+//                return null;
+//            }
+//        });
 
         kryo.register(PlayerData.class, new Serializer<PlayerData>(){
 

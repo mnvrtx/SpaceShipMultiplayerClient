@@ -5,9 +5,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.fogok.dataobjects.PlayerData;
 import com.fogok.dataobjects.gameobjects.ConsoleState;
+import com.fogok.dataobjects.utils.Serialization;
 import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.view.utils.DebugGUI;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
+
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 public class GameProcess implements Screen {
 
@@ -18,11 +22,22 @@ public class GameProcess implements Screen {
 
     public GameProcess(NativeGdxHelper nativeGdxHelper, NetRootController netRootController) {
         netRootController.setToken("qweqweqwdfqwfjq");
-        netRootController.getNetPvpController().connectToPvp();
+
+        try {
+            netRootController.getNetPvpController().connectToPvp("qweqwdgqfqwf");
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         this.nativeGdxHelper = nativeGdxHelper;
         playerData = new PlayerData(new ConsoleState());
+        Serialization.getInstance().setPlayerData(playerData);
 
         gameSession = new GameSession(nativeGdxHelper, playerData);
+        Serialization.getInstance().setEveryBodyPoolToSync(gameSession.getControllerManager().getEveryBodyObjectsPool());
+
         gui = new GUI(nativeGdxHelper, gameSession.getControllerManager());
     }
 

@@ -26,6 +26,6 @@ public abstract class DefaultController {
                     public void operationComplete(ChannelFuture future) throws Exception {
 
                     }
-                }, ip.split(":")[0], Integer.parseInt(ip.split(":")[1]));
+                }, ip.split(":")[0], Integer.parseInt(ip.split(":")[1]), true);
     }
 }

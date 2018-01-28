@@ -36,6 +36,7 @@ public class EveryBodyViewModels {
         for (SimpleViewModelObject simpleViewModelObject : simpleViewModelObjects)
             simpleViewModelObject.draw(batch);
         for (ViewModelMemberBase memberBase : viewModelMemberBase)
-            memberBase.draw(batch);
+            if (memberBase != null)
+                memberBase.draw(batch);
     }
 }

@@ -176,36 +176,8 @@ public class EveryBodyPool extends Pool<GameObject> {
                 for (int q = 0; q < typedGameObjects.size; q++) {   //проходимся по всем объектам, которые касаются определённого типа
                     GameObject gameObject = typedGameObjects.get(q);
 
-                        addEndJSONString(false, objectsIters++ == 0);
-                        stringBuilder.append(JSONElements[0]);
-                        long gameObjectLongFlags = gameObject.getLongFlags();
-                        for (int i = 0; i < JSONStrings.length; i++) {          //проходимся по параметрам объекта
-                            if (!(i == GameObject.ADIITPRMS && gameObject.getAdditParams().length == 0) && !(i == GameObject.BOOLEANS && gameObjectLongFlags == 0)){     //не добавляем лишнего, если данных нет
-                                addEndJSONString(false, i == 0);
-                                addStartJSONString(i, false);
-                                switch (i) {
-                                    case GameObject.X:
-                                        stringBuilder.append(gameObject.getX());
-                                        break;
-                                    case GameObject.Y:
-                                        stringBuilder.append(gameObject.getY());
-                                        break;
-                                    case GameObject.ADIITPRMS:
-                                        stringBuilder.append(JSONElements[6]);
-                                        float[] addPrms = gameObject.getAdditParams();
-                                        for (int j = 0; j < addPrms.length; j++) {
-                                            stringBuilder.append(addPrms[j]);
-                                            addEndJSONString(false, j == addPrms.length - 1);
-                                        }
-                                        stringBuilder.append(JSONElements[7]);
-                                        break;
-                                    case GameObject.BOOLEANS:
-                                        stringBuilder.append(gameObjectLongFlags);
-                                        break;
-                                }
-                            }
-                        }
-                        stringBuilder.append(JSONElements[1]);
+                    addEndJSONString(false, objectsIters++ == 0);
+                    stringBuilder.append(gameObject.toString());
 
                 }
                 stringBuilder.append(JSONElements[7]);
@@ -229,7 +201,7 @@ public class EveryBodyPool extends Pool<GameObject> {
             stringBuilder.append(JSONElements[4]);
     }
 
-    private static final char[] JSONElements = new char[]{
+    public static final char[] JSONElements = new char[]{
             //  0    1    2    3    4    5    6     7
             '{', '}', ':', '"', ',', 'N', '[', ']'
     };

@@ -38,7 +38,7 @@ public class SocServHandler extends BaseChannelHandler implements ConInformCallB
         super.channelActive(ctx);
         this.ctx = ctx;
         simpleTransactionReader.getTransactionExecutor().execute(ctx.channel(),
-                new TokenToServiceTransaction(netRootController.getToken(), RequestTypeInTokenToServiceTrnsn.CHECK_VALID));
+                new TokenToServiceTransaction(netRootController.getAuthPlayerToken(), RequestTypeInTokenToServiceTrnsn.CHECK_VALID));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class SocServHandler extends BaseChannelHandler implements ConInformCallB
     }
 
     private void startKeepAliveLoop(Channel channel){
-        final TokenToServiceTransaction tokenToClientTransaction = new TokenToServiceTransaction(netRootController.getToken(), RequestTypeInTokenToServiceTrnsn.KEEP_ALIVE);
+        final TokenToServiceTransaction tokenToClientTransaction = new TokenToServiceTransaction(netRootController.getAuthPlayerToken(), RequestTypeInTokenToServiceTrnsn.KEEP_ALIVE);
         channel.eventLoop().scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {

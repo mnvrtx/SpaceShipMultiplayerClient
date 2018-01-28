@@ -12,6 +12,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import static com.esotericsoftware.minlog.Log.info;
@@ -31,28 +32,43 @@ public class ConnectToServiceImpl {
                         final ErrorConnectionToServiceCallback errorCallback,
                         final ChannelFutureListener succesCallback,
                         final String ip,
-                        final int port) {
+                        final int port, final boolean tcp) {
 
 
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                info("Start netty thread");
+                info("Start netty thread with " + (tcp ? "tcp" : "udp"));
                 try {
                     final Bootstrap boot = new Bootstrap();
-                    boot.group(workingGroup)
-                            .channel(NioSocketChannel.class)
-                            .option(ChannelOption.TCP_NODELAY, true)
-                            .handler(new ChannelInitializer<SocketChannel>() {
-                                @Override
-                                protected void initChannel(SocketChannel ch) throws Exception {
-                                    ch.config().setRecvByteBufAllocator(
-                                            new FixedRecvByteBufAllocator(262144)); //set  buf size here
-                                    ch.pipeline().addLast(coreHandler);
-                                    ch.pipeline().addLast(exceptionHandler);
-                                }
-                            });
+                    if (tcp) {
+                        boot.group(workingGroup)
+                                .channel(NioSocketChannel.class)
+                                .option(ChannelOption.TCP_NODELAY, true)
+                                .handler(new ChannelInitializer<SocketChannel>() {
+                                    @Override
+                                    protected void initChannel(SocketChannel ch) throws Exception {
+                                        ch.config().setRecvByteBufAllocator(new FixedRecvByteBufAllocator(262144)); //set  buf size here
+                                        ch.pipeline().addLast(coreHandler);
+                                        ch.pipeline().addLast(exceptionHandler);
+                                    }
+                                });
+                    } else {
+                        boot.group(workingGroup)
+                                .channel(NioDatagramChannel.class)
+//                                .option(ChannelOption.SO_BROADCAST, true)
+//                                .option(ChannelOption.DATAGRAM_CHANNEL_ACTIVE_ON_REGISTRATION, true)
+                                .handler(new ChannelInitializer<NioDatagramChannel>() {
+                                        @Override
+                                        protected void initChannel(NioDatagramChannel ch) throws Exception {
+                                            ch.config().setRecvByteBufAllocator(new FixedRecvByteBufAllocator(262144)); //set  buf size here
+                                            ch.pipeline().addLast(coreHandler);
+                                            ch.pipeline().addLast(exceptionHandler);
+                                        }
+                                    });
+                    }
+
 
 
                     ChannelFuture future = boot.connect(ip, port).sync();

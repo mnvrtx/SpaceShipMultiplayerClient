@@ -1,20 +1,16 @@
 package com.fogok.dataobjects.transactions.utils;
 
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
 import com.fogok.dataobjects.datastates.ClientToServerDataStates;
 import com.fogok.dataobjects.datastates.ConnectionToServiceType;
 import com.fogok.dataobjects.datastates.ServerToClientDataStates;
-import com.fogok.dataobjects.transactions.common.BaseTransaction;
 import com.fogok.dataobjects.transactions.authservice.AuthTransaction;
 import com.fogok.dataobjects.transactions.authservice.TokenToClientTransaction;
+import com.fogok.dataobjects.transactions.common.BaseTransaction;
 import com.fogok.dataobjects.transactions.common.ConnectionInformationTransaction;
 import com.fogok.dataobjects.transactions.common.TokenToServiceTransaction;
 import com.fogok.dataobjects.transactions.relaybalancerservice.SSInformationTransaction;
 import com.fogok.dataobjects.transactions.socserv.KeepAliveTransaction;
 import com.fogok.dataobjects.utils.Serialization;
-
-import java.io.ByteArrayOutputStream;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -26,17 +22,14 @@ import static com.esotericsoftware.minlog.Log.info;
 
 public class TransactionExecutor {
 
-    private Output output = new Output(new ByteArrayOutputStream());
-    private Input input = new Input();
-
     private BaseTransaction transactionToFindAppropMethod = new BaseTransaction(ConnectionToServiceType.CLIENT_TO_SERVICE, 0);
 
     private int lostPackets;
 
     public ChannelFuture execute(Channel channel, BaseTransaction transaction) {
-        output.clear();
-        transaction.write(Serialization.getInstance().getKryo(), output);
-        ChannelFuture channelFuture = channel.writeAndFlush(Unpooled.copiedBuffer(output.getBuffer()));
+        Serialization.getInstance().getOutput().clear();
+        transaction.write(Serialization.getInstance().getKryo(), Serialization.getInstance().getOutput());
+        ChannelFuture channelFuture = channel.writeAndFlush(Unpooled.copiedBuffer(Serialization.getInstance().getOutput().getBuffer()));
         info(String.format("send %s %s to %s",
                 transaction.getClass().getSimpleName(), transaction.toString(),
                 channel.remoteAddress()));
@@ -53,7 +46,7 @@ public class TransactionExecutor {
     }
 
     public BaseTransaction findAppropriateObjectAndCreate(Object msg, AppropriatelyObjectsResolver appropriatelyObjectsResolver) {
-        final byte[] bytes = readByteBufAndDispose((ByteBuf) msg);
+        final byte[] bytes = readByteBufAndDispose(((ByteBuf) msg));
         BaseTransaction baseTransaction = findAppropriateTransaction(bytes, appropriatelyObjectsResolver);
         if (baseTransaction == null)
             return null;
@@ -83,8 +76,8 @@ public class TransactionExecutor {
 
     public  <T extends BaseTransaction> boolean fillTransaction(byte[] bytes, T baseTransaction) {
         try {
-            input.setBuffer(bytes);
-            baseTransaction.read(Serialization.getInstance().getKryo(), input);
+            Serialization.getInstance().getInput().setBuffer(bytes);
+            baseTransaction.read(Serialization.getInstance().getKryo(), Serialization.getInstance().getInput());
             return true;
         } catch (Exception e) {
             lostPackets++;

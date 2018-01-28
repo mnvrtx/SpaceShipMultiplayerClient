@@ -36,7 +36,7 @@ public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        netRootController.readServerChannel(ctx.channel(), msg, simpleTransactionReader, false);
+        netRootController.readServerChannel(ctx.channel(), msg, simpleTransactionReader, null);
     }
 
     /**

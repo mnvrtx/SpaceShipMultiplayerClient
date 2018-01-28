@@ -25,7 +25,7 @@ public class NativeGdxHelper {
     private OrthographicCamera uiCamera;
     private OrthographicCamera gameSessionCamera;
     private SpriteBatch uiSpriteBatch;
-    private BitmapFont bitmapFont, uiBitmapFont;
+    private BitmapFont uiBitmapFont;
     private Stage stage;
 
     public NativeGdxHelper() {
@@ -82,9 +82,9 @@ public class NativeGdxHelper {
         return stage;
     }
 
-    public BitmapFont getBitmapFont() {
-        return bitmapFont;
-    }
+//    public BitmapFont getBitmapFont() {
+//        return bitmapFont;
+//    }
 
     public BitmapFont getUiBitmapFont() {
         return uiBitmapFont;

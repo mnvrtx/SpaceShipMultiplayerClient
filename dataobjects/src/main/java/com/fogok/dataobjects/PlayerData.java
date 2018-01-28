@@ -18,4 +18,8 @@ public class PlayerData {
         return consoleState;
     }
 
+    @Override
+    public String toString() {
+        return consoleState.toString();
+    }
 }

@@ -15,7 +15,7 @@ public class GUI {
     public GUI(NativeGdxHelper nativeGdxHelper, ControllerManager controllerManager) {
         uiSpriteBatch = nativeGdxHelper.getUiSpriteBatch();
         joyStick = new JoyStick(controllerManager);
-        debugGUI = new DebugGUI(nativeGdxHelper.getBitmapFont());
+        debugGUI = new DebugGUI(nativeGdxHelper.getUiBitmapFont());
     }
 
     public void draw(NativeGdxHelper nativeGdxHelper){

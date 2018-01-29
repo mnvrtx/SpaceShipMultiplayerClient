@@ -27,9 +27,9 @@ public class TransactionExecutor {
     private int lostPackets;
 
     public ChannelFuture execute(Channel channel, BaseTransaction transaction) {
-        Serialization.getInstance().getOutput().clear();
-        transaction.write(Serialization.getInstance().getKryo(), Serialization.getInstance().getOutput());
-        ChannelFuture channelFuture = channel.writeAndFlush(Unpooled.copiedBuffer(Serialization.getInstance().getOutput().getBuffer()));
+        Serialization.instance.getOutput().clear();
+        transaction.write(Serialization.instance.getKryo(), Serialization.instance.getOutput());
+        ChannelFuture channelFuture = channel.writeAndFlush(Unpooled.copiedBuffer(Serialization.instance.getOutput().getBuffer()));
         info(String.format("send %s %s to %s",
                 transaction.getClass().getSimpleName(), transaction.toString(),
                 channel.remoteAddress()));
@@ -76,8 +76,8 @@ public class TransactionExecutor {
 
     public  <T extends BaseTransaction> boolean fillTransaction(byte[] bytes, T baseTransaction) {
         try {
-            Serialization.getInstance().getInput().setBuffer(bytes);
-            baseTransaction.read(Serialization.getInstance().getKryo(), Serialization.getInstance().getInput());
+            Serialization.instance.getInput().setBuffer(bytes);
+            baseTransaction.read(Serialization.instance.getKryo(), Serialization.instance.getInput());
             return true;
         } catch (Exception e) {
             lostPackets++;

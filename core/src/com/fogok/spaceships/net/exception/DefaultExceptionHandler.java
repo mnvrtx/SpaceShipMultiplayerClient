@@ -38,6 +38,7 @@ public class DefaultExceptionHandler extends ChannelDuplexHandler {
     private void throwException(Throwable cause) {
         defaultExceptionCallBack.exceptionConnect(cause);
         error(String.format("Exception in connect to service: %s", cause));
+        cause.printStackTrace();
     }
 
     @Override

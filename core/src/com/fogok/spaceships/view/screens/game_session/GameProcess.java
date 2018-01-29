@@ -23,6 +23,15 @@ public class GameProcess implements Screen {
     public GameProcess(NativeGdxHelper nativeGdxHelper, NetRootController netRootController) {
         netRootController.setToken("qweqweqwdfqwfjq");
 
+        this.nativeGdxHelper = nativeGdxHelper;
+        playerData = new PlayerData(new ConsoleState());
+        Serialization.instance.setPlayerData(playerData);
+
+        gameSession = new GameSession(nativeGdxHelper, playerData);
+        Serialization.instance.setEveryBodyPoolToSync(gameSession.getControllerManager().getEveryBodyObjectsPool());
+
+        gui = new GUI(nativeGdxHelper, gameSession.getControllerManager());
+
         try {
             netRootController.getNetPvpController().connectToPvp("qweqwdgqfqwf");
         } catch (SocketException e) {
@@ -30,15 +39,6 @@ public class GameProcess implements Screen {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-
-        this.nativeGdxHelper = nativeGdxHelper;
-        playerData = new PlayerData(new ConsoleState());
-        Serialization.getInstance().setPlayerData(playerData);
-
-        gameSession = new GameSession(nativeGdxHelper, playerData);
-        Serialization.getInstance().setEveryBodyPoolToSync(gameSession.getControllerManager().getEveryBodyObjectsPool());
-
-        gui = new GUI(nativeGdxHelper, gameSession.getControllerManager());
     }
 
     @Override

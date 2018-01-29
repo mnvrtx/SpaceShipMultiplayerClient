@@ -16,7 +16,7 @@ public class KeepAliveTransaction extends TokenizedTransaction {
 
     public KeepAliveTransaction(BaseTransaction baseTransaction) {
         super(baseTransaction);
-        Serialization.getInstance().setServerState(serverState = new ServerState());
+        Serialization.instance.setServerState(serverState = new ServerState());
     }
 
     public KeepAliveTransaction(String token, ServerState serverState) {

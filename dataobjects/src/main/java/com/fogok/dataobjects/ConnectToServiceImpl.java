@@ -76,8 +76,6 @@ public class ConnectToServiceImpl {
                                     });
 //                        future = boot.bind(0).sync();
                         future = boot.connect(ip, port).sync();
-                        info(String.format("Connect to service '%s' success",
-                                coreHandler.getClass().getSimpleName()));
                     }
 
                     succesCallback.operationComplete(future);

@@ -10,7 +10,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -24,33 +23,26 @@ public class PvpHandler extends SimpleChannelInboundHandler<DatagramPacket>{
 //    private final static float TIMEITERSSLEEP = 0.016f;  //in seconds
     private final static float TIMEITERSSLEEP = 2f;  //in seconds
 
-//    private SimpleTransactionReader transactionReader;
     private boolean isConnected;
     private NetRootController netRootController;
     private DatagramChannel datagramChannel;
-    private String ip;
 
-    private ByteBuf byteBuf = Unpooled.directBuffer();
-
-    public PvpHandler(NetRootController netRootController, String ip) throws UnknownHostException, SocketException {
+    public PvpHandler(NetRootController netRootController) throws UnknownHostException, SocketException {
         this.netRootController = netRootController;
-        this.ip = ip;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-
-        info(String.format("Startup udp client service '%s' success with '%s' to '%s",
-                this.getClass().getSimpleName(), ctx.channel().localAddress(), ctx.channel().remoteAddress()));
-
         datagramChannel = (DatagramChannel) ctx.channel();
-
         sendStartData();
     }
 
+
+
     private void sendStartData(){
-        Output output = Serialization.getInstance().getCleanedOutput();
+        info("Try to send start data");
+        Output output = Serialization.instance.getCleanedOutput();
         //header
         output.writeInt(PvpTransactionHeaderType.START_DATA.ordinal(), true);
         //content
@@ -58,14 +50,15 @@ public class PvpHandler extends SimpleChannelInboundHandler<DatagramPacket>{
         output.writeString(netRootController.getAuthPlayerToken());
 
         //send
-        byteBuf.writeBytes(output.getBuffer());
-        datagramChannel.writeAndFlush(new DatagramPacket(byteBuf, datagramChannel.remoteAddress()));
-        info("Start data sended! ");
+        DatagramPacket datagramPacketToSend = new DatagramPacket(Unpooled.buffer(), datagramChannel.remoteAddress());
+        datagramPacketToSend.content().writeBytes(output.getBuffer());
+        datagramChannel.writeAndFlush(datagramPacketToSend);
     }
 
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket datagramPacket) throws Exception {
+        datagramChannel = (DatagramChannel) ctx.channel();
         info("Read channel information from: " + datagramChannel.remoteAddress());
         netRootController.readServerChannel(null, datagramPacket.content().retain(), null, this);
     }
@@ -80,17 +73,16 @@ public class PvpHandler extends SimpleChannelInboundHandler<DatagramPacket>{
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-//                        Output output = Serialization.getInstance().getCleanedOutput();
-//
-//                        output.writeInt(PvpTransactionHeaderType.CONSOLE_STATE.ordinal(), true);
-//                        Serialization.getInstance().getKryo().writeObject(output, PlayerData.class);
-//                        datagramPacket.setData(output.getBuffer());
-//                        try {
-//                            datagramSocket.send(datagramPacket);
-//                            info("Send playerData " + Serialization.getInstance().getPlayerData());
-//                        } catch (IOException e) {
-//                            error("Error in datagram send action:\n" + e);
-//                        }
+                        Output output = Serialization.instance.getCleanedOutput();
+
+                        output.writeInt(PvpTransactionHeaderType.CONSOLE_STATE.ordinal(), true);
+                        Serialization.instance.getKryo().writeObject(output, Serialization.instance.getPlayerData());
+
+                        DatagramPacket datagramPacketToSend = new DatagramPacket(Unpooled.buffer(), datagramChannel.remoteAddress());
+                        datagramPacketToSend.content().writeBytes(output.getBuffer());
+                        datagramChannel.writeAndFlush(datagramPacketToSend);
+
+                        info(Serialization.instance.getPlayerData() + "");
                     }
                 });
             }

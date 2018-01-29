@@ -3,8 +3,8 @@ package com.fogok.spaceships.net.controllers;
 import com.fogok.dataobjects.ConnectToServiceImpl;
 import com.fogok.spaceships.net.NetRootController;
 import com.fogok.spaceships.net.exception.DefaultExceptionCallBack;
-import com.fogok.spaceships.net.exception.DefaultExceptionHandler;
 import com.fogok.spaceships.net.exception.DefaultOtherExceptionHandler;
+import com.fogok.spaceships.net.exception.UdpExceptionHandler;
 import com.fogok.spaceships.net.handlers.PvpHandler;
 
 import java.net.SocketException;
@@ -28,20 +28,21 @@ public class NetPvpController extends DefaultController{
         String ip = "127.0.0.1:15504";
         this.sessionId = sessionId;
         ConnectToServiceImpl.getInstance().connect(
-                pvpHandler = new PvpHandler(netRootController, ip),
+                pvpHandler = new PvpHandler(netRootController),
                 workerGroup = new NioEventLoopGroup(2),
 
-                new DefaultExceptionHandler(new DefaultExceptionCallBack() {
+                new UdpExceptionHandler(new DefaultExceptionCallBack() {
                     @Override
                     public void exceptionConnect(Throwable cause) {
-
+//                        info(String.format("Connect to service '%s' error",
+//                                pvpHandler.getClass().getSimpleName()));
                     }
                 }),
 
                 new DefaultOtherExceptionHandler(netRootController), new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
-
+                        //nouse!
                     }
                 }, ip.split(":")[0], Integer.parseInt(ip.split(":")[1]), false);
     }

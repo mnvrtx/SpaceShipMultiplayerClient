@@ -81,17 +81,18 @@ public class NetRootController {
             if (pvpHandler == null) {
                 baseTransactionReader.readByteBufFromChannel(channel, (ByteBuf) msg);
             } else {
-                Input input = Serialization.getInstance().getInput();
+                Input input = Serialization.instance.getInput();
                 byte[] response = new byte[((ByteBuf) msg).readableBytes()];
                 ((ByteBuf) msg).readBytes(response);
                 input.setBuffer(response);
                 switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
                     case START_DATA:
+                        info(String.format("Started data received success"));
                         pvpHandler.startLoopPingPong();
                         break;
                     case EVERYBODY_POOL:
-                        Serialization.getInstance().getKryo().readObject(input, EveryBodyPool.class);
-                        info("everyBodyPool - "  + Serialization.getInstance().getEveryBodyPool());
+                        Serialization.instance.getKryo().readObject(input, EveryBodyPool.class);
+                        info("everyBodyPool - "  + Serialization.instance.getEveryBodyPool().toString(true));
                         break;
                 }
             }

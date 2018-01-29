@@ -13,13 +13,12 @@ import com.fogok.dataobjects.utils.libgdxexternals.Array;
 import java.io.ByteArrayOutputStream;
 import java.util.BitSet;
 
-public class Serialization {
+import static com.esotericsoftware.minlog.Log.info;
 
-    private static Serialization instance;
+public enum Serialization {
 
-    public static Serialization getInstance() {
-        return instance == null ? instance = new Serialization() : instance;
-    }
+    instance;
+
 
     private Kryo kryo;
 
@@ -36,6 +35,7 @@ public class Serialization {
     }
 
     public Output getOutput() {
+        info("getOutput");
         return output;
     }
 
@@ -63,7 +63,7 @@ public class Serialization {
         return serverState;
     }
 
-    public Serialization() {
+   {
 
         kryo = new Kryo();
 
@@ -146,8 +146,8 @@ public class Serialization {
             public PlayerData read(Kryo kryo, Input input, Class<PlayerData> aClass) {
 
                 playerData.getConsoleState().setPlayerId(input.readLong(true));
-                playerData.getConsoleState().setX(input.readFloat(0.02f, true));
-                playerData.getConsoleState().setY(input.readFloat(0.02f, true));
+                playerData.getConsoleState().setX(input.readFloat(0.02f, false));
+                playerData.getConsoleState().setY(input.readFloat(0.02f, false));
                 int lenghtAdditParams = input.readInt(true);
                 playerData.getConsoleState().setAdditParams(input.readFloats(lenghtAdditParams));
                 int lenghtStringInformParams = input.readInt(true);
@@ -166,46 +166,47 @@ public class Serialization {
 
                 Array<Array<GameObject>> typedObjects = everyBodyPool.getAllObjects();
 
-                output.writeInt(everyBodyPool.getTypeObjectsCount(), true);     //2
                 for (int i = 0; i < typedObjects.size; i++) {
                     Array<GameObject> allObjectsFromOneType = typedObjects.get(i);
-                    if (allObjectsFromOneType.size != 0) {
 
-                        output.writeInt(allObjectsFromOneType.size, true);  //2 4
-                        output.writeInt(i, true);   //2 4 0
-                        for (int j = 0; j < allObjectsFromOneType.size; j++) {
-                            GameObject gameObject = allObjectsFromOneType.get(j);
+                    output.writeInt(i, true);   //objectTypeIdx
+                    output.writeInt(allObjectsFromOneType.size, true);  //objectsFromOneTypeCount
 
-                            output.writeLong(gameObject.getPlayerId(), true);
-                            output.writeFloat(gameObject.getX(), 0.02f, false);
-                            output.writeFloat(gameObject.getY(), 0.02f, false);
-                            output.writeInt(gameObject.getAdditParams().length, true);
-                            output.writeFloats(gameObject.getAdditParams());
-                            output.writeInt(gameObject.getStringInformation().length, true);
-                            output.writeChars(gameObject.getStringInformation());
-                            output.writeLong(gameObject.getLongFlags());
-                        }
+                    for (int j = 0; j < allObjectsFromOneType.size; j++) {
+                        GameObject gameObject = allObjectsFromOneType.get(j);
 
+                        output.writeLong(gameObject.getPlayerId(), true);
+                        output.writeFloat(gameObject.getX(), 0.02f, false);
+                        output.writeFloat(gameObject.getY(), 0.02f, false);
+                        output.writeInt(gameObject.getAdditParams().length, true);
+                        output.writeFloats(gameObject.getAdditParams());
+                        output.writeInt(gameObject.getStringInformation().length, true);
+                        output.writeChars(gameObject.getStringInformation());
+                        output.writeLong(gameObject.getLongFlags());
                     }
                 }
-
             }
 
             @Override
             public EveryBodyPool read(Kryo kryo, Input input, Class<EveryBodyPool> type) {
 
-                int typeObjectsCount = input.readInt(true); // 2
-                for (int i = 0; i < typeObjectsCount; i++) {
-                    int objectsFromOneTypeCount = input.readInt(true); //2 4
-                    int localObjectsFromOneTypeCount = everyBodyPool.getAllObjects().get(i).size;
+                Array<Array<GameObject>> typedObjects = everyBodyPool.getAllObjects();
+
+                for (int i = 0; i < typedObjects.size; i++) {
+                    Array<GameObject> allObjectsFromOneType = typedObjects.get(i);
+
                     int objectTypeIdx = input.readInt(true);
+                    int objectsFromOneTypeCount = input.readInt(true);
+
+                    int localObjectsFromOneTypeCount = everyBodyPool.getAllObjects().get(objectTypeIdx).size;
                     balance(objectTypeIdx, localObjectsFromOneTypeCount, objectsFromOneTypeCount);
+
                     for (int j = 0; j < objectsFromOneTypeCount; j++) {
                         GameObject gameObject = everyBodyPool.getAllObjects().get(objectTypeIdx).get(j);
 
                         gameObject.setPlayerId(input.readLong(true));
-                        gameObject.setX(input.readFloat(0.02f, true));
-                        gameObject.setY(input.readFloat(0.02f, true));
+                        gameObject.setX(input.readFloat(0.02f, false));
+                        gameObject.setY(input.readFloat(0.02f, false));
                         int lenghtAdditParams = input.readInt(true);
                         gameObject.setAdditParams(input.readFloats(lenghtAdditParams));
                         int lenghtStringInformParams = input.readInt(true);
@@ -213,7 +214,6 @@ public class Serialization {
                         gameObject.setLongFlags(input.readLong());
                     }
                 }
-
                 return null;
             }
         });

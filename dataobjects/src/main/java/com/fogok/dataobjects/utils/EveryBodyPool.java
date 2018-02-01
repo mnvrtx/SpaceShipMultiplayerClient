@@ -2,6 +2,7 @@ package com.fogok.dataobjects.utils;
 
 import com.fogok.dataobjects.GameObject;
 import com.fogok.dataobjects.GameObjectsType;
+import com.fogok.dataobjects.gameobjects.ConsoleState;
 import com.fogok.dataobjects.gameobjects.ships.SimpleShipObject;
 import com.fogok.dataobjects.gameobjects.weapons.SimpleBlusterObject;
 import com.fogok.dataobjects.utils.libgdxexternals.Array;
@@ -67,6 +68,8 @@ public class EveryBodyPool extends Pool<GameObject> {
                 return new SimpleBlusterObject();
             case SimpleShip:
                 return new SimpleShipObject();
+            case ConsoleState:
+                return new ConsoleState();
         }
         return null;
     }

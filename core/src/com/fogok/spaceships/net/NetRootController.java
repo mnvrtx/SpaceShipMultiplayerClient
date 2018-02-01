@@ -16,9 +16,6 @@ import com.fogok.spaceships.net.handlers.PvpHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
-import static com.esotericsoftware.minlog.Log.info;
-import static com.esotericsoftware.minlog.Log.warn;
-
 public class NetRootController {
     private boolean blockReader;
 
@@ -54,8 +51,8 @@ public class NetRootController {
             readServerRunnable.baseTransactionReader = baseTransactionReader;
             readServerRunnable.pvpHandler = pvpHandler;
             Gdx.app.postRunnable(readServerRunnable);
-        }else
-            warn("Request to read during another read");
+        }
+//            warn("Request to read during another read");
     }
 
 //    private final Pool<ReadServerRunnable> serverReaders = new Pool<ReadServerRunnable>(10) {
@@ -87,12 +84,12 @@ public class NetRootController {
                 input.setBuffer(response);
                 switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
                     case START_DATA:
-                        info(String.format("Started data received success"));
+//                        info(String.format("Started data received success"));
                         pvpHandler.startLoopPingPong();
                         break;
                     case EVERYBODY_POOL:
                         Serialization.instance.getKryo().readObject(input, EveryBodyPool.class);
-                        info("everyBodyPool - "  + Serialization.instance.getEveryBodyPool().toString(true));
+//                        info("everyBodyPool - "  + Serialization.instance.getEveryBodyPool().toString(false));
                         break;
                 }
             }

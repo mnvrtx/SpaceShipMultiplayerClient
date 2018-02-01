@@ -32,11 +32,9 @@ public class DebugGUI {
 
         switch (screen) {
             case 1:
-                debugFont.getData().setScale(0.015f);
                 debugFont.draw(batch, DEBUG_TEXT, 0.3f, Main.HEIGHT - 0.3f);
                 break;
             case 2:
-                debugFont.getData().setScale(0.03f);
                 debugFont.draw(batch, EVERYBODYPOOLVISUAL.toString(), 0.3f, Main.HEIGHT - 0.3f);
                 break;
         }

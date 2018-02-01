@@ -11,8 +11,8 @@ public class DesktopLauncher {
 //        config.width = (int)(854 * 0.65f);
 //        config.height = 480 / 2;
 
-        config.width = 1;
-        config.height = 1;
+        config.width = 854;
+        config.height = 480;
 
         //Ctrl + Shift + Alt + J    //multicursor
         //Ctrl + Shift + F8     //show breakpoints

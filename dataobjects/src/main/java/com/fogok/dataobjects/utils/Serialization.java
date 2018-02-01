@@ -35,7 +35,6 @@ public enum Serialization {
     }
 
     public Output getOutput() {
-        info("getOutput");
         return output;
     }
 
@@ -63,8 +62,8 @@ public enum Serialization {
         return serverState;
     }
 
-   {
-
+    {
+        info("Init Serialization");
         kryo = new Kryo();
 
         //TODO: перенести сериализацию в сами классы! тут реальное говно с копипастом, нужно переделать по хорошему
@@ -132,8 +131,8 @@ public enum Serialization {
             public void write(Kryo kryo, Output output, PlayerData playerData) {
 
                 output.writeLong(playerData.getConsoleState().getPlayerId(), true);
-                output.writeFloat(playerData.getConsoleState().getX(), 0.02f, false);
-                output.writeFloat(playerData.getConsoleState().getY(), 0.02f, false);
+                output.writeFloat(playerData.getConsoleState().getX(), 10f, false);
+                output.writeFloat(playerData.getConsoleState().getY(), 10f, false);
                 output.writeInt(playerData.getConsoleState().getAdditParams().length, true);
                 output.writeFloats(playerData.getConsoleState().getAdditParams());
                 output.writeInt(playerData.getConsoleState().getStringInformation().length, true);
@@ -146,8 +145,8 @@ public enum Serialization {
             public PlayerData read(Kryo kryo, Input input, Class<PlayerData> aClass) {
 
                 playerData.getConsoleState().setPlayerId(input.readLong(true));
-                playerData.getConsoleState().setX(input.readFloat(0.02f, false));
-                playerData.getConsoleState().setY(input.readFloat(0.02f, false));
+                playerData.getConsoleState().setX(input.readFloat(10f, false));
+                playerData.getConsoleState().setY(input.readFloat(10f, false));
                 int lenghtAdditParams = input.readInt(true);
                 playerData.getConsoleState().setAdditParams(input.readFloats(lenghtAdditParams));
                 int lenghtStringInformParams = input.readInt(true);
@@ -165,7 +164,8 @@ public enum Serialization {
             public void write(Kryo kryo, Output output, EveryBodyPool everyBodyPool) {  ///
 
                 Array<Array<GameObject>> typedObjects = everyBodyPool.getAllObjects();
-
+                output.writeInt(typedObjects.size, true);   //objectTypeSize
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////
                 for (int i = 0; i < typedObjects.size; i++) {
                     Array<GameObject> allObjectsFromOneType = typedObjects.get(i);
 
@@ -176,8 +176,8 @@ public enum Serialization {
                         GameObject gameObject = allObjectsFromOneType.get(j);
 
                         output.writeLong(gameObject.getPlayerId(), true);
-                        output.writeFloat(gameObject.getX(), 0.02f, false);
-                        output.writeFloat(gameObject.getY(), 0.02f, false);
+                        output.writeFloat(gameObject.getX(), 10f, false);
+                        output.writeFloat(gameObject.getY(), 10f, false);
                         output.writeInt(gameObject.getAdditParams().length, true);
                         output.writeFloats(gameObject.getAdditParams());
                         output.writeInt(gameObject.getStringInformation().length, true);
@@ -191,22 +191,21 @@ public enum Serialization {
             public EveryBodyPool read(Kryo kryo, Input input, Class<EveryBodyPool> type) {
 
                 Array<Array<GameObject>> typedObjects = everyBodyPool.getAllObjects();
-
-                for (int i = 0; i < typedObjects.size; i++) {
-                    Array<GameObject> allObjectsFromOneType = typedObjects.get(i);
-
+                int targetTypedObjectsSize = input.readInt(true);   //objectTypeSize;
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+                for (int i = 0; i < targetTypedObjectsSize; i++) {
                     int objectTypeIdx = input.readInt(true);
                     int objectsFromOneTypeCount = input.readInt(true);
 
-                    int localObjectsFromOneTypeCount = everyBodyPool.getAllObjects().get(objectTypeIdx).size;
+                    int localObjectsFromOneTypeCount = typedObjects.get(objectTypeIdx).size;
                     balance(objectTypeIdx, localObjectsFromOneTypeCount, objectsFromOneTypeCount);
 
                     for (int j = 0; j < objectsFromOneTypeCount; j++) {
                         GameObject gameObject = everyBodyPool.getAllObjects().get(objectTypeIdx).get(j);
 
                         gameObject.setPlayerId(input.readLong(true));
-                        gameObject.setX(input.readFloat(0.02f, false));
-                        gameObject.setY(input.readFloat(0.02f, false));
+                        gameObject.setX(input.readFloat(10f, false));
+                        gameObject.setY(input.readFloat(10f, false));
                         int lenghtAdditParams = input.readInt(true);
                         gameObject.setAdditParams(input.readFloats(lenghtAdditParams));
                         int lenghtStringInformParams = input.readInt(true);

@@ -20,8 +20,8 @@ import static com.esotericsoftware.minlog.Log.info;
 
 public class PvpHandler extends SimpleChannelInboundHandler<DatagramPacket>{
 
-//    private final static float TIMEITERSSLEEP = 0.016f;  //in seconds
-    private final static float TIMEITERSSLEEP = 2f;  //in seconds
+    private final static float TIMEITERSSLEEP = 0.016f;  //in seconds
+//    private final static float TIMEITERSSLEEP = 2f;  //in seconds
 
     private boolean isConnected;
     private NetRootController netRootController;
@@ -59,7 +59,7 @@ public class PvpHandler extends SimpleChannelInboundHandler<DatagramPacket>{
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket datagramPacket) throws Exception {
         datagramChannel = (DatagramChannel) ctx.channel();
-        info("Read channel information from: " + datagramChannel.remoteAddress());
+//        info("Read channel information from: " + datagramChannel.remoteAddress());
         netRootController.readServerChannel(null, datagramPacket.content().retain(), null, this);
     }
 
@@ -82,7 +82,7 @@ public class PvpHandler extends SimpleChannelInboundHandler<DatagramPacket>{
                         datagramPacketToSend.content().writeBytes(output.getBuffer());
                         datagramChannel.writeAndFlush(datagramPacketToSend);
 
-                        info(Serialization.instance.getPlayerData() + "");
+//                        info(Serialization.instance.getPlayerData() + "");
                     }
                 });
             }

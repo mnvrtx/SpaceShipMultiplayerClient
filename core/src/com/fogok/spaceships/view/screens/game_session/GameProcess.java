@@ -54,7 +54,7 @@ public class GameProcess implements Screen {
         gameSession.draw(nativeGdxHelper);
         if (DebugGUI.DEBUG) {
             DebugGUI.DEBUG_TEXT.setLength(0);
-//            DebugGUI.DEBUG_TEXT.append(DebugGUI.jsonReader.parse(networkData.getJSON()).prettyPrint(JsonWriter.OutputType.json, 2));
+            DebugGUI.DEBUG_TEXT.append(gameSession.getControllerManager().getEveryBodyObjectsPool().toString(true));
         }
         gui.draw(nativeGdxHelper);
     }

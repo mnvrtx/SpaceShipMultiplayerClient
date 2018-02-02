@@ -2,7 +2,7 @@ apply plugin: 'java'
 
 dependencies {
     // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
-    compile 'com.esotericsoftware:kryo:4.0.0'
+    compile 'com.esotericsoftware:kryo:4.0.1'
     // https://mvnrepository.com/artifact/com.esotericsoftware.minlog/minlog
 //    compile 'com.esotericsoftware.minlog:minlog:1.2'
 
@@ -10,7 +10,7 @@ dependencies {
 //    compile 'org.objenesis:objenesis:1.2'
 
     // https://mvnrepository.com/artifact/io.netty/netty-all
-    compile ('io.netty:netty-all:4.0.36.Final') {
+    compile ('io.netty:netty-all:4.1.20.Final') {
         exclude group: 'org.objenesis', module: 'objenesis'
     }
 

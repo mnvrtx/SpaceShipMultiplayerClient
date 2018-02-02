@@ -13,11 +13,10 @@ import com.fogok.spaceships.net.controllers.NetRelayBalancerController;
 import com.fogok.spaceships.net.controllers.NetSocServController;
 import com.fogok.spaceships.net.handlers.PvpHandler;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 public class NetRootController {
-    private boolean blockReader;
+    public volatile boolean blockReader;
 
     private ClientState clientState;
 
@@ -42,12 +41,12 @@ public class NetRootController {
 
 
     //region PostLogicExecutor
-    public void readServerChannel(Channel channel, Object msg, BaseTransactionReader baseTransactionReader, PvpHandler pvpHandler){
+    public void readServerChannel(Channel channel, byte[] bytes, BaseTransactionReader baseTransactionReader, PvpHandler pvpHandler){
         if (!blockReader) {
             blockReader = true;
             readServerRunnable.context = this;
             readServerRunnable.channel = channel;
-            readServerRunnable.msg = msg;
+            readServerRunnable.bytes = bytes;
             readServerRunnable.baseTransactionReader = baseTransactionReader;
             readServerRunnable.pvpHandler = pvpHandler;
             Gdx.app.postRunnable(readServerRunnable);
@@ -67,7 +66,7 @@ public class NetRootController {
     private static class ReadServerRunnable implements Runnable/*, Pool.Poolable */{
 
         private NetRootController context;
-        private Object msg;
+        private byte[] bytes;
         private Channel channel;
         private BaseTransactionReader baseTransactionReader;
         private PvpHandler pvpHandler;
@@ -76,12 +75,10 @@ public class NetRootController {
         public void run() {
             //warning - maybe long read object
             if (pvpHandler == null) {
-                baseTransactionReader.readByteBufFromChannel(channel, (ByteBuf) msg);
+                baseTransactionReader.readByteBufFromChannel(channel, bytes);
             } else {
                 Input input = Serialization.instance.getInput();
-                byte[] response = new byte[((ByteBuf) msg).readableBytes()];
-                ((ByteBuf) msg).readBytes(response);
-                input.setBuffer(response);
+                input.setBuffer(bytes);
                 switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
                     case START_DATA:
 //                        info(String.format("Started data received success"));

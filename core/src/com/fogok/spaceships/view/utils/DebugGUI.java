@@ -15,7 +15,7 @@ public class DebugGUI {
     public static JsonReader jsonReader = new JsonReader();
     private BitmapFont debugFont;
 
-    private int screen;
+    private int screen = 1;
 
     public DebugGUI(BitmapFont bitmapFont) {
         DEBUG = true;

@@ -29,12 +29,12 @@ public enum Serialization {
 
     private Output output = new Output(new ByteArrayOutputStream());
 
-    public Output getCleanedOutput(){
+    public synchronized Output getCleanedOutput(){
         output.clear();
         return getOutput();
     }
 
-    public Output getOutput() {
+    public synchronized Output getOutput() {
         return output;
     }
 
@@ -131,8 +131,8 @@ public enum Serialization {
             public void write(Kryo kryo, Output output, PlayerData playerData) {
 
                 output.writeLong(playerData.getConsoleState().getPlayerId(), true);
-                output.writeFloat(playerData.getConsoleState().getX(), 10f, false);
-                output.writeFloat(playerData.getConsoleState().getY(), 10f, false);
+                output.writeFloat(playerData.getConsoleState().getX(), 1000f, false);
+                output.writeFloat(playerData.getConsoleState().getY(), 1000f, false);
                 output.writeInt(playerData.getConsoleState().getAdditParams().length, true);
                 output.writeFloats(playerData.getConsoleState().getAdditParams());
                 output.writeInt(playerData.getConsoleState().getStringInformation().length, true);
@@ -145,8 +145,8 @@ public enum Serialization {
             public PlayerData read(Kryo kryo, Input input, Class<PlayerData> aClass) {
 
                 playerData.getConsoleState().setPlayerId(input.readLong(true));
-                playerData.getConsoleState().setX(input.readFloat(10f, false));
-                playerData.getConsoleState().setY(input.readFloat(10f, false));
+                playerData.getConsoleState().setX(input.readFloat(1000f, false));
+                playerData.getConsoleState().setY(input.readFloat(1000f, false));
                 int lenghtAdditParams = input.readInt(true);
                 playerData.getConsoleState().setAdditParams(input.readFloats(lenghtAdditParams));
                 int lenghtStringInformParams = input.readInt(true);
@@ -176,8 +176,8 @@ public enum Serialization {
                         GameObject gameObject = allObjectsFromOneType.get(j);
 
                         output.writeLong(gameObject.getPlayerId(), true);
-                        output.writeFloat(gameObject.getX(), 10f, false);
-                        output.writeFloat(gameObject.getY(), 10f, false);
+                        output.writeFloat(gameObject.getX(), 1000f, false);
+                        output.writeFloat(gameObject.getY(), 1000f, false);
                         output.writeInt(gameObject.getAdditParams().length, true);
                         output.writeFloats(gameObject.getAdditParams());
                         output.writeInt(gameObject.getStringInformation().length, true);
@@ -204,8 +204,8 @@ public enum Serialization {
                         GameObject gameObject = everyBodyPool.getAllObjects().get(objectTypeIdx).get(j);
 
                         gameObject.setPlayerId(input.readLong(true));
-                        gameObject.setX(input.readFloat(10f, false));
-                        gameObject.setY(input.readFloat(10f, false));
+                        gameObject.setX(input.readFloat(1000f, false));
+                        gameObject.setY(input.readFloat(1000f, false));
                         int lenghtAdditParams = input.readInt(true);
                         gameObject.setAdditParams(input.readFloats(lenghtAdditParams));
                         int lenghtStringInformParams = input.readInt(true);
@@ -250,7 +250,7 @@ public enum Serialization {
                 everyBodyPool.free(GameObjectsType.values()[type]);
     }
 
-    public Kryo getKryo() {
+    public synchronized Kryo getKryo() {
         return kryo;
     }
 

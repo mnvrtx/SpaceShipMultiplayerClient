@@ -6,6 +6,7 @@ import com.fogok.spaceships.net.exception.DefaultExceptionCallBack;
 
 import java.util.concurrent.TimeUnit;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,7 +37,11 @@ public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        netRootController.readServerChannel(ctx.channel(), msg, simpleTransactionReader, null);
+        ByteBuf byteBuf = (ByteBuf) msg;
+        byte[] response = new byte[byteBuf.readableBytes()];
+        byteBuf.readBytes(response);
+        netRootController.readServerChannel(ctx.channel(), response, simpleTransactionReader, null);
+        byteBuf.release();
     }
 
     /**

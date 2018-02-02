@@ -1,17 +1,12 @@
 package com.fogok.spaceships.net.controllers;
 
-import com.fogok.dataobjects.ConnectToServiceImpl;
 import com.fogok.spaceships.net.NetRootController;
-import com.fogok.spaceships.net.exception.DefaultExceptionCallBack;
-import com.fogok.spaceships.net.exception.DefaultOtherExceptionHandler;
-import com.fogok.spaceships.net.exception.UdpExceptionHandler;
 import com.fogok.spaceships.net.handlers.PvpHandler;
 
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.nio.NioEventLoopGroup;
 
 public class NetPvpController extends DefaultController{
@@ -25,26 +20,11 @@ public class NetPvpController extends DefaultController{
     }
 
     public void connectToPvp(String sessionId) throws SocketException, UnknownHostException {
-        String ip = "127.0.0.1:15504";
+        String ip = "192.168.1.102:15504";
+        InetSocketAddress inetSocketAddress = new InetSocketAddress(ip.split(":")[0], Integer.parseInt(ip.split(":")[1]));
         this.sessionId = sessionId;
-        ConnectToServiceImpl.getInstance().connect(
-                pvpHandler = new PvpHandler(netRootController),
-                workerGroup = new NioEventLoopGroup(2),
-
-                new UdpExceptionHandler(new DefaultExceptionCallBack() {
-                    @Override
-                    public void exceptionConnect(Throwable cause) {
-//                        info(String.format("Connect to service '%s' error",
-//                                pvpHandler.getClass().getSimpleName()));
-                    }
-                }),
-
-                new DefaultOtherExceptionHandler(netRootController), new ChannelFutureListener() {
-                    @Override
-                    public void operationComplete(ChannelFuture future) throws Exception {
-                        //nouse!
-                    }
-                }, ip.split(":")[0], Integer.parseInt(ip.split(":")[1]), false);
+        workerGroup = new NioEventLoopGroup(2);
+        pvpHandler = new PvpHandler(netRootController, inetSocketAddress);
     }
 
     public PvpHandler getPvpHandler() {

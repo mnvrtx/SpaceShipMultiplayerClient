@@ -50,7 +50,7 @@ public class GameProcess implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.02f, 0.02f, 0.02f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+//        info("TEST");
         gameSession.draw(nativeGdxHelper);
         if (DebugGUI.DEBUG) {
             DebugGUI.DEBUG_TEXT.setLength(0);

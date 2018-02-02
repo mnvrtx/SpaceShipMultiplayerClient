@@ -21,6 +21,9 @@ import static com.esotericsoftware.minlog.Log.info;
 
 public class ConnectToServiceImpl {
 
+    public static final int RECEIVE_BUFFER_SIZE = 32768;
+    public static final int TIMEOUT = 5000;
+
     //region Singleton realization
     private static ConnectToServiceImpl instance;
     public static ConnectToServiceImpl getInstance() {

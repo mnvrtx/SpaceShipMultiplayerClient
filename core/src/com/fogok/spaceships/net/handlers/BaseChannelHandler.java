@@ -40,7 +40,7 @@ public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
         ByteBuf byteBuf = (ByteBuf) msg;
         byte[] response = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(response);
-        netRootController.readServerChannel(ctx.channel(), response, simpleTransactionReader, null);
+        netRootController.readServerChannel(ctx.channel(), response, simpleTransactionReader);
         byteBuf.release();
     }
 

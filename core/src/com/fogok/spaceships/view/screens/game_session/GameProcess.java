@@ -19,8 +19,10 @@ public class GameProcess implements Screen {
     private GUI gui;
     private GameSession gameSession;
     private PlayerData playerData;
+    private NetRootController netRootController;
 
     public GameProcess(NativeGdxHelper nativeGdxHelper, NetRootController netRootController) {
+        this.netRootController = netRootController;
         netRootController.setToken("qweqweqwdfqwfjq");
 
         this.nativeGdxHelper = nativeGdxHelper;
@@ -83,5 +85,6 @@ public class GameProcess implements Screen {
     public void dispose() {
         gui.dispose();
         gameSession.dispose();
+        netRootController.getNetPvpController().getPvpHandler().stop();
     }
 }

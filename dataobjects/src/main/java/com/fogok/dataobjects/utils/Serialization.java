@@ -29,12 +29,12 @@ public enum Serialization {
 
     private Output output = new Output(new ByteArrayOutputStream());
 
-    public synchronized Output getCleanedOutput(){
+    public Output getCleanedOutput(){
         output.clear();
         return getOutput();
     }
 
-    public synchronized Output getOutput() {
+    public Output getOutput() {
         return output;
     }
 
@@ -250,7 +250,7 @@ public enum Serialization {
                 everyBodyPool.free(GameObjectsType.values()[type]);
     }
 
-    public synchronized Kryo getKryo() {
+    public Kryo getKryo() {
         return kryo;
     }
 

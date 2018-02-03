@@ -1,7 +1,7 @@
 package com.fogok.spaceships.net;
 
 import com.badlogic.gdx.Gdx;
-import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.fogok.dataobjects.datastates.ClientState;
 import com.fogok.dataobjects.transactions.pvp.PvpTransactionHeaderType;
 import com.fogok.dataobjects.transactions.utils.BaseTransactionReader;
@@ -14,6 +14,9 @@ import com.fogok.spaceships.net.controllers.NetSocServController;
 import com.fogok.spaceships.net.handlers.PvpHandler;
 
 import io.netty.channel.Channel;
+
+import static com.esotericsoftware.minlog.Log.info;
+import static com.esotericsoftware.minlog.Log.warn;
 
 public class NetRootController {
     public volatile boolean blockReader;
@@ -41,65 +44,78 @@ public class NetRootController {
 
 
     //region PostLogicExecutor
-    public void readServerChannel(Channel channel, byte[] bytes, BaseTransactionReader baseTransactionReader, PvpHandler pvpHandler){
+    public void readServerChannel(Channel channel, byte[] bytes, BaseTransactionReader baseTransactionReader){
         if (!blockReader) {
             blockReader = true;
+
+            //set required data
             readServerRunnable.context = this;
             readServerRunnable.channel = channel;
             readServerRunnable.bytes = bytes;
             readServerRunnable.baseTransactionReader = baseTransactionReader;
-            readServerRunnable.pvpHandler = pvpHandler;
+
+            //invoke after draw
             Gdx.app.postRunnable(readServerRunnable);
-        }
-//            warn("Request to read during another read");
+        }else
+            warn("Request to read during another read");
     }
 
-//    private final Pool<ReadServerRunnable> serverReaders = new Pool<ReadServerRunnable>(10) {
-//        @Override
-//        protected ReadServerRunnable newObject() {
-//            return new ReadServerRunnable();
-//        }
-//    };
+    public void readUdpResponse(PvpHandler pvpHandler, ByteBufferInput input) {
+        if (!blockReader) {
+            blockReader = true;
 
-    private ReadServerRunnable readServerRunnable = new ReadServerRunnable();
+            //set required data
+            readUdpRunnable.context = this;
+            readUdpRunnable.pvpHandler = pvpHandler;
+            readUdpRunnable.input = input;
 
-    private static class ReadServerRunnable implements Runnable/*, Pool.Poolable */{
+            //invoke after draw
+            Gdx.app.postRunnable(readUdpRunnable);
+        }else
+            warn("Request to read during another read");
+    }
 
+    private ReadUdpRunnable readUdpRunnable = new ReadUdpRunnable();
+    private static class ReadUdpRunnable implements Runnable {
         private NetRootController context;
-        private byte[] bytes;
-        private Channel channel;
-        private BaseTransactionReader baseTransactionReader;
+
         private PvpHandler pvpHandler;
+        private ByteBufferInput input;
 
         @Override
         public void run() {
-            //warning - maybe long read object
-            if (pvpHandler == null) {
-                baseTransactionReader.readByteBufFromChannel(channel, bytes);
-            } else {
-                Input input = Serialization.instance.getInput();
-                input.setBuffer(bytes);
-                switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
-                    case START_DATA:
-//                        info(String.format("Started data received success"));
+            switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
+                case START_DATA:
+                    if (input.readBoolean()) {
+                        info("Connected success");
                         pvpHandler.startLoopPingPong();
-                        break;
-                    case EVERYBODY_POOL:
-                        Serialization.instance.getKryo().readObject(input, EveryBodyPool.class);
-//                        info("everyBodyPool - "  + Serialization.instance.getEveryBodyPool().toString(false));
-                        break;
-                }
+                    }else
+                        info("Already connected");
+                    break;
+                case EVERYBODY_POOL:
+//                    info("" + Arrays.toString(input.getBuffer()));
+                    Serialization.instance.getKryo().readObject(input, EveryBodyPool.class);
+                    break;
             }
             context.blockReader = false;
         }
+    }
 
-//        @Override //many reads in one iteration
-//        public void reset() {
-//            msg = null;
-//            channel = null;
-//            baseTransactionReader = null;
-//        }
 
+    private ReadServerRunnable readServerRunnable = new ReadServerRunnable();
+
+    private static class ReadServerRunnable implements Runnable{
+        private NetRootController context;
+
+        private byte[] bytes;
+        private Channel channel;
+        private BaseTransactionReader baseTransactionReader;
+
+        @Override
+        public void run() {
+            baseTransactionReader.readByteBufFromChannel(channel, bytes);
+            context.blockReader = false;
+        }
     }
     //endregion
 

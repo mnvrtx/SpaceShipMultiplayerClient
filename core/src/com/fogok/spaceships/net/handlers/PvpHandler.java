@@ -1,6 +1,7 @@
 package com.fogok.spaceships.net.handlers;
 
-import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.fogok.dataobjects.ConnectToServiceImpl;
 import com.fogok.dataobjects.transactions.pvp.PvpTransactionHeaderType;
 import com.fogok.dataobjects.utils.Serialization;
@@ -11,85 +12,106 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-import java.util.concurrent.TimeUnit;
+import java.nio.ByteBuffer;
 
 import static com.esotericsoftware.minlog.Log.info;
 
 public class PvpHandler {
 
-    private final static long TIMEITERSSLEEP = 25;
+    private final static long TIMEITERSSLEEP = 16;
+    private final static int TRY_COUNT = 30;
 
     private boolean isConnected;
     private NetRootController netRootController;
     private DatagramSocket datagramSocket;
-    private InetSocketAddress inetSocketAddress;
+    final ByteBuffer writeBuffer;
+    private final ByteBufferInput input = new ByteBufferInput();
+    private final ByteBufferOutput output = new ByteBufferOutput();
 
-    private DatagramPacket datagramPacketToSend;
-    private DatagramPacket datagramPacketToReceive;
+    DatagramPacket datagramSend = new DatagramPacket(new byte[0], 0);
+    DatagramPacket datagramReceive = new DatagramPacket(new byte[0], 0);
+
+    private InetSocketAddress inetSocketAddress;
 
     public PvpHandler(NetRootController netRootController, InetSocketAddress inetSocketAddress){
         this.netRootController = netRootController;
         this.inetSocketAddress = inetSocketAddress;
-        datagramPacketToSend = new DatagramPacket(new byte[0], 0, inetSocketAddress);
-        datagramPacketToReceive = new DatagramPacket(new byte[0], 0);
-        netRootController.getNetPvpController().getWorkerGroup().schedule(new Runnable() {
+
+        datagramSend.setSocketAddress(inetSocketAddress);
+
+//        readBuffer = ByteBuffer.allocate(ConnectToServiceImpl.BUFFER_SIZE);
+        writeBuffer = ByteBuffer.allocate(ConnectToServiceImpl.BUFFER_SIZE);
+//        readBuffer.clear();
+        writeBuffer.clear();
+
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                sendStartData();
+                try {
+                    sendStartData(TRY_COUNT);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
             }
-        }, 0, TimeUnit.MILLISECONDS);
+        }).start();
     }
 
 
+    /**
+     * Send start data.
+     * @param tryCount
+     */
+    private void sendStartData(int tryCount) throws SocketException {
+        //init
+        datagramSocket = new DatagramSocket(61233);
+        datagramSocket.setSoTimeout(50);
+        datagramSocket.setReuseAddress(true);
 
-    private void sendStartData(){
-        try {
-            info("Try to send start data");
-            Output output = Serialization.instance.getCleanedOutput();
-            //header
-            output.writeInt(PvpTransactionHeaderType.START_DATA.ordinal(), true);
-            //content
-            output.writeString(netRootController.getNetPvpController().getSessionId());
-            output.writeString(netRootController.getAuthPlayerToken());
-
-            //init
-            datagramSocket = new DatagramSocket(63123);
-
-            //send
-            datagramPacketToSend.setData(output.getBuffer());
-            datagramSocket.send(datagramPacketToSend);
-
-            //receive
-            datagramPacketToReceive.setData(new byte[ConnectToServiceImpl.RECEIVE_BUFFER_SIZE]);
-            datagramSocket.setSoTimeout(ConnectToServiceImpl.TIMEOUT);
-            datagramSocket.receive(datagramPacketToReceive);
-            netRootController.readServerChannel(null, datagramPacketToReceive.getData(), null, this);
-        } catch (SocketException e) {
-            e.printStackTrace();
-            datagramSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            datagramSocket.close();
+        for (int i = 0; i < tryCount; i++) {
+            try {
+                trySendStartData();
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
+    private void trySendStartData() throws IOException {
+        info("Try to send start data");
 
-//    @Override
-//    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket datagramPacket) throws Exception {
-//        datagramChannel = (DatagramChannel) ctx.channel();
-//
-//        ByteBuf byteBuf = datagramPacket.content();
-//        byte[] response = new byte[byteBuf.readableBytes()];
-//        byteBuf.readBytes(response);
-//        netRootController.readServerChannel(null, response, null, this);
-//        byteBuf.release();
+        //prepare to serialize
+        writeBuffer.clear();
+        output.setBuffer(writeBuffer);
 
-//    }
+        //serialize
+        //header
+        output.writeInt(PvpTransactionHeaderType.START_DATA.ordinal(), true);
+        //content
+        output.writeString(netRootController.getNetPvpController().getSessionId());
+        output.writeString(netRootController.getAuthPlayerToken());
 
-    private boolean stop = false;
+        //commit
+        output.flush();
+
+        //send
+        writeBuffer.flip();
+        datagramSend.setData(writeBuffer.array());
+        datagramSocket.send(datagramSend);
+
+        //receive
+        datagramReceive.setData(new byte[ConnectToServiceImpl.BUFFER_SIZE]);
+        datagramSocket.receive(datagramReceive);
+
+        //deserialize
+        input.setBuffer(datagramReceive.getData());
+        netRootController.readUdpResponse(this, input);
+    }
+
+    private volatile boolean stop = false;
+    private int countRetry = 0;
     public void startLoopPingPong(){
-        info(String.format("Started loop pingpong to %s service: ", datagramPacketToReceive.getAddress()));
+        info(String.format("Started loop pingpong to %s service: ", inetSocketAddress.getAddress()));
         final PvpHandler pvpHandler = this;
         new Thread(new Runnable() {
             @Override
@@ -98,42 +120,53 @@ public class PvpHandler {
                 while (!stop) {
                     if (!netRootController.blockReader) {
                         try {
-                            //write data
-                            Serialization.instance.getCleanedOutput().writeInt(PvpTransactionHeaderType.CONSOLE_STATE.ordinal(), true);
-                            Serialization.instance.getKryo().writeObject(Serialization.instance.getOutput(), Serialization.instance.getPlayerData());
+                            if (countRetry == 0) {
+                                //prepare to serialize
+                                writeBuffer.clear();
+                                output.setBuffer(writeBuffer);
+
+                                //serialize
+                                //header
+                                output.writeInt(PvpTransactionHeaderType.CONSOLE_STATE.ordinal(), true);
+                                //content
+                                Serialization.instance.getKryo().writeObject(output, Serialization.instance.getPlayerData());
+
+                                //commit
+                                output.flush();
+
+                                //send prepare
+                                writeBuffer.flip();
+                                datagramSend.setData(writeBuffer.array());
+                            }
 
                             //send
-                            datagramPacketToSend.setData(Serialization.instance.getOutput().getBuffer());
-                            datagramSocket.send(datagramPacketToSend);
-//                        info("Sent - " + Arrays.toString(datagramPacketToSend.getData()));
+                            datagramSocket.send(datagramSend);
 
-                            //receive
-                            datagramSocket.setSoTimeout(ConnectToServiceImpl.TIMEOUT);
-                            datagramSocket.receive(datagramPacketToReceive);
-                            netRootController.readServerChannel(null, datagramPacketToReceive.getData(), null, pvpHandler);
-//                        info("Received - " + Arrays.toString(datagramPacketToReceive.getData()));
-                        } catch (SocketException e) {
-                            e.printStackTrace();
-                            datagramSocket.close();
-                            netRootController.getNetPvpController().getWorkerGroup().shutdownGracefully();
-                            stop = true;
+                            //maybe receive
+                            datagramReceive.setData(new byte[ConnectToServiceImpl.BUFFER_SIZE]);
+                            datagramSocket.receive(datagramReceive);
+
+                            //deserialize received
+                            input.setBuffer(datagramReceive.getData());
+                            netRootController.readUdpResponse(pvpHandler, input);
+                            countRetry = 0;
                         } catch (IOException e) {
-                            e.printStackTrace();
-                            datagramSocket.close();
-                            netRootController.getNetPvpController().getWorkerGroup().shutdownGracefully();
-                            stop = true;
+                            //not received... return to start and increment countRetry
+                            countRetry++;
+                            if (countRetry > TRY_COUNT) {
+                                stop = true;
+                                info("stop = true");
+                            }
                         }
-                    }
-                    try {
-                        Thread.sleep(TIMEITERSSLEEP);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        isConnected = false;
                     }
                 }
                 isConnected = false;
             }
         }).start();
+    }
+
+    public void stop() {
+        stop = true;
     }
 
     public boolean isConnected() {

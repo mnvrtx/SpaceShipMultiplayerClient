@@ -7,6 +7,7 @@ import com.fogok.dataobjects.PlayerData;
 import com.fogok.dataobjects.gameobjects.ConsoleState;
 import com.fogok.dataobjects.utils.Serialization;
 import com.fogok.spaceships.net.NetRootController;
+import com.fogok.spaceships.net.handlers.PvpHandler;
 import com.fogok.spaceships.view.utils.DebugGUI;
 import com.fogok.spaceships.view.utils.NativeGdxHelper;
 
@@ -48,6 +49,8 @@ public class GameProcess implements Screen {
 
     }
 
+    long cachedPing;
+    int iters, itersMax = 10;
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.02f, 0.02f, 0.02f, 1f);
@@ -57,6 +60,11 @@ public class GameProcess implements Screen {
         if (DebugGUI.DEBUG) {
             DebugGUI.DEBUG_TEXT.setLength(0);
             DebugGUI.DEBUG_TEXT.append(gameSession.getControllerManager().getEveryBodyObjectsPool().toString(true));
+            if (iters++ > itersMax) {
+                iters = 0;
+                cachedPing = PvpHandler.ping;
+            }
+            DebugGUI.DEBUG_TEXT.append("\n" + cachedPing);
         }
         gui.draw(nativeGdxHelper);
     }

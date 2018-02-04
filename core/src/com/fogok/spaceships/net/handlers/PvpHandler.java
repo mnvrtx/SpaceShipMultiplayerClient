@@ -8,11 +8,10 @@ import com.fogok.dataobjects.utils.Serialization;
 import com.fogok.spaceships.net.NetRootController;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
 
 import static com.esotericsoftware.minlog.Log.info;
 
@@ -20,16 +19,17 @@ public class PvpHandler {
 
     private final static long TIMEITERSSLEEP = 16;
     private final static int TRY_COUNT = 30;
+    private final static int TIMEOUT = 60;
 
     private boolean isConnected;
     private NetRootController netRootController;
-    private DatagramSocket datagramSocket;
-    final ByteBuffer writeBuffer;
+    private DatagramChannel datagramChannel;
+    final ByteBuffer writeBuffer, readBuffer;
     private final ByteBufferInput input = new ByteBufferInput();
     private final ByteBufferOutput output = new ByteBufferOutput();
 
-    DatagramPacket datagramSend = new DatagramPacket(new byte[0], 0);
-    DatagramPacket datagramReceive = new DatagramPacket(new byte[0], 0);
+//    DatagramPacket datagramSend = new DatagramPacket(new byte[0], 0);
+//    DatagramPacket datagramReceive = new DatagramPacket(new byte[0], 0);
 
     private InetSocketAddress inetSocketAddress;
 
@@ -37,11 +37,11 @@ public class PvpHandler {
         this.netRootController = netRootController;
         this.inetSocketAddress = inetSocketAddress;
 
-        datagramSend.setSocketAddress(inetSocketAddress);
+//        datagramSend.setSocketAddress(inetSocketAddress);
 
-//        readBuffer = ByteBuffer.allocate(ConnectToServiceImpl.BUFFER_SIZE);
-        writeBuffer = ByteBuffer.allocate(ConnectToServiceImpl.BUFFER_SIZE);
-//        readBuffer.clear();
+        readBuffer = ByteBuffer.allocate(ConnectToServiceImpl.BUFFER_SIZE);
+        writeBuffer = ByteBuffer.allocateDirect(ConnectToServiceImpl.BUFFER_SIZE);
+        readBuffer.clear();
         writeBuffer.clear();
 
         new Thread(new Runnable() {
@@ -50,6 +50,8 @@ public class PvpHandler {
                 try {
                     sendStartData(TRY_COUNT);
                 } catch (SocketException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -61,23 +63,26 @@ public class PvpHandler {
      * Send start data.
      * @param tryCount
      */
-    private void sendStartData(int tryCount) throws SocketException {
+    private void sendStartData(int tryCount) throws IOException {
         //init
-        datagramSocket = new DatagramSocket(61233);
-        datagramSocket.setSoTimeout(50);
-        datagramSocket.setReuseAddress(true);
+        datagramChannel = DatagramChannel.open();
+        datagramChannel.configureBlocking(false);
+//        datagramChannel.bind(null);
+        datagramChannel.socket().bind(new InetSocketAddress(61233));
+//        datagramChannel.socket().setReuseAddress(true);
+        datagramChannel.connect(inetSocketAddress);
 
         for (int i = 0; i < tryCount; i++) {
             try {
-                trySendStartData();
-                break;
+                if (trySendStartData())
+                    break;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void trySendStartData() throws IOException {
+    private boolean trySendStartData() throws IOException {
         info("Try to send start data");
 
         //prepare to serialize
@@ -96,19 +101,30 @@ public class PvpHandler {
 
         //send
         writeBuffer.flip();
-        datagramSend.setData(writeBuffer.array());
-        datagramSocket.send(datagramSend);
+        datagramChannel.send(writeBuffer, inetSocketAddress);
 
         //receive
-        datagramReceive.setData(new byte[ConnectToServiceImpl.BUFFER_SIZE]);
-        datagramSocket.receive(datagramReceive);
+        long start = System.currentTimeMillis() + 5000;
+        readBuffer.clear();
+        while (System.currentTimeMillis() < start && readBuffer.position() == 0)
+            if (!datagramChannel.isConnected())
+                datagramChannel.receive(readBuffer); // always null on Android >= 5.0}
+            else
+                datagramChannel.read(readBuffer);
+
+        if (readBuffer.position() == 0)
+            return false;
+
 
         //deserialize
-        input.setBuffer(datagramReceive.getData());
+        readBuffer.flip();
+        input.setBuffer(readBuffer);
         netRootController.readUdpResponse(this, input);
+        return true;
     }
 
     private volatile boolean stop = false;
+    public static volatile long ping;
     private int countRetry = 0;
     public void startLoopPingPong(){
         info(String.format("Started loop pingpong to %s service: ", inetSocketAddress.getAddress()));
@@ -120,34 +136,50 @@ public class PvpHandler {
                 while (!stop) {
                     if (!netRootController.blockReader) {
                         try {
-                            if (countRetry == 0) {
-                                //prepare to serialize
-                                writeBuffer.clear();
-                                output.setBuffer(writeBuffer);
+                            //prepare to serialize
+                            writeBuffer.clear();
+                            output.setBuffer(writeBuffer);
 
-                                //serialize
-                                //header
-                                output.writeInt(PvpTransactionHeaderType.CONSOLE_STATE.ordinal(), true);
-                                //content
-                                Serialization.instance.getKryo().writeObject(output, Serialization.instance.getPlayerData());
+                            //serialize
+                            //header
+                            output.writeInt(PvpTransactionHeaderType.CONSOLE_STATE.ordinal(), true);
+                            //content
+                            Serialization.instance.getKryo().writeObject(output, Serialization.instance.getPlayerData());
 
-                                //commit
-                                output.flush();
+                            //commit
+                            output.flush();
 
-                                //send prepare
-                                writeBuffer.flip();
-                                datagramSend.setData(writeBuffer.array());
-                            }
+                            //send prepare
+                            writeBuffer.flip();
 
                             //send
-                            datagramSocket.send(datagramSend);
+                            datagramChannel.send(writeBuffer, inetSocketAddress);
 
                             //maybe receive
-                            datagramReceive.setData(new byte[ConnectToServiceImpl.BUFFER_SIZE]);
-                            datagramSocket.receive(datagramReceive);
+                            long start = System.currentTimeMillis();
+                            long startTimeout = start + TIMEOUT;
+
+                            readBuffer.clear();
+                            while (System.currentTimeMillis() < startTimeout && readBuffer.position() == 0)
+                                if (!datagramChannel.isConnected())
+                                    datagramChannel.receive(readBuffer); // always null on Android >= 5.0}
+                                else
+                                    datagramChannel.read(readBuffer);
+
+                            if (readBuffer.position() == 0) {
+                                countRetry++;
+                                if (countRetry > TRY_COUNT) {
+                                    stop = true;
+                                    info("stop = true");
+                                }
+                                continue;
+                            }
+
+                            ping = System.currentTimeMillis() - start;
 
                             //deserialize received
-                            input.setBuffer(datagramReceive.getData());
+                            readBuffer.flip();
+                            input.setBuffer(readBuffer);
                             netRootController.readUdpResponse(pvpHandler, input);
                             countRetry = 0;
                         } catch (IOException e) {

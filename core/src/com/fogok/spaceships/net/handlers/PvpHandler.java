@@ -19,14 +19,13 @@ public class PvpHandler {
 
     private final static long TIMEITERSSLEEP = 16;
     private final static int TRY_COUNT = 30;
-    private final static int TIMEOUT = 60;
+    private final static int TIMEOUT = 4;
 
     private boolean isConnected;
     private NetRootController netRootController;
     private DatagramChannel datagramChannel;
-    final ByteBuffer writeBuffer, readBuffer;
-    private final ByteBufferInput input = new ByteBufferInput();
-    private final ByteBufferOutput output = new ByteBufferOutput();
+    private final ByteBufferInput input = new ByteBufferInput(ByteBuffer.allocate(ConnectToServiceImpl.BUFFER_SIZE));
+    private final ByteBufferOutput output = new ByteBufferOutput(ByteBuffer.allocateDirect(ConnectToServiceImpl.BUFFER_SIZE));
 
 //    DatagramPacket datagramSend = new DatagramPacket(new byte[0], 0);
 //    DatagramPacket datagramReceive = new DatagramPacket(new byte[0], 0);
@@ -36,13 +35,6 @@ public class PvpHandler {
     public PvpHandler(NetRootController netRootController, InetSocketAddress inetSocketAddress){
         this.netRootController = netRootController;
         this.inetSocketAddress = inetSocketAddress;
-
-//        datagramSend.setSocketAddress(inetSocketAddress);
-
-        readBuffer = ByteBuffer.allocate(ConnectToServiceImpl.BUFFER_SIZE);
-        writeBuffer = ByteBuffer.allocateDirect(ConnectToServiceImpl.BUFFER_SIZE);
-        readBuffer.clear();
-        writeBuffer.clear();
 
         new Thread(new Runnable() {
             @Override
@@ -67,9 +59,7 @@ public class PvpHandler {
         //init
         datagramChannel = DatagramChannel.open();
         datagramChannel.configureBlocking(false);
-//        datagramChannel.bind(null);
         datagramChannel.socket().bind(new InetSocketAddress(61233));
-//        datagramChannel.socket().setReuseAddress(true);
         datagramChannel.connect(inetSocketAddress);
 
         for (int i = 0; i < tryCount; i++) {
@@ -86,8 +76,7 @@ public class PvpHandler {
         info("Try to send start data");
 
         //prepare to serialize
-        writeBuffer.clear();
-        output.setBuffer(writeBuffer);
+        output.clear();
 
         //serialize
         //header
@@ -96,34 +85,29 @@ public class PvpHandler {
         output.writeString(netRootController.getNetPvpController().getSessionId());
         output.writeString(netRootController.getAuthPlayerToken());
 
-        //commit
-        output.flush();
-
         //send
-        writeBuffer.flip();
-        datagramChannel.send(writeBuffer, inetSocketAddress);
+        datagramChannel.send((ByteBuffer) output.getByteBuffer().flip(), inetSocketAddress);
 
         //receive
         long start = System.currentTimeMillis() + 5000;
-        readBuffer.clear();
-        while (System.currentTimeMillis() < start && readBuffer.position() == 0)
+        ByteBuffer buffer = (ByteBuffer) input.getByteBuffer().clear();
+        while (System.currentTimeMillis() < start && buffer.position() == 0)
             if (!datagramChannel.isConnected())
-                datagramChannel.receive(readBuffer); // always null on Android >= 5.0}
+                datagramChannel.receive(buffer); // always null on Android >= 5.0}
             else
-                datagramChannel.read(readBuffer);
+                datagramChannel.read(buffer);
 
-        if (readBuffer.position() == 0)
+        if (buffer.position() == 0)
             return false;
 
 
         //deserialize
-        readBuffer.flip();
-        input.setBuffer(readBuffer);
+        buffer.flip();
         netRootController.readUdpResponse(this, input);
         return true;
     }
 
-    private volatile boolean stop = false;
+    private static volatile boolean stop = false;
     public static volatile long ping;
     private int countRetry = 0;
     public void startLoopPingPong(){
@@ -137,8 +121,7 @@ public class PvpHandler {
                     if (!netRootController.blockReader) {
                         try {
                             //prepare to serialize
-                            writeBuffer.clear();
-                            output.setBuffer(writeBuffer);
+                            output.clear();
 
                             //serialize
                             //header
@@ -146,49 +129,44 @@ public class PvpHandler {
                             //content
                             Serialization.instance.getKryo().writeObject(output, Serialization.instance.getPlayerData());
 
-                            //commit
-                            output.flush();
-
-                            //send prepare
-                            writeBuffer.flip();
-
                             //send
-                            datagramChannel.send(writeBuffer, inetSocketAddress);
+                            datagramChannel.send((ByteBuffer) output.getByteBuffer().flip(), inetSocketAddress);
 
                             //maybe receive
                             long start = System.currentTimeMillis();
-                            long startTimeout = start + TIMEOUT;
 
-                            readBuffer.clear();
-                            while (System.currentTimeMillis() < startTimeout && readBuffer.position() == 0)
-                                if (!datagramChannel.isConnected())
-                                    datagramChannel.receive(readBuffer); // always null on Android >= 5.0}
-                                else
-                                    datagramChannel.read(readBuffer);
+                            ByteBuffer buffer = (ByteBuffer) input.getByteBuffer().clear();
 
-                            if (readBuffer.position() == 0) {
-                                countRetry++;
-                                if (countRetry > TRY_COUNT) {
-                                    stop = true;
-                                    info("stop = true");
-                                }
-                                continue;
+                            Thread.sleep(TIMEOUT);
+
+                            if (!datagramChannel.isConnected())
+                                datagramChannel.receive(buffer); // always null on Android >= 5.0}
+                            else
+                                datagramChannel.read(buffer);
+
+                            //if receive - read
+                            if (buffer.position() != 0) {
+                                //save ping
+                                ping = System.currentTimeMillis() - start;
+
+                                //deserialize received
+                                buffer.flip();
+                                netRootController.readUdpResponse(pvpHandler, input);
+                                countRetry = 0;
                             }
 
-                            ping = System.currentTimeMillis() - start;
-
-                            //deserialize received
-                            readBuffer.flip();
-                            input.setBuffer(readBuffer);
-                            netRootController.readUdpResponse(pvpHandler, input);
-                            countRetry = 0;
                         } catch (IOException e) {
                             //not received... return to start and increment countRetry
-                            countRetry++;
-                            if (countRetry > TRY_COUNT) {
-                                stop = true;
-                                info("stop = true");
-                            }
+                            e.printStackTrace();
+//                            countRetry++;
+//                            if (countRetry > TRY_COUNT) {
+//                                stop = true;
+//                                info("stop = true");
+//                            }
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -199,6 +177,11 @@ public class PvpHandler {
 
     public void stop() {
         stop = true;
+        try {
+            datagramChannel.close();
+        } catch (IOException e) {
+            //mute
+        }
     }
 
     public boolean isConnected() {

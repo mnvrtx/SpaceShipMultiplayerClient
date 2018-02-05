@@ -65,6 +65,7 @@ public enum Serialization {
     {
         info("Init Serialization");
         kryo = new Kryo();
+        kryo.setReferences(false);
 
         //TODO: перенести сериализацию в сами классы! тут реальное говно с копипастом, нужно переделать по хорошему
 

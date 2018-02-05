@@ -84,19 +84,21 @@ public class NetRootController {
 
         @Override
         public void run() {
+
             switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
                 case START_DATA:
                     if (input.readBoolean()) {
                         info("Connected success");
                         pvpHandler.startLoopPingPong();
-                    }else
+                    }else {
                         info("Already connected");
+                    }
                     break;
                 case EVERYBODY_POOL:
-//                    info("" + Arrays.toString(input.getBuffer()));
                     Serialization.instance.getKryo().readObject(input, EveryBodyPool.class);
                     break;
             }
+            input.rewind();
             context.blockReader = false;
         }
     }

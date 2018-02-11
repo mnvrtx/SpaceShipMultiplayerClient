@@ -244,11 +244,15 @@ public enum Serialization {
     }
 
     private void balance(int type, int oldSize, int newSize){
-        for (int i = 0; i < Math.abs(newSize - oldSize); i++)
-            if (oldSize < newSize)
+        for (int i = 0; i < Math.abs(newSize - oldSize); i++) {
+            if (oldSize < newSize) {
+                info("add new " + GameObjectsType.values()[type].name());
                 everyBodyPool.obtain(GameObjectsType.values()[type]);
-            else
+            } else {
+                info("remove " + GameObjectsType.values()[type].name());
                 everyBodyPool.free(GameObjectsType.values()[type]);
+            }
+        }
     }
 
     public Kryo getKryo() {

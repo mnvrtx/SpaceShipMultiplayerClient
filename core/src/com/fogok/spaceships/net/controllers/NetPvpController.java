@@ -20,7 +20,7 @@ public class NetPvpController extends DefaultController{
     }
 
     public void connectToPvp(String sessionId) throws SocketException, UnknownHostException {
-        String ip = "192.168.1.105:15504";
+        String ip = "127.0.0.1:15504";
         InetSocketAddress inetSocketAddress = new InetSocketAddress(ip.split(":")[0], Integer.parseInt(ip.split(":")[1]));
         this.sessionId = sessionId;
         workerGroup = new NioEventLoopGroup(2);

@@ -9,7 +9,9 @@ import com.fogok.spaceships.net.NetRootController;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.SocketException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
@@ -18,7 +20,7 @@ import static com.esotericsoftware.minlog.Log.info;
 public class PvpHandler {
 
     private final static long TIMEITERSSLEEP = 16;
-    private final static int TRY_COUNT = 30;
+    private final static int TRY_COUNT = 200;
     private final static int TIMEOUT = 4;
 
     private boolean isConnected;
@@ -56,55 +58,67 @@ public class PvpHandler {
      * @param tryCount
      */
     private void sendStartData(int tryCount) throws IOException {
+        //get free port
+        ServerSocket serverSocket = new ServerSocket(0);
+        int port = serverSocket.getLocalPort();
+        serverSocket.close();
+        serverSocket = null;
         //init
         datagramChannel = DatagramChannel.open();
         datagramChannel.configureBlocking(false);
-        datagramChannel.socket().bind(new InetSocketAddress(61233));
+        datagramChannel.socket().bind(new InetSocketAddress(port));
         datagramChannel.connect(inetSocketAddress);
 
+        trySendStartData(tryCount);
+    }
+
+    private void trySendStartData(int tryCount){
         for (int i = 0; i < tryCount; i++) {
             try {
-                if (trySendStartData())
+                info("Try to send start data");
+
+                //prepare to serialize
+                output.clear();
+
+                //serialize
+                //header
+                output.writeInt(0);
+                output.writeInt(PvpTransactionHeaderType.START_DATA.ordinal(), true);
+                //content
+                output.writeString(netRootController.getNetPvpController().getSessionId());
+                output.writeString(netRootController.getAuthPlayerToken());
+
+                //set output header size bytes
+                writeBytesSizeToHeader(output);
+                //send
+                datagramChannel.send((ByteBuffer) output.getByteBuffer().flip(), inetSocketAddress);
+
+                //receive
+                ByteBuffer buffer = (ByteBuffer) input.getByteBuffer().clear();
+
+                Thread.sleep(30);
+
+                if (!datagramChannel.isConnected())
+                    datagramChannel.receive(buffer); // always null on Android >= 5.0}
+                else
+                    datagramChannel.read(buffer);
+
+
+                //if receive - read
+                if (buffer.position() != 0) {
+                    //check bytes count
+                    buffer.flip();
+                    if (!checkBytesCount(input))
+                        continue;
+
+                    //deserialize received
+                    netRootController.readUdpResponse(this, input);
                     break;
-            } catch (IOException e) {
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    private boolean trySendStartData() throws IOException {
-        info("Try to send start data");
-
-        //prepare to serialize
-        output.clear();
-
-        //serialize
-        //header
-        output.writeInt(PvpTransactionHeaderType.START_DATA.ordinal(), true);
-        //content
-        output.writeString(netRootController.getNetPvpController().getSessionId());
-        output.writeString(netRootController.getAuthPlayerToken());
-
-        //send
-        datagramChannel.send((ByteBuffer) output.getByteBuffer().flip(), inetSocketAddress);
-
-        //receive
-        long start = System.currentTimeMillis() + 5000;
-        ByteBuffer buffer = (ByteBuffer) input.getByteBuffer().clear();
-        while (System.currentTimeMillis() < start && buffer.position() == 0)
-            if (!datagramChannel.isConnected())
-                datagramChannel.receive(buffer); // always null on Android >= 5.0}
-            else
-                datagramChannel.read(buffer);
-
-        if (buffer.position() == 0)
-            return false;
-
-
-        //deserialize
-        buffer.flip();
-        netRootController.readUdpResponse(this, input);
-        return true;
     }
 
     private static volatile boolean stop = false;
@@ -125,9 +139,13 @@ public class PvpHandler {
 
                             //serialize
                             //header
+                            output.writeInt(0);
                             output.writeInt(PvpTransactionHeaderType.CONSOLE_STATE.ordinal(), true);
                             //content
                             Serialization.instance.getKryo().writeObject(output, Serialization.instance.getPlayerData());
+
+                            //set output header size bytes
+                            writeBytesSizeToHeader(output);
 
                             //send
                             datagramChannel.send((ByteBuffer) output.getByteBuffer().flip(), inetSocketAddress);
@@ -146,11 +164,14 @@ public class PvpHandler {
 
                             //if receive - read
                             if (buffer.position() != 0) {
+                                //check bytes count
+                                buffer.flip();
+                                if (!checkBytesCount(input))
+                                    continue;
+
                                 //save ping
                                 ping = System.currentTimeMillis() - start;
-
                                 //deserialize received
-                                buffer.flip();
                                 netRootController.readUdpResponse(pvpHandler, input);
                                 countRetry = 0;
                             }
@@ -167,12 +188,28 @@ public class PvpHandler {
 //                            e.printStackTrace();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                        } catch (BufferUnderflowException e) {
+                            //nothing
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }
                 isConnected = false;
             }
         }).start();
+    }
+
+    private boolean checkBytesCount(ByteBufferInput input) {
+        int targetBytes = input.readInt();
+        return input.getByteBuffer().limit() == targetBytes;
+    }
+
+    private void writeBytesSizeToHeader(ByteBufferOutput output){
+        int pos = output.getByteBuffer().position();
+        output.setPosition(0);
+        output.writeInt(pos);
+        output.setPosition(pos);
     }
 
     public void stop() {

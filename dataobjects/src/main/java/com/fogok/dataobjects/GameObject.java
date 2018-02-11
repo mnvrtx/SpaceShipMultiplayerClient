@@ -9,22 +9,20 @@ import java.util.BitSet;
 
 public abstract class GameObject implements Pool.Poolable {
 
-    public static final int X = 0, Y = 1, ADIITPRMS = 2, BOOLEANS = 3;
-
-    private BitSet flags = new BitSet(10);  //10 params available
+    private BitSet flags = new BitSet(10);  //10 bool params available
 
     private long playerId;
-    private float widthDivHeight;
     private int type;
     private float x;
     private float y;
     private float[] additParams = new float[0];
     private char[] stringInformation = new char[0];
 
+    //local
+    private float widthDivHeight;
 
-    private boolean isInsideField;  //означает, находится ли объект в пуле или же он сейчас непосредственно находится на карте, true - значит, что он внутри пула
-
-    //additParams - здесь параметры, которые не передаются на сервер, и расчитываются прямо в игре
+    //server
+    private boolean isInsideField;
 
 
     //region Setters
@@ -88,8 +86,12 @@ public abstract class GameObject implements Pool.Poolable {
         Serialization.convert(flags, l);
     }
 
-    public void setFlags(int flagNumber, boolean flag) {
+    public void setFlag(int flagNumber, boolean flag) {
         flags.set(flagNumber, flag);
+    }
+
+    public <E extends Enum<E>> void setFlag(E flagEnum, boolean flag) {
+        flags.set(flagEnum.ordinal(), flag);
     }
     //endregion
 
@@ -141,6 +143,8 @@ public abstract class GameObject implements Pool.Poolable {
     }
     //endregion
 
+    //region Json serialization (it is necessary to view all fields)
+    public static final int X = 0, Y = 1, ADIITPRMS = 2, BOOLEANS = 3;
 
     private static StringBuilder stringBuilder = new StringBuilder();
 
@@ -194,7 +198,7 @@ public abstract class GameObject implements Pool.Poolable {
         if (!last)
             stringBuilder.append(EveryBodyPool.JSONElements[4]);
     }
-
+    //endregion
 
     //test
 

@@ -15,6 +15,7 @@ public class JoyStickController implements Controller {
      * Размер контрола joystick, а так же координаты центра
      */
     public int sizeJoystickDragButton, sizeJoystickCircle, posXJoystick, posYJoystick, centerXJoystick, centerYJoystick;
+    private boolean isFireTouched;
 
     private ConsoleState consoleState;
 
@@ -44,11 +45,11 @@ public class JoyStickController implements Controller {
     }
 
     /**
-     * Рефрешим джойстик
-     * @param tIdx индекс касания
-     * @param isTouched касаются ли joystick
+     * Refresh all joystick data
+     * @param tIdx finger touch idx
+     * @param isTouched finger is touch ?
      */
-    private void refreshJoystick(int tIdx, boolean isTouched){   //refreshJoystick
+    private void refreshJoystick(int tIdx, boolean isTouched){
         float joyStickOutputX, joyStickOutputY;
         if (isTouched){
             float xT = (float) Gdx.input.getX(tIdx);
@@ -58,9 +59,6 @@ public class JoyStickController implements Controller {
             float distance = (float) Math.sqrt(Math.pow((xT - centerXJoystick), 2) + Math.pow((yT - centerYJoystick), 2));
             float max_over_joystick_distance =  (float) sizeJoystickCircle / 2f;
             if (distance > max_over_joystick_distance) distance = max_over_joystick_distance;
-
-//            NAPR_J = (int) (angle - 180f);
-//            TYAGA = distance / max_over_joystick_distance;
 
             joyStickOutputX = (float) Math.sin(Math.toRadians(180f - angle)) * distance;
             joyStickOutputY = (float) Math.cos(Math.toRadians(180f - angle)) * distance;
@@ -78,6 +76,7 @@ public class JoyStickController implements Controller {
 
         consoleState.setX(joyStickOutputX);
         consoleState.setY(joyStickOutputY);
+        consoleState.setFlag(ConsoleState.AdditBooleanParams.IS_FIRE, isFireTouched);
     }
 
     /**

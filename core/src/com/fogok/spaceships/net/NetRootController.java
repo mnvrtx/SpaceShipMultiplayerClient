@@ -84,20 +84,25 @@ public class NetRootController {
 
         @Override
         public void run() {
-
-            switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
-                case START_DATA:
-                    if (input.readBoolean()) {
-                        info("Connected success");
-                        pvpHandler.startLoopPingPong();
-                    }else {
-                        info("Already connected");
-                    }
-                    break;
-                case EVERYBODY_POOL:
-                    Serialization.instance.getKryo().readObject(input, EveryBodyPool.class);
-                    break;
+            try {
+                switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
+                    case START_DATA:
+                        if (input.readBoolean()) {
+                            info("Connected success");
+                            pvpHandler.startLoopPingPong();
+                        }else {
+                            info("Already connected");
+                        }
+                        break;
+                    case EVERYBODY_POOL:
+                        Serialization.instance.getKryo().readObject(input, EveryBodyPool.class);
+                        break;
+                }
+            } catch (Exception e) {
+                warn("bad packet received");
+                e.printStackTrace();
             }
+
             input.rewind();
             context.blockReader = false;
         }

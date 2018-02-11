@@ -14,7 +14,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public abstract class BaseChannelHandler extends ChannelInboundHandlerAdapter{
 
-    public static final long CONNECTION_TIMEOUT_MILLISECONDS = 6000;
+    public static final long CONNECTION_TIMEOUT_MILLISECONDS = 12000;
 
     protected SimpleTransactionReader simpleTransactionReader = new SimpleTransactionReader();
     protected NetRootController netRootController;

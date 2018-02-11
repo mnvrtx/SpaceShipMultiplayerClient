@@ -13,13 +13,17 @@ import com.fogok.spaceships.net.controllers.NetRelayBalancerController;
 import com.fogok.spaceships.net.controllers.NetSocServController;
 import com.fogok.spaceships.net.handlers.PvpHandler;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import static com.esotericsoftware.minlog.Log.info;
 import static com.esotericsoftware.minlog.Log.warn;
 
 public class NetRootController {
-    public volatile boolean blockReader;
+
+    public volatile boolean isRead;
+    public volatile boolean isWrite;
+    public volatile boolean fastReadBlock;
 
     private ClientState clientState;
 
@@ -45,8 +49,8 @@ public class NetRootController {
 
     //region PostLogicExecutor
     public void readServerChannel(Channel channel, byte[] bytes, BaseTransactionReader baseTransactionReader){
-        if (!blockReader) {
-            blockReader = true;
+        if (!isRead) {
+            isRead = true;
 
             //set required data
             readServerRunnable.context = this;
@@ -60,19 +64,17 @@ public class NetRootController {
             warn("Request to read during another read");
     }
 
-    public void readUdpResponse(PvpHandler pvpHandler, ByteBufferInput input) {
-        if (!blockReader) {
-            blockReader = true;
+    public void fastReadChannel(PvpHandler pvpHandler, ByteBufferInput input, ByteBuf buf) {
+        //set required data
 
-            //set required data
-            readUdpRunnable.context = this;
-            readUdpRunnable.pvpHandler = pvpHandler;
-            readUdpRunnable.input = input;
+        readUdpRunnable.context = this;
+        readUdpRunnable.pvpHandler = pvpHandler;
+        readUdpRunnable.input = input;
+        readUdpRunnable.buf = buf;
 
-            //invoke after draw
-            Gdx.app.postRunnable(readUdpRunnable);
-        }else
-            warn("Request to read during another read");
+        //invoke after draw
+        Gdx.app.postRunnable(readUdpRunnable);
+
     }
 
     private ReadUdpRunnable readUdpRunnable = new ReadUdpRunnable();
@@ -81,30 +83,26 @@ public class NetRootController {
 
         private PvpHandler pvpHandler;
         private ByteBufferInput input;
+        private ByteBuf buf;
 
         @Override
         public void run() {
-            try {
-                switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
-                    case START_DATA:
-                        if (input.readBoolean()) {
-                            info("Connected success");
-                            pvpHandler.startLoopPingPong();
-                        }else {
-                            info("Already connected");
-                        }
-                        break;
-                    case EVERYBODY_POOL:
-                        Serialization.instance.getKryo().readObject(input, EveryBodyPool.class);
-                        break;
-                }
-            } catch (Exception e) {
-                warn("bad packet received");
-                e.printStackTrace();
+            switch (PvpTransactionHeaderType.values()[input.readInt(true)]) {
+                case START_DATA:
+                    if (input.readBoolean()) {
+                        info("Connected success");
+                        pvpHandler.startLoopPingPong();
+                    }else {
+                        info("Already connected");
+                    }
+                    break;
+                case EVERYBODY_POOL:
+                    Serialization.instance.getKryo().readObject(input, EveryBodyPool.class);
+//                    info(Serialization.instance.getEveryBodyPool().toString());
+                    break;
             }
-
-            input.rewind();
-            context.blockReader = false;
+            buf.release();
+            context.fastReadBlock = false;
         }
     }
 
@@ -121,7 +119,7 @@ public class NetRootController {
         @Override
         public void run() {
             baseTransactionReader.readByteBufFromChannel(channel, bytes);
-            context.blockReader = false;
+            context.isRead = false;
         }
     }
     //endregion

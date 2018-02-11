@@ -48,6 +48,7 @@ public class DefaultExceptionHandler extends ChannelDuplexHandler {
             public void operationComplete(ChannelFuture future) {
                 if (!future.isSuccess()) {
                     error(String.format("Unhandled exception in write to channel: %s", future.cause()));
+                    future.cause().printStackTrace();
                 }
             }
         }));
